@@ -9,6 +9,8 @@
     "dev": "parcel src/pages/*.hbs --no-cache",
     "watch": "parcel watch src/pages/*.hbs --no-cache",
     "start": "npm run build && npm run dev",
+    "version": "git add -A src",
+    "postversion": "git push --follow-tags",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

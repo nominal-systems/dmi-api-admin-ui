@@ -1,70 +1,10 @@
 import 'regenerator-runtime/runtime'
 import Alpine from 'alpinejs'
+import { getThemeFromLocalStorage, setThemeToLocalStorage } from "./theme"
+import { setTokenToLocalStorage } from "./auth"
+import { apiGet, apiPost } from "./api-client"
 
 const DMI_API_URL = process.env.API_URL
-
-function getThemeFromLocalStorage() {
-  // if user already changed the theme, use it
-  if (window.localStorage.getItem('dark')) {
-    return JSON.parse(window.localStorage.getItem('dark'))
-  }
-
-  // else return their preferences
-  return (
-    !!window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  )
-}
-
-function setThemeToLocalStorage(value) {
-  window.localStorage.setItem('dark', value)
-}
-
-function getTokenFromLocalStorage() {
-  if (window.localStorage.getItem('token')) {
-    return window.localStorage.getItem('token')
-  }
-}
-
-function setTokenToLocalStorage(token) {
-  window.localStorage.setItem('token', token)
-}
-
-function unsetTokenFromLocalStorage() {
-  window.localStorage.removeItem('token')
-}
-
-function apiPost(url, body, next) {
-  const req = {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`
-    }
-  }
-
-  if (body !== null) {
-    req.headers['Content-Type'] = 'application/json'
-    req.body = body
-  }
-
-  return fetch(url, req).then(response => response.json())
-    .then(next)
-}
-
-function apiGet(url, next) {
-  return fetch(url, {
-    headers: new Headers({
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`
-    })
-  }).then(res => res.json())
-    .then(res => {
-      if (res.statusCode === 401 || res.statusCode === 403) {
-        unsetTokenFromLocalStorage()
-        window.location.href = '/login'
-      }
-      next(res)
-    })
-}
 
 window.data = {
   dark: getThemeFromLocalStorage(),
@@ -141,7 +81,7 @@ window.data = {
   integrationId: null,
   isIntegrationStatusUpdating: false,
   async fetchIntegrations() {
-    apiGet(`${DMI_API_URL}/admin/integrations`, (body) => {
+    await apiGet(`${DMI_API_URL}/admin/integrations`, (body) => {
       this.integrations = body.map(integration => {
         return {
           ...integration,
@@ -153,7 +93,7 @@ window.data = {
   },
   async updateIntegrationStatus() {
     this.isIntegrationStatusUpdating = true
-    apiPost(`${DMI_API_URL}/admin/integrations/${this.integrationId}/${this.operation}`, null, (body) => {
+    await apiPost(`${DMI_API_URL}/admin/integrations/${this.integrationId}/${this.operation}`, null, (body) => {
       this.isIntegrationStatusUpdating = false
       this.closeModal()
     })
@@ -162,7 +102,7 @@ window.data = {
   // Events
   events: [],
   async fetchEvents() {
-    apiGet(`${DMI_API_URL}/admin/events`, (body) => {
+    await apiGet(`${DMI_API_URL}/admin/events`, (body) => {
       this.events = body.map(event => {
         return {
           ...event,
