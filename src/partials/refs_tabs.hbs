@@ -1,0 +1,33 @@
+<div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+  <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400" id="tabExample" role="tablist">
+    <li class="mr-2" role="presentation">
+      <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="sexes-tab" type="button" role="tab" aria-controls="sexes" aria-selected="false">Sexes</button>
+    </li>
+    <li class="mr-2" role="presentation">
+      <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="species-tab" type="button" role="tab" aria-controls="species" aria-selected="false">Species</button>
+    </li>
+    <li class="mr-2" role="presentation">
+      <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="breeds-tab" type="button" role="tab" aria-controls="breeds" aria-selected="false">Breeds</button>
+    </li>
+  </ul>
+</div>
+<div id="tabContentExample">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="sexes" role="tabpanel" aria-labelledby="sexes-tab">
+    <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+      Sexes
+    </h3>
+    {{> refs/sexes_table }}
+  </div>
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="species" role="tabpanel" aria-labelledby="species-tab">
+    <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+      Species
+    </h3>
+    {{> refs/species_table }}
+  </div>
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="breeds" role="tabpanel" aria-labelledby="breeds-tab">
+    <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+      Breeds
+    </h3>
+    {{> refs/breeds_table }}
+  </div>
+</div>
