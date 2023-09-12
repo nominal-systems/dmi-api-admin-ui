@@ -3,8 +3,7 @@ import Alpine from 'alpinejs'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from "./theme"
 import { setTokenToLocalStorage } from "./auth"
 import { apiGet, apiPost } from "./api-client"
-import { Tabs } from "flowbite";
-import { refs} from "./refs";
+import { refs } from "./refs";
 
 const DMI_API_URL = process.env.API_URL
 
