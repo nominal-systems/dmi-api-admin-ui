@@ -44,8 +44,8 @@ window.data = {
     username: null,
     password: null
   },
-  login() {
-    apiPost(`${DMI_API_URL}/admin/login`, JSON.stringify(this.user), (res) => {
+  async login() {
+    await apiPost(`${DMI_API_URL}/admin/login`, JSON.stringify(this.user), (res) => {
       if (res.token !== undefined) {
         setTokenToLocalStorage(res.token)
         window.location.href = '/'

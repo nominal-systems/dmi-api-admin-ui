@@ -1,10 +1,11 @@
-import { Tabs } from 'flowbite'
+import { Modal, Tabs } from 'flowbite'
 import { apiGet } from "./api-client";
 
 const DMI_API_URL = process.env.API_URL
+let DEFAULT_TAB_ID = 'sexes'
 const tabOptions = {
-  defaultTabId: 'sexes',
-  activeClasses: 'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-400 border-blue-600 dark:border-blue-500',
+  defaultTabId: DEFAULT_TAB_ID,
+  activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
   inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
 }
 const tabElements = [
@@ -29,16 +30,7 @@ const modalOptions = {
   placement: 'bottom-right',
   backdrop: 'dynamic',
   backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-  closable: true,
-  onHide: () => {
-    console.log('modal is hidden');
-  },
-  onShow: () => {
-    console.log('modal is shown');
-  },
-  onToggle: () => {
-    console.log('modal has been toggled');
-  }
+  closable: true
 };
 
 export const refs = {
@@ -62,6 +54,15 @@ export const refs = {
       })
     })
     this.modal.show()
+  },
+  closeModal() {
+    this.editingRef = {}
+    this.editingRefMappings = []
+    this.modal.hide()
+  },
+  updateRef() {
+    console.log(`this.editingRef= ${JSON.stringify(this.editingRef, null, 2)}`) // TODO(gb): remove trace
+    //TODO(gb): implement ref update
   },
   async fetchProviders() {
     await apiGet(`${DMI_API_URL}/admin/providers`, (body) => {
