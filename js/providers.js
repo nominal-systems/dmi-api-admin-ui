@@ -1,9 +1,11 @@
 import { getIntegrationForProvider, getProvider, getProviderRefs, syncProviderRefs } from './api-client'
 import { getProviderFromUrl } from './utils'
-import { Tabs } from 'flowbite'
+import { Modal, Tabs } from 'flowbite'
 
 export const providers = {
   provider: null,
+
+  // Reference Data
   refs: [
       {
         id: 'sex',
@@ -39,8 +41,6 @@ export const providers = {
   async fetchProviderRefs() {
     this.ref(this.activeTab.id).items = await getProviderRefs(this.provider.id, this.activeTab.id)
   },
-  tabs: null,
-  activeTab: null,
   async doSyncProviderRefs(type) {
     const integration = await getIntegrationForProvider(this.provider.id)
     if (integration !== undefined) {
@@ -49,6 +49,10 @@ export const providers = {
       })
     }
   },
+
+  // Tabs
+  tabs: null,
+  activeTab: null,
   initTabs() {
     const tabs = this.refs.map((ref) => {
       return {
@@ -68,8 +72,28 @@ export const providers = {
     }
     this.tabs = new Tabs(tabs, tabOptions)
   },
+
+  // Modal
+  modal: null,
+  editingRef: null,
+  openModal(ref) {
+    this.editingRef = ref
+    this.modal.show()
+  },
+  initModal() {
+    const targetE = this.$refs['providerRefModal']
+    const modalOptions = {
+      placement: 'bottom-right',
+      backdrop: 'dynamic',
+      backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
+      closable: true
+    }
+    this.modal = new Modal(targetE, modalOptions)
+  },
+
   async initProvider() {
     this.provider = await getProvider(getProviderFromUrl())
     this.initTabs()
+    this.initModal()
   }
 }

@@ -26,17 +26,19 @@
 <div>
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="sex" role="tabpanel">
     <div x-data="{type: 'sex'}">
-      {{> refs/provider-ref-table }}
+      {{> providers/ref-table }}
     </div>
   </div>
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="species" role="tabpanel">
     <div x-data="{type: 'species'}">
-      {{> refs/provider-ref-table }}
+      {{> providers/ref-table }}
     </div>
   </div>
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="breeds" role="tabpanel">
     <div x-data="{type: 'breeds'}">
-      {{> refs/provider-ref-table }}
+      {{> providers/ref-table }}
     </div>
   </div>
 </div>
+
+{{> providers/ref-modal }}
