@@ -1,5 +1,7 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 
+const BASE_URL = `${process.env.API_URL}/admin`
+
 export function apiPost(url, body, next) {
   const req = {
     method: 'POST',
@@ -13,7 +15,8 @@ export function apiPost(url, body, next) {
     req.body = body
   }
 
-  return fetch(url, req).then(response => response.json())
+  return fetch(url, req)
+    .then(response => response.json())
     .then(next)
 }
 
@@ -30,4 +33,41 @@ export function apiGet(url, next) {
       }
       next(res)
     })
+}
+
+export const getIntegrationForProvider = async (providerId) => {
+  let integration = {}
+  await apiGet(`${BASE_URL}/integrations?providerId=${providerId}`, (body) => {
+    integration = body[0]
+  })
+  return integration
+}
+export const getProviders = async () => {
+  let providers = []
+  await apiGet(`${BASE_URL}/providers`, (body) => {
+    providers = body
+  })
+  return providers
+}
+
+export const getProvider = async (id) => {
+  let provider = {}
+  await apiGet(`${BASE_URL}/providers/${id}`, (body) => {
+    provider = body
+  })
+  return provider
+}
+
+export const getProviderRefs = async (id, type) => {
+  let refs = []
+  await apiGet(`${BASE_URL}/providers/${id}/refs/${type}`, (body) => {
+    refs = body
+  })
+  return refs
+}
+
+export const syncProviderRefs = async (provider, type, integrationId, next) => {
+  await apiPost(`${BASE_URL}/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null, (body) => {
+    next(body)
+  })
 }

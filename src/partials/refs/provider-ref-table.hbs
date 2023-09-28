@@ -1,0 +1,32 @@
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <tr>
+      <th scope="col" class="px-6 py-3">
+        Name
+      </th>
+      <th scope="col" class="px-6 py-3">
+        Code
+      </th>
+      <th scope="col" class="px-6 py-3">
+        Mapping
+      </th>
+      <th scope="col" class="px-6 py-3">
+        <span class="sr-only">Edit</span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <template x-for="item in providerRefs[type]">
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" x-text="item.name"></th>
+        <td class="px-6 py-4" x-text="item.code"></td>
+        <td class="px-6 py-4" x-text="item.ref?.code"></td>
+        <td class="px-6 py-4 text-right">
+          <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
+        </td>
+      </tr>
+    </template>
+    </tbody>
+  </table>
+</div>

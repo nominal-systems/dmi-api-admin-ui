@@ -82,7 +82,7 @@ export const refs = {
       })
     ])
   },
-  async init() {
+  async initRefs() {
     this.tabs = new Tabs(tabElements, tabOptions)
     await this.fetchReferenceData()
     await this.fetchProviders()
