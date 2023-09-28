@@ -4,42 +4,59 @@ import { Tabs } from 'flowbite'
 
 export const providers = {
   provider: null,
-  providerRefs: {
-    sex: [],
-    species: [],
-    breed: []
+  refs: [
+      {
+        id: 'sex',
+        typeName: 'sexes',
+        triggerRef: 'sexTab',
+        targetRef: 'sex',
+        name: 'Sexes',
+        items: []
+      },
+    {
+      id: 'species',
+      typeName: 'species',
+      triggerRef: 'speciesTab',
+      targetRef: 'species',
+      name: 'Species',
+      items: []
+    },
+    {
+      id: 'breeds',
+      typeName: 'breeds',
+      triggerRef: 'breedsTab',
+      targetRef: 'breeds',
+      name: 'Breeds',
+      items: []
+    }
+  ],
+  ref(type) {
+    return this.refs.find((ref) => ref.id === type)
+  },
+  refItems(type) {
+    return this.ref(type).items
   },
   async fetchProviderRefs() {
-    this.providerRefs[this.activeTab.id] = await getProviderRefs(this.provider.id, this.activeTab.id)
+    this.ref(this.activeTab.id).items = await getProviderRefs(this.provider.id, this.activeTab.id)
   },
   tabs: null,
   activeTab: null,
   async doSyncProviderRefs(type) {
     const integration = await getIntegrationForProvider(this.provider.id)
     if (integration !== undefined) {
-      await syncProviderRefs(this.provider.id, type, integration.id, async (body) => {
+      await syncProviderRefs(this.provider.id, this.ref(type).typeName, integration.id, async (body) => {
         await this.fetchProviderRefs()
       })
     }
   },
   initTabs() {
-    const tabs = [
-      {
-        id: 'sex',
-        triggerEl: this.$refs.sexTab,
-        targetEl: this.$refs.sex
-      },
-      {
-        id: 'species',
-        triggerEl: this.$refs.speciesTab,
-        targetEl: this.$refs.species
-      },
-      {
-        id: 'breed',
-        triggerEl: this.$refs.breedTab,
-        targetEl: this.$refs.breed
+    const tabs = this.refs.map((ref) => {
+      return {
+        id: ref.id,
+        triggerEl: this.$refs[ref.triggerRef],
+        targetEl: this.$refs[ref.targetRef]
       }
-    ]
+    })
     const tabOptions = {
       defaultTabId: tabs[0].id,
       activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',

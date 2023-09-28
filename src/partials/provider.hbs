@@ -17,58 +17,25 @@
     <li class="mr-2" role="presentation">
       <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
               type="button" role="tab"
-              x-ref="breedTab" aria-controls="breed" aria-selected="false">
+              x-ref="breedsTab" aria-controls="breed" aria-selected="false">
         Breeds
       </button>
     </li>
   </ul>
 </div>
-<div id="tabContentExample">
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-       x-ref="sex" role="tabpanel">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
-        Sexes (<span x-text="providerRefs.sex.length"></span>)
-      </h3>
-      <button type="button"
-              class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-              @click="await doSyncProviderRefs('sexes')">
-        Sync
-      </button>
-    </div>
+<div>
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="sex" role="tabpanel">
     <div x-data="{type: 'sex'}">
       {{> refs/provider-ref-table }}
     </div>
   </div>
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-       x-ref="species" role="tabpanel">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
-        Species (<span x-text="providerRefs.species.length"></span>)
-      </h3>
-      <button type="button"
-              class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-              @click="await doSyncProviderRefs('species')">
-        Sync
-      </button>
-    </div>
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="species" role="tabpanel">
     <div x-data="{type: 'species'}">
       {{> refs/provider-ref-table }}
     </div>
   </div>
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-       x-ref="breed" role="tabpanel">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
-        Breeds (<span x-text="providerRefs.breed.length"></span>)
-      </h3>
-      <button type="button"
-              class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-              @click="await doSyncProviderRefs('breeds')">
-        Sync
-      </button>
-    </div>
-    <div x-data="{type: 'breed'}">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" x-ref="breeds" role="tabpanel">
+    <div x-data="{type: 'breeds'}">
       {{> refs/provider-ref-table }}
     </div>
   </div>
