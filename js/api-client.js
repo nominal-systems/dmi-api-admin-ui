@@ -35,6 +35,13 @@ export function apiGet(url, next) {
     })
 }
 
+export const getIntegrations = async (next) => {
+  let integrations = []
+  await apiGet(`${BASE_URL}/integrations`, (body) => {
+    integrations = body
+  })
+  return integrations
+}
 export const getIntegrationForProvider = async (providerId) => {
   let integration = {}
   await apiGet(`${BASE_URL}/integrations?providerId=${providerId}`, (body) => {

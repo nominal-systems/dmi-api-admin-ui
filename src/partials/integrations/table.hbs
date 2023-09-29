@@ -1,70 +1,72 @@
-<div class="w-full overflow-hidden rounded-lg shadow-xs">
-  <div class="w-full overflow-x-auto">
-    <table class="w-full whitespace-no-wrap">
-      <thead>
-      <tr
-        class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-      >
-        <th class="px-4 py-3">ID</th>
-        <th class="px-4 py-3">Practice</th>
-        <th class="px-4 py-3">Provider</th>
-        <th class="px-4 py-3">Status</th>
-        <th class="px-4 py-3">Actions</th>
-      </tr>
-      </thead>
-      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800" x-init="fetchIntegrations()">
-      <template x-for="integration in integrations">
-        <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
-          <td class="px-4 py-3">
-            <div class="flex items-center text-sm">
-              <div>
-                <p class="font-semibold" x-text="integration.practice.name"></p>
-                <p class="text-xs text-gray-600 dark:text-gray-400" x-text="integration.practice.organization.name"></p>
+<div x-data="integrations" x-init="init">
+  <div class="w-full overflow-hidden rounded-lg shadow-xs">
+    <div class="w-full overflow-x-auto">
+      <table class="w-full whitespace-no-wrap">
+        <thead>
+        <tr
+          class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+        >
+          <th class="px-4 py-3">ID</th>
+          <th class="px-4 py-3">Practice</th>
+          <th class="px-4 py-3">Provider</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Actions</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+        <template x-for="integration in integrations">
+          <tr class="text-gray-700 dark:text-gray-400">
+            <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
+            <td class="px-4 py-3">
+              <div class="flex items-center text-sm">
+                <div>
+                  <p class="font-semibold" x-text="integration.practice.name"></p>
+                  <p class="text-xs text-gray-600 dark:text-gray-400" x-text="integration.practice.organization.name"></p>
+                </div>
               </div>
-            </div>
-          </td>
-          <td class="px-4 py-3 text-xs">
-            <span class="uppercase" x-text="integration.providerConfiguration.providerId"></span>
-          </td>
-          <td class="px-4 py-3 text-xs">
+            </td>
+            <td class="px-4 py-3 text-xs">
+              <span class="uppercase" x-text="integration.providerConfiguration.providerId"></span>
+            </td>
+            <td class="px-4 py-3 text-xs">
               <span
                 class="px-2 py-1 font-semibold leading-tight rounded-full"
                 x-bind:class="`text-${integration.color}-700 bg-${integration.color}-100 dark:bg-${integration.color}-700 dark:text-${integration.color}-100`"
                 x-text="integration.status">
               </span>
-          </td>
-          <td class="px-4 py-3 text-xs">
-            <div class="flex items-center space-x-4 text-sm">
-              <template x-if="integration.isRunning">
-                <button
-                  class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                  @click="operation='stop'; integrationId=integration.id; openModal('#modal')"
-                  aria-label="Stop">
-                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"></path>
-                  </svg>
-                </button>
-              </template>
-              <template x-if="!integration.isRunning">
-                <button
-                  class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                  @click="operation='start'; integrationId=integration.id; openModal('#modal')"
-                  aria-label="Start">
-                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
-                  </svg>
-                </button>
-              </template>
-            </div>
-          </td>
-        </tr>
-      </template>
-      </tbody>
-    </table>
+            </td>
+            <td class="px-4 py-3 text-xs">
+              <div class="flex items-center space-x-4 text-sm">
+                <template x-if="integration.isRunning">
+                  <button
+                    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                    @click="openModal(integration)"
+                    aria-label="Stop">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"></path>
+                    </svg>
+                  </button>
+                </template>
+                <template x-if="!integration.isRunning">
+                  <button
+                    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                    @click="openModal(integration)"
+                    aria-label="Start">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
+                    </svg>
+                  </button>
+                </template>
+              </div>
+            </td>
+          </tr>
+        </template>
+        </tbody>
+      </table>
+    </div>
   </div>
+  {{> integrations/modal }}
 </div>
-{{> integrations/modal }}
 <div class="w-0 h-0 dark:bg-green-700"></div>

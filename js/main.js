@@ -4,9 +4,10 @@ import 'flowbite'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from "./theme"
 import { setTokenToLocalStorage } from "./auth"
 import { apiGet, apiPost, getProviders } from "./api-client"
+import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
 import { refs } from "./refs"
 import { providers } from "./providers"
-import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
+import { integrations } from "./integrations"
 
 const DMI_API_URL = process.env.API_URL
 
@@ -31,16 +32,6 @@ window.data = {
     this.isProfileMenuOpen = false
   },
   isPagesMenuOpen: false,
-  isModalOpen: false,
-  trapCleanup: null,
-  openModal(sel) {
-    this.isModalOpen = true
-    this.trapCleanup = focusTrap(document.querySelector(sel))
-  },
-  closeModal() {
-    this.isModalOpen = false
-    this.trapCleanup()
-  },
 
   // Auth
   user: {
@@ -106,31 +97,6 @@ window.data = {
     })
   },
 
-
-  // Integrations
-  integrations: [],
-  operation: null,
-  integrationId: null,
-  isIntegrationStatusUpdating: false,
-  async fetchIntegrations() {
-    await apiGet(`${DMI_API_URL}/admin/integrations`, (body) => {
-      this.integrations = body.map(integration => {
-        return {
-          ...integration,
-          isRunning: integration.status === 'RUNNING',
-          color: integration.status === 'RUNNING' ? 'green' : 'red'
-        }
-      })
-    })
-  },
-  async updateIntegrationStatus() {
-    this.isIntegrationStatusUpdating = true
-    await apiPost(`${DMI_API_URL}/admin/integrations/${this.integrationId}/${this.operation}`, null, (body) => {
-      this.isIntegrationStatusUpdating = false
-      this.closeModal()
-    })
-  },
-
   // Events
   events: [],
   async fetchEvents() {
@@ -147,4 +113,5 @@ window.data = {
 
 window.refs = refs
 window.providers = providers
+window.integrations = integrations
 Alpine.start()
