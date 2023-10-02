@@ -1,13 +1,14 @@
 import 'regenerator-runtime/runtime'
 import Alpine from 'alpinejs'
 import 'flowbite'
-import { getThemeFromLocalStorage, setThemeToLocalStorage } from "./theme"
-import { setTokenToLocalStorage } from "./auth"
-import { apiGet, apiPost, getProviders } from "./api-client"
+import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
+import { setTokenToLocalStorage } from './auth'
+import { apiGet, apiPost, getProviders } from './api-client'
 import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
-import { refs } from "./refs"
-import { providers } from "./providers"
-import { integrations } from "./integrations"
+import { events } from './events'
+import { refs } from './refs'
+import { providers } from './providers'
+import { integrations } from './integrations'
 
 const DMI_API_URL = process.env.API_URL
 
@@ -96,21 +97,9 @@ window.data = {
       }
     })
   },
-
-  // Events
-  events: [],
-  async fetchEvents() {
-    await apiGet(`${DMI_API_URL}/admin/events`, (body) => {
-      this.events = body.map(event => {
-        return {
-          ...event,
-          createdAtString: new Date(event.createdAt).toLocaleString()
-        }
-      })
-    })
-  },
 }
 
+window.events = events
 window.refs = refs
 window.providers = providers
 window.integrations = integrations
