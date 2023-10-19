@@ -85,3 +85,11 @@ export const syncProviderRefs = async (provider, type, integrationId, next) => {
         next(body)
     })
 }
+
+export const getExternalRequests = async () => {
+    let requests = []
+    await apiGet(`${BASE_URL}/external-requests`, (body) => {
+        requests = body
+    })
+    return requests
+}
