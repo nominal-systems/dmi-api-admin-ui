@@ -1,16 +1,19 @@
-import { getExternalRequests } from './api-client'
+import { getExternalRequests, getProviders } from './api-client'
 
-const PAGE_SIZE = 25
+const PAGE_SIZE = 100
+const MAX_PAGES = 10
 
 export const externalRequests = () => {
   return {
     page: null,
     pageSize: PAGE_SIZE,
+    pagesMax: MAX_PAGES,
     pagesTotal: null,
     resultsStart: null,
     resultsEnd: null,
     total: null,
     requests: [],
+    providers: [],
     async getPage(page) {
       this.page = page
       const requests = await getExternalRequests(this.page, this.pageSize)
@@ -23,6 +26,7 @@ export const externalRequests = () => {
     },
     async init() {
       await this.getPage(1)
+      this.providers = await getProviders()
     }
   }
 }

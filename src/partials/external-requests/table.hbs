@@ -14,12 +14,6 @@
       </form>
     </div>
     <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
-      <button type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-        <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
-        </svg>
-        Add product
-      </button>
       <div class="flex items-center w-full space-x-3 md:w-auto">
         <button id="actionsDropdownButton" data-dropdown-toggle="actionsDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
           <svg class="-ml-1 mr-1.5 w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -54,56 +48,39 @@
             Category
           </h6>
           <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-            <li class="flex items-center">
-              <input id="apple" type="checkbox" value=""
-                     class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
-              <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                Apple (56)
-              </label>
-            </li>
-            <li class="flex items-center">
-              <input id="fitbit" type="checkbox" value=""
-                     class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
-              <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                Fitbit (56)
-              </label>
-            </li>
-            <li class="flex items-center">
-              <input id="dell" type="checkbox" value=""
-                     class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
-              <label for="dell" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                Dell (56)
-              </label>
-            </li>
-            <li class="flex items-center">
-              <input id="asus" type="checkbox" value="" checked
-                     class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
-              <label for="asus" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                Asus (97)
-              </label>
-            </li>
+            <template x-for="provider in providers" :key="provider.id">
+              <li class="flex items-center">
+                <input id="apple" type="checkbox" value=""
+                       class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
+                <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100 uppercase"
+                       x-text="provider.id"></label>
+              </li>
+            </template>
           </ul>
         </div>
       </div>
     </div>
   </div>
-  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+  <table class="w-full table-fixed text-sm text-left text-gray-500 dark:text-gray-400">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
     <tr>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-28">
         Provider
       </th>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-24">
         Method
       </th>
       <th scope="col" class="px-6 py-3">
         URL
       </th>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-24">
         Status
       </th>
-      <th scope="col" class="px-6 py-3">
-        Action
+      <th scope="col" class="px-6 py-3 w-24">
+        Payload
+      </th>
+      <th scope="col" class="px-6 py-3 w-28">
+        Response
       </th>
     </tr>
     </thead>
@@ -113,17 +90,21 @@
         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white uppercase"
             x-text="req.provider">
         </th>
-        <td class="px-6 py-4"
-            x-text="req.method">
+        <td class="px-6 py-4" x-text="req.method">
         </td>
-        <td class="px-6 py-4"
-            x-text="req.url">
+        <td class="px-6 py-4 truncate" x-text="req.url">
         </td>
-        <td class="px-6 py-4"
-            x-text="req.status">
+        <td class="px-6 py-4" x-text="req.status">
         </td>
         <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+          <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            Show
+          </button>
+        </td>
+        <td class="px-6 py-4">
+          <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            Show
+          </button>
         </td>
       </tr>
     </template>
@@ -135,26 +116,34 @@
     </span>
     <ul class="inline-flex -space-x-px text-sm h-8">
       <li>
-        <a href="#" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+        <button class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                :disabled="page === 1"
+                @click="getPage(page - 1)">
+          Previous
+        </button>
       </li>
       <template x-for="i in pagesTotal">
         <li>
           <button class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  @click="await getPage(i)"
+                  @click="getPage(i)"
                   x-show="page !== i"
                   x-text="i">
           </button>
           <button
             aria-current="page"
             class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-            @click="await getPage(i)"
+            @click="getPage(i)"
             x-show="page === i"
             x-text="i">
           </button>
         </li>
       </template>
       <li>
-        <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+        <button class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                :disabled="page === pagesTotal"
+                @click="getPage(page + 1)">
+          Next
+        </button>
       </li>
     </ul>
   </nav>
