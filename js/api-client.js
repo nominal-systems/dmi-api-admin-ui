@@ -93,3 +93,11 @@ export const getExternalRequests = async (page, limit) => {
   })
   return result
 }
+
+export const getExternalRequest = async (id) => {
+  let result = {}
+  await apiGet(`${BASE_URL}/external-requests/${id}`, (body) => {
+    result = body
+  })
+  return result
+}

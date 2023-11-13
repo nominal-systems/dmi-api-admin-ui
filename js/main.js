@@ -3,13 +3,15 @@ import Alpine from 'alpinejs'
 import 'flowbite'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
-import { apiGet, apiPost, getProviders } from './api-client'
+import { apiPost, getProviders } from './api-client'
 import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
 import { events } from './events'
 import { refs } from './refs'
 import { providers } from './providers'
 import { integrations } from './integrations'
 import { externalRequests } from './external-requests'
+import dateDirective from './directives/dateDirective'
+import codeDirective from './directives/codeDirective'
 
 const DMI_API_URL = process.env.API_URL
 
@@ -104,8 +106,15 @@ window.data = {
       }
     })
   },
+
+
 }
 
+// Custom Directives
+dateDirective()
+codeDirective()
+
+// Alpine init
 window.events = events
 window.refs = refs
 window.providers = providers
