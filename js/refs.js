@@ -1,31 +1,10 @@
 import { Modal, Tabs } from 'flowbite'
-import { apiGet } from "./api-client";
+import { getProviders, getRefs } from "./api-client"
 
-const DMI_API_URL = process.env.API_URL
-let DEFAULT_TAB_ID = 'sexes'
-const tabOptions = {
-  defaultTabId: DEFAULT_TAB_ID,
-  activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
-  inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
-}
-const tabElements = [
-  {
-    id: 'sexes',
-    triggerEl: document.querySelector('#sexes-tab'),
-    targetEl: document.querySelector('#sexes')
-  },
-  {
-    id: 'species',
-    triggerEl: document.querySelector('#species-tab'),
-    targetEl: document.querySelector('#species')
-  },
-  {
-    id: 'breeds',
-    triggerEl: document.querySelector('#breeds-tab'),
-    targetEl: document.querySelector('#breeds')
-  }
-]
-const $modalTarget = document.getElementById('refsModal');
+const PAGE_SIZE = 100
+const MAX_PAGES = 10
+
+const $modalTarget = document.getElementById('refsModal')
 const modalOptions = {
   placement: 'bottom-right',
   backdrop: 'dynamic',
@@ -34,13 +13,42 @@ const modalOptions = {
 }
 
 export const refs = {
-  tabs: [],
-  referenceData: {
-    sexes: [],
-    species: [],
-    breeds: []
-  },
+  // Providers
   providers: [],
+  async fetchProviders() {
+    this.providers = await getProviders()
+  },
+
+  // Reference data
+  referenceData: {
+    sex: [],
+    species: [],
+    breed: []
+  },
+  type: null,
+  page: null,
+  pageSize: PAGE_SIZE,
+  pagesMax: MAX_PAGES,
+  pagesTotal: null,
+  resultsStart: null,
+  resultsEnd: null,
+  total: null,
+  updateRef() {
+    //TODO(gb): implement ref update
+  },
+  async getPage(type, page) {
+    this.page = page
+    this.type = type
+    const refs = await getRefs(type, this.page, this.pageSize)
+    this.referenceData[type] = refs.data
+    this.total = refs.total
+    this.page = refs.page
+    this.resultsStart = this.page * this.pageSize - this.pageSize + 1
+    this.resultsEnd = Math.min(this.page * this.pageSize, this.total)
+    this.pagesTotal = Math.ceil(this.total / this.pageSize)
+  },
+
+  // Modal
   modal: new Modal($modalTarget, modalOptions),
   editingRef: {},
   editingRefMappings: [],
@@ -60,31 +68,41 @@ export const refs = {
     this.editingRefMappings = []
     this.modal.hide()
   },
-  updateRef() {
-    console.log(`this.editingRef= ${JSON.stringify(this.editingRef, null, 2)}`) // TODO(gb): remove trace
-    //TODO(gb): implement ref update
-  },
-  async fetchProviders() {
-    await apiGet(`${DMI_API_URL}/admin/providers`, (body) => {
-      this.providers = body
-    })
-  },
-  async fetchReferenceData() {
-    await Promise.all([
-      apiGet(`${DMI_API_URL}/admin/refs/sexes`, (body) => {
-        this.referenceData.sexes = body.items
-      }),
-      apiGet(`${DMI_API_URL}/admin/refs/species`, (body) => {
-        this.referenceData.species = body.items
-      }),
-      apiGet(`${DMI_API_URL}/admin/refs/breeds`, (body) => {
-        this.referenceData.breeds = body.items
-      })
-    ])
+
+  // Tabs
+  tabs: null,
+  activeTab: null,
+  initTabs() {
+    const tabOptions = {
+      defaultTabId: 'sex',
+      activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
+      inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
+      onShow: async (tab) => {
+        this.activeTab = tab.getActiveTab()
+        await this.getPage(this.activeTab.id, 1)
+      }
+    }
+    const tabElements = [
+      {
+        id: 'sex',
+        triggerEl: document.querySelector('#sex-tab'),
+        targetEl: document.querySelector('#sex')
+      },
+      {
+        id: 'species',
+        triggerEl: document.querySelector('#species-tab'),
+        targetEl: document.querySelector('#species')
+      },
+      {
+        id: 'breed',
+        triggerEl: document.querySelector('#breed-tab'),
+        targetEl: document.querySelector('#breed')
+      }
+    ]
+    this.tabs = new Tabs(tabElements, tabOptions)
   },
   async initRefs() {
-    this.tabs = new Tabs(tabElements, tabOptions)
-    await this.fetchReferenceData()
     await this.fetchProviders()
+    this.initTabs()
   }
 }

@@ -64,6 +64,14 @@ export const getProviders = async () => {
   return providers
 }
 
+export const getRefs = async (type, page, limit) => {
+  let refs = []
+  await apiGet(`${BASE_URL}/refs/${type}?page=${page}&limit=${limit}`, (body) => {
+    refs = body
+  })
+  return refs
+}
+
 export const getProvider = async (id) => {
   let provider = {}
   await apiGet(`${BASE_URL}/providers/${id}`, (body) => {
