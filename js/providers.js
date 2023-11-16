@@ -24,8 +24,8 @@ export const providers = {
       items: []
     },
     {
-      id: 'breeds',
-      typeName: 'breeds',
+      id: 'breed',
+      typeName: 'breed',
       triggerRef: 'breedsTab',
       targetRef: 'breeds',
       name: 'Breeds',

@@ -13,7 +13,7 @@ export default () => {
         }
         else if (typeof code === 'object') {
           // Directly format the object
-          text = JSON.stringify(code, null, 4);
+          text = JSON.stringify(code, null, 2);
         }
         else if (code.startsWith('{') && code.endsWith('}') || code.startsWith('[') && code.endsWith(']')) {
           // Format as JSON
@@ -33,6 +33,8 @@ export default () => {
           // Return the original code if the type is unrecognized
           text = code;
         }
+
+        console.log(`text= ${JSON.stringify(text, null, 2)}`) // TODO(gb): remove trace
 
         el.textContent = text
       })
