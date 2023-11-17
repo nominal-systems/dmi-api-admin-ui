@@ -7,15 +7,12 @@ export default () => {
     effect(() => {
       formatCode(code => {
         let text = null
-        console.log(`expression= ${expression}, code= ${JSON.stringify(code, null, 2)}`) // TODO(gb): remove trace
         if (code === null || code === undefined) {
           text = ''
-        }
-        else if (typeof code === 'object') {
+        } else if (typeof code === 'object') {
           // Directly format the object
           text = JSON.stringify(code, null, 2);
-        }
-        else if (code.startsWith('{') && code.endsWith('}') || code.startsWith('[') && code.endsWith(']')) {
+        } else if (code.startsWith('{') && code.endsWith('}') || code.startsWith('[') && code.endsWith(']')) {
           // Format as JSON
           text = JSON.stringify(JSON.parse(code), null, 2);
         } else if (code.startsWith('"') && code.endsWith('"')) {
@@ -34,12 +31,9 @@ export default () => {
           text = code;
         }
 
-        console.log(`text= ${JSON.stringify(text, null, 2)}`) // TODO(gb): remove trace
-
         el.textContent = text
       })
     })
-
   })
 }
 

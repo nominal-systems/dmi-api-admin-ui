@@ -1,20 +1,12 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
-
-const PAGE_SIZE = 100
-const MAX_PAGES = 10
+import table from './plugins/table'
 
 export const externalRequests = () => {
   return {
-    page: null,
-    pageSize: PAGE_SIZE,
-    pagesMax: MAX_PAGES,
-    pagesTotal: null,
-    resultsStart: null,
-    resultsEnd: null,
-    total: null,
-    requests: [],
     providers: [],
+
+    // Modal
     modal: null,
     externalRequest: null,
     async openModal(externalRequest) {
@@ -25,16 +17,6 @@ export const externalRequests = () => {
       this.externalRequest = null
       this.modal.hide()
     },
-    async getPage(page) {
-      this.page = page
-      const requests = await getExternalRequests(this.page, this.pageSize)
-      this.requests = requests.data
-      this.total = requests.total
-      this.page = requests.page
-      this.resultsStart = this.page * this.pageSize - this.pageSize + 1
-      this.resultsEnd = Math.min(this.page * this.pageSize, this.total)
-      this.pagesTotal = Math.ceil(this.total / this.pageSize)
-    },
     initModal() {
       const modalOptions = {
         placement: 'bottom-right',
@@ -44,9 +26,21 @@ export const externalRequests = () => {
       }
       this.modal = new Modal(this.$refs['externalRequestModal'], modalOptions)
     },
+
+    // Table
+    table: null,
+    initTable() {
+      this.table = table(
+        {
+        pageSize: 20,
+        pagesMax: 10,
+      }, async (page, pageSize) => {
+          return await getExternalRequests(page, pageSize)
+        })
+    },
     async init() {
+      this.initTable()
       this.initModal()
-      await this.getPage(1)
       this.providers = await getProviders()
     }
   }
