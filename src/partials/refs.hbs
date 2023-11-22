@@ -18,28 +18,28 @@
   </ul>
 </div>
 <div id="tabContentExample">
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="sex" role="tabpanel" aria-labelledby="sex-tab">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="sex" role="tabpanel" aria-labelledby="sex-tab" x-data="refs.sex">
     <div class="flex items-center justify-between">
       <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Sexes (<span x-text="total"></span>)
       </h3>
     </div>
-    {{> refs/table type="sex" }}
+    {{> refs/table }}
   </div>
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="species" role="tabpanel" aria-labelledby="species-tab">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="species" role="tabpanel" aria-labelledby="species-tab" x-data="refs.species">
     <div class="flex items-center justify-between">
       <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Species (<span x-text="total"></span>)
       </h3>
     </div>
-    {{> refs/table type="species" }}
+    {{> refs/table }}
   </div>
-  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="breed" role="tabpanel" aria-labelledby="breed-tab">
+  <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="breed" role="tabpanel" aria-labelledby="breed-tab" x-data="refs.breed">
     <div class="flex items-center justify-between">
       <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Breeds (<span x-text="total"></span>)
       </h3>
     </div>
-    {{> refs/table type="breed" }}
+    {{> refs/table }}
   </div>
 </div>

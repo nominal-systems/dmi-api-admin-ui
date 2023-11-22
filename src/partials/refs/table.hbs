@@ -8,20 +8,16 @@
       <th scope="col" class="px-6 py-3">
         Code
       </th>
-      <th scope="col" class="px-6 py-3" x-show="'{{ type }}' === 'breeds'">
-        Species
-      </th>
       <th scope="col" class="px-6 py-3">
         <span class="sr-only">Edit</span>
       </th>
     </tr>
     </thead>
     <tbody>
-    <template x-for="item in referenceData['{{ type }}']">
+    <template x-for="item in refs[type].items">
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" x-text="item.name"></th>
         <td class="px-6 py-4" x-text="item.code"></td>
-        <td class="px-6 py-4" x-text="item.species" x-show="'{{ type }}' === 'breeds'"></td>
         <td class="px-6 py-4 text-right">
           <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
         </td>
@@ -29,41 +25,6 @@
     </template>
     </tbody>
   </table>
-  <nav class="flex items-center justify-between p-4" aria-label="Table navigation">
-    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-      Showing <span class="font-semibold text-gray-900 dark:text-white"><span x-text="resultsStart"></span>-<span x-text="resultsEnd"></span></span> of <span class="font-semibold text-gray-900 dark:text-white" x-text="total"></span>
-    </span>
-    <ul class="inline-flex -space-x-px text-sm h-8" x-show="pagesTotal > 1">
-      <li>
-        <button class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                :disabled="page === 1"
-                @click="getPage(type, page - 1)">
-          Previous
-        </button>
-      </li>
-      <template x-for="i in pagesTotal">
-        <li>
-          <button class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  @click="getPage(type, i)"
-                  x-show="page !== i"
-                  x-text="i">
-          </button>
-          <button
-            aria-current="page"
-            class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-            @click="getPage(type, i)"
-            x-show="page === i"
-            x-text="i">
-          </button>
-        </li>
-      </template>
-      <li>
-        <button class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                :disabled="page === pagesTotal"
-                @click="getPage(type, page + 1)">
-          Next
-        </button>
-      </li>
-    </ul>
-  </nav>
+
+  {{> common/pagination }}
 </div>
