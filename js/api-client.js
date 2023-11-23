@@ -35,9 +35,9 @@ export function apiGet(url, next) {
     })
 }
 
-export const getEvents = async () => {
+export const getEvents = async (page, limit) => {
   let events = []
-  await apiGet(`${BASE_URL}/events`, (body) => {
+  await apiGet(`${BASE_URL}/events?page=${page}&limit=${limit}`, (body) => {
     events = body
   })
   return events

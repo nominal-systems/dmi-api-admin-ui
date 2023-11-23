@@ -1,4 +1,4 @@
-<div class="w-full overflow-hidden rounded-lg shadow-xs">
+<div class="w-full overflow-hidden rounded-lg shadow-xs" x-data="table">
     <div class="w-full overflow-x-auto">
         <table class="w-full whitespace-no-wrap">
             <thead>
@@ -11,11 +11,11 @@
                 <th class="px-4 py-3">Data</th>
             </tr>
             </thead>
-            <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800" x-init="fetchEvents">
-            <template x-for="event in events">
+            <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+            <template x-for="event in table.items">
                 <tr class="text-gray-700 dark:text-gray-400">
                     <td class="px-4 py-3 text-xs" x-text="event.seq"></td>
-                    <td class="px-4 py-3 text-xs" x-text="event.createdAtString"></td>
+                    <td class="px-4 py-3 text-xs" x-date="event.createdAt"></td>
                     <td class="px-4 py-3 text-xs" x-text="event.integrationId"></td>
                     <td class="px-4 py-3 text-xs" x-text="event.namespace"></td>
                     <td class="px-4 py-3 text-xs" x-text="event.type"></td>
@@ -38,6 +38,8 @@
             </template>
             </tbody>
         </table>
+
+        {{> common/pagination }}
     </div>
 </div>
 {{> events/modal }}
