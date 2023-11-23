@@ -4,20 +4,12 @@ import table from './plugins/table'
 
 const PAGE_SIZE = 20
 
-const $modalTarget = document.getElementById('refsModal')
-const modalOptions = {
-  placement: 'bottom-right',
-  backdrop: 'dynamic',
-  backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-  closable: true
-}
-
 export const refs = () => {
   return {
     // Providers
     providers: [],
 
-    // Reference data
+    // Reference Data
     type: null,
     refs: {
       sex: null,
@@ -29,7 +21,6 @@ export const refs = () => {
     },
 
     // Modal
-    modal: new Modal($modalTarget, modalOptions),
     editingRef: {},
     editingRefMappings: [],
     openModal(ref) {
@@ -47,6 +38,16 @@ export const refs = () => {
       this.editingRef = {}
       this.editingRefMappings = []
       this.modal.hide()
+    },
+    initModal() {
+      const $modalTarget = document.getElementById('refsModal')
+      const modalOptions = {
+        placement: 'bottom-right',
+        backdrop: 'dynamic',
+        backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
+        closable: true
+      }
+      this.modal = new Modal($modalTarget, modalOptions)
     },
 
     // Tabs
@@ -113,6 +114,7 @@ export const refs = () => {
     async init() {
       this.initTables()
       this.initTabs()
+      this.initModal()
       this.providers = await getProviders()
     }
   }

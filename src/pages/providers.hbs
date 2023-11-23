@@ -1,9 +1,15 @@
 {{!< base}}
 
-<main class="h-full overflow-y-auto" x-data="providers" x-init="initProvider">
-  <div class="container px-6 mx-auto grid">
-    <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200" x-text="provider?.description"></h2>
+<main class="h-full overflow-y-auto" x-data="providers">
+    <div class="container px-6 mx-auto grid">
+        <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200" x-text="provider?.description"></h2>
 
-    {{> provider }}
-  </div>
+        <h3 class="mb-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+            Reference Data
+        </h3>
+
+        {{> refs }}
+    </div>
+
+    {{> providers/ref-modal }}
 </main>
