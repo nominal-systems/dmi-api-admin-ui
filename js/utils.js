@@ -4,7 +4,13 @@ export function isProviderPage() {
 }
 
 export function getProviderFromUrl() {
-  return isProviderPage() ? window.location.hash.split('#/')[1] : null;
+  const hashParts = window.location.hash.split('#/')
+  return isProviderPage() ? hashParts[1].split('/')[0] : null;
+}
+
+export function getReferenceDataTypeFromUrl() {
+  const hashParts = window.location.hash.split('#/')
+  return isProviderPage() ? hashParts[1].split('/')[1] : null;
 }
 
 export function navigateToProviderPage(providerId) {

@@ -12,9 +12,9 @@ export const refs = () => {
     // Reference Data
     type: null,
     refs: {
-      sex: null,
+      sexes: null,
       species: null,
-      breed: null
+      breeds: null
     },
     updateRef() {
       //TODO(gb): implement ref update
@@ -69,9 +69,9 @@ export const refs = () => {
       }
       const tabElements = [
         {
-          id: 'sex',
-          triggerEl: document.querySelector('#sex-tab'),
-          targetEl: document.querySelector('#sex')
+          id: 'sexes',
+          triggerEl: document.querySelector('#sexes-tab'),
+          targetEl: document.querySelector('#sexes')
         },
         {
           id: 'species',
@@ -79,9 +79,9 @@ export const refs = () => {
           targetEl: document.querySelector('#species')
         },
         {
-          id: 'breed',
-          triggerEl: document.querySelector('#breed-tab'),
-          targetEl: document.querySelector('#breed')
+          id: 'breeds',
+          triggerEl: document.querySelector('#breeds-tab'),
+          targetEl: document.querySelector('#breeds')
         }
       ]
       this.tabs = new Tabs(tabElements, tabOptions)
@@ -89,7 +89,7 @@ export const refs = () => {
 
     // Tables
     initTables() {
-      this.refs.sex = table(
+      this.refs.sexes = table(
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
@@ -103,7 +103,7 @@ export const refs = () => {
           return await getRefs('species', page, pageSize)
         }
       )
-      this.refs.breed = table(
+      this.refs.breeds = table(
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
