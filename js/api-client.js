@@ -88,6 +88,14 @@ export const getProviderRefs = async (id, type, page, limit) => {
   return refs
 }
 
+export const getDefaultBreeds = async (providerId, speciesCodes) => {
+  let defaultBreeds = []
+  await apiGet(`${BASE_URL}/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`, (body) => {
+    defaultBreeds = body
+  })
+  return defaultBreeds
+}
+
 export const syncProviderRefs = async (provider, type, integrationId, next) => {
   await apiPost(`${BASE_URL}/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null, (body) => {
     next(body)

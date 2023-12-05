@@ -1,4 +1,4 @@
-import { getIntegrationForProvider, getProviderRefs, syncProviderRefs } from './api-client'
+import { getDefaultBreeds, getIntegrationForProvider, getProviderRefs, syncProviderRefs } from './api-client'
 import { getProviderFromUrl, getReferenceDataTypeFromUrl } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
@@ -109,7 +109,15 @@ export const providers = () => {
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
-          return await getProviderRefs(this.provider.id, 'species', page, pageSize)
+          const refs = await getProviderRefs(this.provider.id, 'species', page, pageSize)
+          const defaults = await getDefaultBreeds(this.provider.id, refs.data.map((r) => r.code))
+          defaults.forEach((defaultBreed) => {
+            const ref = refs.data.find((r) => r.code === defaultBreed.species)
+            if (ref !== undefined) {
+              ref.defaultBreed = defaultBreed.defaultBreed
+            }
+          })
+          return refs
         }
       )
       this.refs.breeds = table(
