@@ -34,11 +34,14 @@ export const providers = () => {
       species: null,
       breeds: null
     },
-    async doSyncProviderRefs(type) {
+    syncing: false,
+    async syncProviderRefs() {
+      this.syncing = true
       const integration = await getIntegrationForProvider(this.provider.id)
       if (integration !== undefined) {
-        await syncProviderRefs(this.provider.id, this.ref(type).typeName, integration.id, async (body) => {
-          //TODO(gb): refresh table
+        await syncProviderRefs(this.provider.id, this.type, integration.id, async (body) => {
+          this.syncing = false
+          await this.table.getPage(1)
         })
       }
     },
