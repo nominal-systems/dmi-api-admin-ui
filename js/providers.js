@@ -2,26 +2,9 @@ import { getDefaultBreeds, getIntegrationForProvider, getProviderRefs, syncProvi
 import { getProviderFromUrl, getReferenceDataTypeFromUrl } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
+import { PROVIDERS } from './constants/provider-list'
 
 const PAGE_SIZE = 20
-const PROVIDERS = {
-  antech: {
-    id: 'antech',
-    description: 'Antech'
-  },
-  idexx: {
-    id: 'idexx',
-    description: 'IDEXX'
-  },
-  heska: {
-    id: 'heska',
-    description: 'Heska'
-  },
-  zoetis: {
-    id: 'zoetis',
-    description: 'Zoetis'
-  },
-}
 
 export const providers = () => {
   return {

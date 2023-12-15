@@ -1,6 +1,7 @@
-import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
+import { getExternalRequest, getExternalRequests } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
+import { PROVIDERS } from './constants/provider-list'
 
 export const externalRequests = () => {
   return {
@@ -27,21 +28,46 @@ export const externalRequests = () => {
       this.modal = new Modal(this.$refs['externalRequestModal'], modalOptions)
     },
 
+    // Filter
+    filter: {
+      status: [
+        { label: '2xx', value: '2xx', checked: false },
+        { label: '3xx', value: '3xx', checked: false },
+        { label: '4xx', value: '4xx', checked: true },
+        { label: '5xx', value: '5xx', checked: true },
+      ],
+      providers: []
+    },
+    initFilter() {
+      this.filter.providers = Object.keys(PROVIDERS).map((key) => {
+        return { label: PROVIDERS[key].description, value: PROVIDERS[key].id, checked: true }
+      })
+    },
+    async search() {
+      await this.table.getPage(1)
+    },
+
     // Table
     table: null,
     initTable() {
       this.table = table(
         {
-        pageSize: 20,
-        pagesMax: 10,
-      }, async (page, pageSize) => {
-          return await getExternalRequests(page, pageSize)
+          pageSize: 20,
+          pagesMax: 10,
+        }, async (page, pageSize) => {
+          const filter = JSON.parse(JSON.stringify(this.filter))
+          const status = filter.status.filter((s) => s.checked).map((s) => s.value)
+          const providers = filter.providers.filter((p) => p.checked).map((p) => p.value)
+          return await getExternalRequests(providers, status, page, pageSize)
         })
     },
+
     async init() {
+      this.initFilter()
       this.initTable()
       this.initModal()
-      this.providers = await getProviders()
+
+
     }
   }
 }
