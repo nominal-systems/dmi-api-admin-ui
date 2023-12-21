@@ -42,6 +42,7 @@ export const getEvents = async (page, limit) => {
   })
   return events
 }
+
 export const getIntegrations = async (next) => {
   let integrations = []
   await apiGet(`${BASE_URL}/integrations`, (body) => {
@@ -49,9 +50,19 @@ export const getIntegrations = async (next) => {
   })
   return integrations
 }
+
+export const getIntegrationJobsStatus = async (integrationId) => {
+  let jobStatus = {}
+  await apiGet(`${BASE_URL}/integrations/${integrationId}/jobs/status`, (body) => {
+    jobStatus = body
+  })
+  return jobStatus
+}
+
 export const getIntegrationForProvider = async (providerId) => {
   let integration = {}
   await apiGet(`${BASE_URL}/integrations?providerId=${providerId}`, (body) => {
+    console.log(`body= ${JSON.stringify(body, null, 2)}`) // TODO(gb): remove trace
     integration = body[0]
   })
   return integration
