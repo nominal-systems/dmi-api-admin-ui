@@ -2,6 +2,8 @@ import { getIntegrationJobsStatus, getIntegrations } from './api-client'
 import { Modal } from 'flowbite'
 import * as moment from 'moment'
 
+const JOBS_STATUS_POLLING_INTERVAL = 30 * 1000
+
 export const integrations = {
   integrations: [],
 
@@ -30,7 +32,6 @@ export const integrations = {
   async fetchIntegrations() {
     const integrations = await getIntegrations()
     for (const integration of integrations) {
-      await this.setIntegrationJobsStatus(integration)
       this.integrations.push({
         ...integration,
         isRunning: integration.status === 'RUNNING',
@@ -38,17 +39,26 @@ export const integrations = {
       })
     }
 
+    await this.pollIntegrationJobsStatus()
     setInterval(async () => {
-      for (const integration of this.integrations) {
-        await this.setIntegrationJobsStatus(integration)
-      }
-    }, 5000)
+      await this.setIntegrationJobsStatus()
+    }, JOBS_STATUS_POLLING_INTERVAL)
+    console.log(`Polling job status every ${JOBS_STATUS_POLLING_INTERVAL}MS`)
   },
 
+  async pollIntegrationJobsStatus(i) {
+    const promises = []
+    for (const integration of this.integrations) {
+      promises.push(this.setIntegrationJobsStatus(integration))
+    }
+    await Promise.all(promises)
+  },
   async setIntegrationJobsStatus(integration) {
     const jobsStatus = await getIntegrationJobsStatus(integration.id)
-    jobsStatus.lastRun = moment(jobsStatus.lastRun).fromNow()
+    const timestamp = jobsStatus.lastRun
+    jobsStatus.lastRun = moment(timestamp).fromNow()
     integration.jobsStatus = jobsStatus
+    console.log(`Get job status for ${integration.id} (lastRun: ${timestamp})`)
   },
 
   async updateIntegrationStatus() {
