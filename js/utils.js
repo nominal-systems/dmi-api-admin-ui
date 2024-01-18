@@ -13,8 +13,8 @@ export function getReferenceDataTypeFromUrl() {
   return isProviderPage() ? hashParts[1].split('/')[1] : null;
 }
 
-export function navigateToProviderPage(providerId) {
-  window.history.pushState({}, '', `/providers#/${providerId}`)
+export function navigateToProviderPage(url) {
+  window.history.pushState({}, '', url)
   // window.location.assign(`/providers#/${provider.id}`)
   setTimeout(() => {
     window.location.reload(true)

@@ -5,7 +5,7 @@
   "license": "",
   "author": "Gonzalo Bellver",
   "scripts": {
-    "build": "parcel build src/pages/*.hbs",
+    "build": "parcel build src/pages/*.hbs --no-cache --public-url=$UI_URL",
     "dev": "parcel src/pages/*.hbs --no-cache",
     "watch": "parcel watch src/pages/*.hbs --no-cache",
     "start": "npm run build && npm run dev",
