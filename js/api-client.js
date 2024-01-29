@@ -1,9 +1,9 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 
 const API_BASE_URL = `${process.env.API_URL}/admin`
-const UI_BASE_URL = `${process.env.UI_URL}`
+const UI_BASE_URL = process.env.UI_URL || ''
 
-export function apiPost(url, body, next) {
+export const apiPost = async (url, body, next) => {
   const req = {
     method: 'POST',
     headers: {
@@ -13,13 +13,32 @@ export function apiPost(url, body, next) {
 
   if (body !== null) {
     req.headers['Content-Type'] = 'application/json'
-    req.body = body
+    req.body = JSON.stringify(body)
   }
 
-  return fetch(url, req)
-    .then(response => response.json())
-    .then(next)
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, req)
+    const responseBody = await response.json()
+
+    if (!response.ok) {
+      const error = new Error(responseBody.message || 'Server responded with an error');
+      error.status = response.status;
+      error.statusText = response.statusText;
+      error.body = responseBody; // Including server response data
+      throw error;
+    }
+
+    return responseBody
+  } catch (error) {
+    if (error.name === 'TypeError') {
+      error.message = 'Network issue. Please try again later.'
+    }
+    throw error
+  }
+
+
 }
+
 
 export function apiGet(url, next) {
   return fetch(url, {

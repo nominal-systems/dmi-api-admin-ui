@@ -13,8 +13,7 @@ import { externalRequests } from './external-requests'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 
-const API_BASE_URL = `${process.env.API_URL}/admin`
-const UI_BASE_URL = `${process.env.UI_URL}`
+const UI_BASE_URL = process.env.UI_URL || ''
 
 window.data = {
   dark: getThemeFromLocalStorage(),
@@ -43,13 +42,17 @@ window.data = {
     username: null,
     password: null
   },
+  error: null,
   async login() {
-    await apiPost(`${API_BASE_URL}/login`, JSON.stringify(this.user), (res) => {
-      if (res.token !== undefined) {
+    await apiPost(`/login`, this.user)
+      .then(res => {
+        this.error = null
         setTokenToLocalStorage(res.token)
         window.location.href = `${process.env.UI_URL}/`
-      }
-    })
+      })
+      .catch(err => {
+        this.error = err
+      })
   },
 
   // Menu
