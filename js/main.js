@@ -105,7 +105,7 @@ window.data = {
       return {
         id: provider.id,
         name: provider.id,
-        url: `${UI_BASE_URL}/providers#/${provider.name}`,
+        url: `${UI_BASE_URL}/providers#/${provider.id}`,
         active: provider.id === getProviderFromUrl(),
         go: navigateToProviderPage
       }
