@@ -1,11 +1,11 @@
 export function isProviderPage() {
   const hashParts = window.location.hash.split('#/')
-  return window.location.pathname === '/providers' && hashParts.length === 2;
+  return window.location.pathname.includes('/providers')  && hashParts.length === 2;
 }
 
 export function getProviderFromUrl() {
   const hashParts = window.location.hash.split('#/')
-  return isProviderPage() ? hashParts[1].split('/')[0] : null;
+  return isProviderPage() ? hashParts[1] : null;
 }
 
 export function getReferenceDataTypeFromUrl() {
