@@ -5,7 +5,6 @@ import table from './plugins/table'
 export const events = {
   // Events
   table: null,
-  event: null,
   initTable() {
     this.table = table(
       {
@@ -18,12 +17,13 @@ export const events = {
 
   // Modal
   modal: null,
-  openModal(event) {
-    this.event = event
+  modalEvent: null,
+  openModal(ev) {
+    this.modalEvent = ev
     this.modal.show()
   },
   closeModal() {
-    this.event = null
+    this.modalEvent = null
     this.modal.hide()
   },
   initModal() {
