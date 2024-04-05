@@ -16,6 +16,7 @@ export const refs = () => {
       species: null,
       breeds: null
     },
+    syncing: false,
     updateRef() {
       //TODO(gb): implement ref update
     },
