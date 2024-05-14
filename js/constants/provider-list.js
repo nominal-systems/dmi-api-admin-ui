@@ -19,4 +19,8 @@ export const PROVIDERS = {
     id: 'zoetis',
     description: 'Zoetis'
   },
+  'wisdom-panel': {
+    id: 'wisdom-panel',
+    description: 'Wisdom Panel'
+  }
 }
