@@ -17,7 +17,7 @@ export const apiPost = async (url, body, next) => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${url}`, req)
+    const response = await fetch(url, req)
     const responseBody = await response.json()
 
     if (!response.ok) {
@@ -39,7 +39,6 @@ export const apiPost = async (url, body, next) => {
 
 }
 
-
 export function apiGet(url, next) {
   return fetch(url, {
     headers: new Headers({
@@ -55,6 +54,10 @@ export function apiGet(url, next) {
     })
 }
 
+export const login = async (user) => {
+  return await apiPost(`${API_BASE_URL}/login`, user)
+}
+
 export const getEvents = async (page, limit) => {
   let events = []
   await apiGet(`${API_BASE_URL}/events?page=${page}&limit=${limit}`, (body) => {
@@ -62,6 +65,7 @@ export const getEvents = async (page, limit) => {
   })
   return events
 }
+
 export const getIntegrations = async (next) => {
   let integrations = []
   await apiGet(`${API_BASE_URL}/integrations`, (body) => {
@@ -69,6 +73,7 @@ export const getIntegrations = async (next) => {
   })
   return integrations
 }
+
 export const getIntegrationForProvider = async (providerId) => {
   let integration = {}
   await apiGet(`${API_BASE_URL}/integrations?providerId=${providerId}`, (body) => {
@@ -76,6 +81,7 @@ export const getIntegrationForProvider = async (providerId) => {
   })
   return integration
 }
+
 export const getProviders = async () => {
   let providers = []
   await apiGet(`${API_BASE_URL}/providers`, (body) => {

@@ -3,7 +3,7 @@ import Alpine from 'alpinejs'
 import 'flowbite'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
-import { apiPost, getProviders } from './api-client'
+import { getProviders, login } from './api-client'
 import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
 import { events } from './events'
 import { refs } from './refs'
@@ -43,8 +43,8 @@ window.data = {
     password: null
   },
   error: null,
-  async login() {
-    await apiPost(`/login`, this.user)
+  async doLogin() {
+    await login(this.user)
       .then(res => {
         this.error = null
         setTokenToLocalStorage(res.token)
