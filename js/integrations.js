@@ -1,4 +1,4 @@
-import { apiPost, getIntegrations } from './api-client'
+import { getIntegrations, updateIntegrationStatus } from './api-client'
 import { Modal } from 'flowbite'
 
 export const integrations = {
@@ -31,7 +31,7 @@ export const integrations = {
   async updateIntegrationStatus() {
     this.error = null
     this.inProgress = true
-    await apiPost(`/integrations/${this.selectedIntegration.id}/${this.operation}`, null)
+    await updateIntegrationStatus(this.selectedIntegration.id, this.operation)
       .then(res => {
         this.inProgress = false
         this.fetchIntegrations()

@@ -14,6 +14,11 @@ import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 
 const UI_BASE_URL = process.env.UI_URL || ''
+if (process.env.NODE_ENV === 'development') {
+  console.log(`Environment: ${JSON.stringify(process.env.NODE_ENV, null, 2)}`)
+  console.log(`API Base: ${process.env.API_URL}`)
+  console.log(`UI Base: ${UI_BASE_URL}`)
+}
 
 window.data = {
   dark: getThemeFromLocalStorage(),

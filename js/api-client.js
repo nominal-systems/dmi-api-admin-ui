@@ -3,7 +3,7 @@ import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 const API_BASE_URL = `${process.env.API_URL}/admin`
 const UI_BASE_URL = process.env.UI_URL || ''
 
-export const apiPost = async (url, body, next) => {
+const apiPost = async (url, body, next) => {
   const req = {
     method: 'POST',
     headers: {
@@ -17,7 +17,10 @@ export const apiPost = async (url, body, next) => {
   }
 
   try {
-    const response = await fetch(url, req)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`POST ${API_BASE_URL}${url}`)
+    }
+    const response = await fetch(`${API_BASE_URL}${url}`, req)
     const responseBody = await response.json()
 
     if (!response.ok) {
@@ -39,8 +42,11 @@ export const apiPost = async (url, body, next) => {
 
 }
 
-export function apiGet(url, next) {
-  return fetch(url, {
+function apiGet(url, next) {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`GET ${API_BASE_URL}${url}`)
+  }
+  return fetch(`${API_BASE_URL}${url}`, {
     headers: new Headers({
       Authorization: `Bearer ${getTokenFromLocalStorage()}`
     })
@@ -55,12 +61,12 @@ export function apiGet(url, next) {
 }
 
 export const login = async (user) => {
-  return await apiPost(`${API_BASE_URL}/login`, user)
+  return await apiPost(`/login`, user)
 }
 
 export const getEvents = async (page, limit) => {
   let events = []
-  await apiGet(`${API_BASE_URL}/events?page=${page}&limit=${limit}`, (body) => {
+  await apiGet(`/events?page=${page}&limit=${limit}`, (body) => {
     events = body
   })
   return events
@@ -68,7 +74,7 @@ export const getEvents = async (page, limit) => {
 
 export const getIntegrations = async (next) => {
   let integrations = []
-  await apiGet(`${API_BASE_URL}/integrations`, (body) => {
+  await apiGet(`/integrations`, (body) => {
     integrations = body
   })
   return integrations
@@ -76,15 +82,19 @@ export const getIntegrations = async (next) => {
 
 export const getIntegrationForProvider = async (providerId) => {
   let integration = {}
-  await apiGet(`${API_BASE_URL}/integrations?providerId=${providerId}`, (body) => {
+  await apiGet(`/integrations?providerId=${providerId}`, (body) => {
     integration = body[0]
   })
   return integration
 }
 
+export const updateIntegrationStatus = async (integrationId, operation) => {
+  return await apiPost(`/integrations/${integrationId}/${operation}`, null)
+}
+
 export const getProviders = async () => {
   let providers = []
-  await apiGet(`${API_BASE_URL}/providers`, (body) => {
+  await apiGet(`/providers`, (body) => {
     providers = body
   })
   return providers
@@ -92,7 +102,7 @@ export const getProviders = async () => {
 
 export const getRefs = async (type, page, limit) => {
   let refs = []
-  await apiGet(`${API_BASE_URL}/refs/${type}?page=${page}&limit=${limit}`, (body) => {
+  await apiGet(`/refs/${type}?page=${page}&limit=${limit}`, (body) => {
     refs = body
   })
   return refs
@@ -100,7 +110,7 @@ export const getRefs = async (type, page, limit) => {
 
 export const getProvider = async (id) => {
   let provider = {}
-  await apiGet(`${API_BASE_URL}/providers/${id}`, (body) => {
+  await apiGet(`/providers/${id}`, (body) => {
     provider = body
   })
   return provider
@@ -108,7 +118,7 @@ export const getProvider = async (id) => {
 
 export const getProviderRefs = async (id, type, page, limit) => {
   let refs = []
-  await apiGet(`${API_BASE_URL}/providers/${id}/refs/${type}?page=${page}&limit=${limit}`, (body) => {
+  await apiGet(`/providers/${id}/refs/${type}?page=${page}&limit=${limit}`, (body) => {
     refs = body
   })
   return refs
@@ -116,21 +126,21 @@ export const getProviderRefs = async (id, type, page, limit) => {
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {
   let defaultBreeds = []
-  await apiGet(`${API_BASE_URL}/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`, (body) => {
+  await apiGet(`/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`, (body) => {
     defaultBreeds = body
   })
   return defaultBreeds
 }
 
 export const syncProviderRefs = async (provider, type, integrationId, next) => {
-  await apiPost(`${API_BASE_URL}/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null, (body) => {
+  await apiPost(`/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null, (body) => {
     next(body)
   })
 }
 
 export const getExternalRequests = async (providers, status, page, limit) => {
   let result = {}
-  await apiGet(`${API_BASE_URL}/external-requests?providers=${providers}&status=${status}&page=${page}&limit=${limit}`, (body) => {
+  await apiGet(`/external-requests?providers=${providers}&status=${status}&page=${page}&limit=${limit}`, (body) => {
     result = body
   })
   return result
@@ -138,7 +148,7 @@ export const getExternalRequests = async (providers, status, page, limit) => {
 
 export const getExternalRequest = async (id) => {
   let result = {}
-  await apiGet(`${API_BASE_URL}/external-requests/${id}`, (body) => {
+  await apiGet(`/external-requests/${id}`, (body) => {
     result = body
   })
   return result
