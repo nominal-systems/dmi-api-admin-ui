@@ -116,9 +116,17 @@ window.data = {
       }
     })
   },
-
-
 }
+
+// Alert
+Alpine.store('alert', {
+  level: null,
+  html: null,
+  set(level, html) {
+    this.level = level
+    this.html = html
+  }
+})
 
 // Custom Directives
 dateDirective()

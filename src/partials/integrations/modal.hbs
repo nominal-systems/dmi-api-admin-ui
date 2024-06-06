@@ -19,7 +19,7 @@
       <!-- Modal body -->
       <div class="mt-4 mb-6">
         <p class="text-sm text-gray-700 dark:text-gray-400">
-          This will <span x-text="operation"></span> the selected integration and
+          This will <span x-text="operation"></span> Integration <strong><span x-text="selectedIntegration?.id"></span> (<span class="uppercase" x-text="selectedIntegration?.providerConfiguration.providerId"></span>)</strong> and
           <span x-text="operation"></span> all
           running jobs.<br>
           Are you sure?

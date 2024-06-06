@@ -1,4 +1,5 @@
 import { getIntegrations, updateIntegrationStatus } from './api-client'
+import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
 
 export const integrations = {
@@ -8,10 +9,10 @@ export const integrations = {
   inProgress: false,
   error: null,
   modal: null,
-  openModal(integration) {
+  openModal(integration, operation) {
     this.error = null
     this.inProgress = false
-    this.operation = integration.status === 'RUNNING' ? 'stop' : 'start'
+    this.operation = operation
     this.selectedIntegration = integration
     this.modal.show()
   },
@@ -36,6 +37,8 @@ export const integrations = {
         this.inProgress = false
         this.fetchIntegrations()
         this.modal.hide()
+        Alpine.store('alert')
+          .set('info', `Integration ${this.selectedIntegration.id} ${this.operation}${this.operation === 'stop' ? 'p': ''}ed.`)
       })
       .catch(err => {
         this.inProgress = false
