@@ -14,15 +14,19 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@azure/identity": "^4.2.0",
+    "@azure/monitor-query": "^1.2.0",
     "@marcotss/parcel-transformer-handlebars-json": "^1.0.0",
     "alpinejs": "^3.13.0",
     "axios": "^1.5.0",
+    "buffer": "^6.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "flowbite": "^1.8.1",
     "handlebars": "^4.7.8",
     "parcel": "^2.9.3",
     "postcss": "^8.4.29",
+    "process": "^0.11.10",
     "tailwindcss": "^3.3.3"
   }
 }

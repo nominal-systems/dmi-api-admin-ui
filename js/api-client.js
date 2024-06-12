@@ -60,6 +60,24 @@ function apiGet(url, next) {
     })
 }
 
+const apiGet2 = async (url) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`GET ${API_BASE_URL}${url}`)
+  }
+
+  return await fetch(`${API_BASE_URL}${url}`, {
+    headers: new Headers({
+      Authorization: `Bearer ${getTokenFromLocalStorage()}`
+    })
+  }).then(res => {
+    if (res.statusCode === 401 || res.statusCode === 403) {
+      unsetTokenFromLocalStorage()
+      window.location.href = `${UI_BASE_URL}/login`
+    }
+    return res
+  })
+}
+
 export const login = async (user) => {
   return await apiPost(`/login`, user)
 }
