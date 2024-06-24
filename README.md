@@ -28,7 +28,8 @@ npm run dev
 
 The application can be configured using environment variables or dotenv. The following variables are available:
 
-| Variable  | Description                          | Default   |
-|-----------|--------------------------------------|-----------|
-| `PORT`    | Port where the web server will start | 1234      |
-| `API_URL` | URL of the DMI API                   | localhost |
+| Variable  | Description                                     | Default |
+|-----------|-------------------------------------------------|---------|
+| `PORT`    | Port where the web server for the UI will start | 1234    |
+| `API_URL` | URL of the DMI API                              | <empty> |
+| `UI_URL`  | URL of the UI                                   | <empty> |

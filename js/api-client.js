@@ -1,7 +1,8 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
+import config from './config'
 
-const API_BASE_URL = `${process.env.API_URL}/admin`
-const UI_BASE_URL = process.env.UI_URL || ''
+const API_BASE_URL = config.get('API_BASE')
+const UI_BASE_URL = config.get('UI_BASE')
 
 const apiPost = async (url, body, next) => {
   const req = {
