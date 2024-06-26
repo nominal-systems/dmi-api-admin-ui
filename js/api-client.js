@@ -55,7 +55,7 @@ function apiGet(url, next) {
     .then(res => {
       if (res.statusCode === 401 || res.statusCode === 403) {
         unsetTokenFromLocalStorage()
-        window.location.href = `${UI_BASE_URL}/login`
+        window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
       }
       next(res)
     })
@@ -73,7 +73,7 @@ function apiGet2(url) {
     .then(res => {
       if (res.statusCode === 401 || res.statusCode === 403) {
         unsetTokenFromLocalStorage()
-        window.location.href = `${UI_BASE_URL}/login`
+        window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
       }
       return res
     })

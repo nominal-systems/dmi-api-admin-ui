@@ -53,7 +53,7 @@ window.data = {
       .then(res => {
         this.error = null
         setTokenToLocalStorage(res.token)
-        window.location.href = `${config.get('UI_BASE')}/`
+        window.location.href = new URLSearchParams(window.location.search).get('redirect') || `${config.get('UI_BASE')}/`
       })
       .catch(err => {
         this.error = err
