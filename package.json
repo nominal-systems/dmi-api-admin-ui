@@ -7,6 +7,7 @@
   "scripts": {
     "build": "parcel build src/pages/*.hbs --no-cache --public-url=$UI_URL",
     "dev": "parcel src/pages/*.hbs --no-cache",
+    "dev:api": "API_URL=http://localhost:3000 UI_URL=$API_URL/ui parcel src/pages/*.hbs --no-cache --public-url=http://localhost:3000/ui",
     "watch": "parcel watch src/pages/*.hbs --no-cache",
     "start": "npm run build && npm run dev",
     "version": "git add -A src",
