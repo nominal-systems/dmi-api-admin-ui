@@ -1,6 +1,7 @@
 import { getEvents } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
+import config from './config'
 
 export const events = {
   // Events
@@ -11,7 +12,12 @@ export const events = {
         pageSize: 20,
         pagesMax: 10,
       }, async (page, pageSize) => {
-        return await getEvents(page, pageSize)
+        const events = await getEvents(page, pageSize)
+        events.data.map((ev) => {
+          ev.url = `${config.get('UI_BASE')}/events/${ev._id}`
+          return ev
+        })
+        return events
       })
   },
 

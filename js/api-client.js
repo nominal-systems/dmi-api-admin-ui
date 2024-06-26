@@ -61,16 +61,34 @@ function apiGet(url, next) {
     })
 }
 
+function apiGet2(url) {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`GET ${API_BASE_URL}${url}`)
+  }
+  return fetch(`${API_BASE_URL}${url}`, {
+    headers: new Headers({
+      Authorization: `Bearer ${getTokenFromLocalStorage()}`
+    })
+  }).then(res => res.json())
+    .then(res => {
+      if (res.statusCode === 401 || res.statusCode === 403) {
+        unsetTokenFromLocalStorage()
+        window.location.href = `${UI_BASE_URL}/login`
+      }
+      return res
+    })
+}
+
 export const login = async (user) => {
   return await apiPost(`/login`, user)
 }
 
 export const getEvents = async (page, limit) => {
-  let events = []
-  await apiGet(`/events?page=${page}&limit=${limit}`, (body) => {
-    events = body
-  })
-  return events
+  return await apiGet2(`/events?page=${page}&limit=${limit}`)
+}
+
+export const getEvent = async (id) => {
+  return await apiGet2(`/events/${id}`)
 }
 
 export const getIntegrations = async (next) => {

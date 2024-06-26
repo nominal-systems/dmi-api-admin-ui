@@ -14,7 +14,9 @@
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
       <template x-for="ev in table.items">
         <tr class="text-gray-700 dark:text-gray-400">
-          <td class="px-4 py-3 text-xs" x-text="ev.seq"></td>
+          <td class="px-4 py-3 text-xs">
+            <a x-bind:href="ev.url" class="font-medium text-purple-600 dark:text-blue-500 hover:underline" x-text="ev.seq"></a>
+          </td>
           <td class="px-4 py-3 text-xs" x-date="ev.createdAt"></td>
           <td class="px-4 py-3 text-xs" x-text="ev.integrationId"></td>
           <td class="px-4 py-3 text-xs" x-text="ev.namespace"></td>

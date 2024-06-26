@@ -6,6 +6,7 @@ import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
 import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
 import { events } from './events'
+import { eventPage } from './event-page'
 import { refs } from './refs'
 import { providers } from './providers'
 import { integrations } from './integrations'
@@ -133,6 +134,7 @@ codeDirective()
 
 // Alpine init
 window.events = events
+window.eventPage = eventPage
 window.refs = refs
 window.providers = providers
 window.integrations = integrations

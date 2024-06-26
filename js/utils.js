@@ -1,6 +1,6 @@
 export function isProviderPage() {
   const hashParts = window.location.hash.split('#/')
-  return window.location.pathname.includes('/providers')  && hashParts.length === 2;
+  return window.location.pathname.includes('/providers') && hashParts.length === 2;
 }
 
 export function getProviderFromUrl() {
@@ -19,4 +19,8 @@ export function navigateToProviderPage(url) {
   setTimeout(() => {
     window.location.reload(true)
   }, 0);
+}
+
+export function getIdFromPath() {
+  return window.location.pathname.split('/').slice(-1)[0]
 }
