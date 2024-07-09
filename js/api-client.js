@@ -83,6 +83,10 @@ export const login = async (user) => {
   return await apiPost(`/login`, user)
 }
 
+export const getOrganizations = async () => {
+  return await apiGet2('/organizations')
+}
+
 export const getEvents = async (page, limit) => {
   return await apiGet2(`/events?page=${page}&limit=${limit}`)
 }
@@ -91,12 +95,8 @@ export const getEvent = async (id) => {
   return await apiGet2(`/events/${id}`)
 }
 
-export const getIntegrations = async (next) => {
-  let integrations = []
-  await apiGet(`/integrations`, (body) => {
-    integrations = body
-  })
-  return integrations
+export const getIntegrations = async () => {
+  return await apiGet2(`/integrations`)
 }
 
 export const getIntegrationForProvider = async (providerId) => {

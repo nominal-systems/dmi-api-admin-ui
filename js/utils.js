@@ -24,3 +24,20 @@ export function navigateToProviderPage(url) {
 export function getIdFromPath() {
   return window.location.pathname.split('/').slice(-1)[0]
 }
+
+export function setQueryParam(param, value) {
+  let url = new URL(window.location)
+  url.searchParams.set(param, value)
+  window.history.pushState({}, '', url)
+}
+
+export function getQueryParams() {
+  let searchParams = new URLSearchParams(window.location.search)
+
+  let params = {}
+  for (let [key, value] of searchParams.entries()) {
+    params[key] = value
+  }
+
+  return params;
+}

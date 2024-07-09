@@ -66,8 +66,6 @@ export const externalRequests = () => {
       this.initFilter()
       this.initTable()
       this.initModal()
-
-
     }
   }
 }
