@@ -2,6 +2,7 @@ import { getIntegrations, getOrganizations, updateIntegrationStatus } from './ap
 import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
 import { getQueryParams, setQueryParam } from './utils'
+import { PROVIDERS } from './constants/provider-list'
 
 export const integrations = {
   integrations: [],
@@ -35,7 +36,8 @@ export const integrations = {
 
   // Filter
   filter: {
-    organizations: null
+    organizations: [],
+    providers: []
   },
   async initFilter() {
     const query = getQueryParams()
@@ -44,28 +46,35 @@ export const integrations = {
       org.checked = query.organizations !== undefined ? query.organizations.includes(org.id) : true
       return org
     })
+    this.filter.providers = Object.keys(PROVIDERS).map((key) => {
+      return {
+        label: PROVIDERS[key].description,
+        value: PROVIDERS[key].id,
+        checked: query.providers !== undefined ? query.providers.split(',').includes(PROVIDERS[key].id) : true
+      }
+    })
     this.updateQueryParams()
   },
   updateQueryParams() {
     setQueryParam('organizations', this.filter.organizations.filter((org) => org.checked).map((org) => org.id))
+    setQueryParam('providers', this.filter.providers.filter((provider) => provider.checked).map((provider) => provider.value))
   },
   filterIntegrations() {
-    setQueryParam('organizations', this.filter.organizations.filter((org) => org.checked).map((org) => org.id))
-    const query = getQueryParams()
-    this.integrations.map((i) => {
-      i.show = query.organizations.includes(i.practice.organization.id)
+    this.updateQueryParams()
+    this.integrations.map((integration) => {
+      integration.show = this.showIntegration(integration)
     })
   },
 
   async fetchIntegrations() {
-    const query = getQueryParams()
+
     // TODO(gb): eventually do filtering in backend
-    this.integrations = (await getIntegrations()).map(i => {
+    this.integrations = (await getIntegrations()).map(integration => {
       return {
-        ...i,
-        isRunning: i.status === 'RUNNING',
-        color: i.status === 'RUNNING' ? 'green' : 'red',
-        show: query.organizations !== undefined ? query.organizations.includes(i.practice.organization.id) : true
+        ...integration,
+        isRunning: integration.status === 'RUNNING',
+        color: integration.status === 'RUNNING' ? 'green' : 'red',
+        show: this.showIntegration(integration)
       }
     })
   },
@@ -78,7 +87,7 @@ export const integrations = {
         this.fetchIntegrations()
         this.modal.hide()
         Alpine.store('alert')
-          .set('info', `Integration ${this.selectedIntegration.id} ${this.operation}${this.operation === 'stop' ? 'p': ''}ed.`)
+          .set('info', `Integration ${this.selectedIntegration.id} ${this.operation}${this.operation === 'stop' ? 'p' : ''}ed.`)
       })
       .catch(err => {
         this.inProgress = false
@@ -86,6 +95,12 @@ export const integrations = {
           message: err.body.error
         }
       })
+  },
+  showIntegration(integration) {
+    const query = getQueryParams()
+    const isFromOrganization = query.organizations === undefined ? true : query.organizations.split(',').includes(integration.practice.organization.id)
+    const isFromProvider = query.providers === undefined ? true : query.providers.split(',').includes(integration.providerConfiguration.providerId)
+    return isFromOrganization && isFromProvider
   },
 
   async init() {
