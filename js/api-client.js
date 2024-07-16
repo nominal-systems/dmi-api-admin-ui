@@ -99,6 +99,10 @@ export const getIntegrations = async () => {
   return await apiGet2(`/integrations`)
 }
 
+export const getIntegration = async (id) => {
+  return await apiGet2(`/integrations/${id}`)
+}
+
 export const getIntegrationForProvider = async (providerId) => {
   let integration = {}
   await apiGet(`/integrations?providerId=${providerId}`, (body) => {

@@ -10,6 +10,7 @@ import { eventPage } from './event-page'
 import { refs } from './refs'
 import { providers } from './providers'
 import { integrations } from './integrations'
+import { integrationPage } from './integration-page'
 import { externalRequests } from './external-requests'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
@@ -138,5 +139,6 @@ window.eventPage = eventPage
 window.refs = refs
 window.providers = providers
 window.integrations = integrations
+window.integrationPage = integrationPage
 window.external_requests = externalRequests
 Alpine.start()
