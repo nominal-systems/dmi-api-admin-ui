@@ -116,17 +116,17 @@ export const updateIntegrationStatus = async (integrationId, operation) => {
 }
 
 export const getProviders = async () => {
-  let providers = []
-  await apiGet(`/providers`, (body) => {
-    providers = body
-  })
-  return providers
+  return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska')
 }
 
 export const getRefs = async (type, page, limit) => {
-  let refs = []
-  await apiGet(`/refs/${type}?page=${page}&limit=${limit}`, (body) => {
-    refs = body
+  const refs = await apiGet2(`/refs/${type}?page=${page}&limit=${limit}`)
+  refs.data.map((ref) => {
+    ref.providerRef = ref.providerRef.reduce((acc, item) => {
+      acc[item.provider.id] = item;
+      return acc;
+    }, {})
+    return ref
   })
   return refs
 }
