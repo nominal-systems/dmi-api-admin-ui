@@ -17,7 +17,11 @@
         </button>
       </div>
       <!-- Modal body -->
-      <pre class="text-white" x-text="JSON.stringify(editingRef, null, 2)"></pre>
+      <div class="mt-4 mb-6">
+        <div class="flex whitespace-pre-wrap rounded-lg p-4 bg-gray-900 text-gray-200  max-h-48 overflow-scroll">
+          <code x-code="editingRef"></code>
+        </div>
+      </div>
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 rounded-b dark:border-gray-600">
         <button type="button"

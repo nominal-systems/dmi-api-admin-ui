@@ -4,7 +4,7 @@ import 'flowbite'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
-import { getProviderFromUrl, isProviderPage, navigateToProviderPage } from './utils'
+import { getIdFromPath, isProviderPage, navigateToProviderPage } from './utils'
 import { events } from './events'
 import { eventPage } from './event-page'
 import { refs } from './refs'
@@ -111,8 +111,8 @@ window.data = {
       return {
         id: provider.id,
         name: provider.id,
-        url: `${config.get('UI_BASE')}/providers#/${provider.id}`,
-        active: provider.id === getProviderFromUrl(),
+        url: `${config.get('UI_BASE')}/providers/${provider.id}`,
+        active: provider.id === getIdFromPath(),
         go: navigateToProviderPage
       }
     })
