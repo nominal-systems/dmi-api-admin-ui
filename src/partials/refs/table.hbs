@@ -2,16 +2,17 @@
   <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
     <tr>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-56">
         Name
       </th>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-[22rem]">
         Code
       </th>
-      <th scope="col" class="px-6 py-3" x-show="type === 'species'">
-        Default breed
-      </th>
-      <th scope="col" class="px-6 py-3">
+      <template x-for="provider in providers">
+        <th scope="col" class="text-xs px-6 py-3 w-28 text-center" x-text="provider.id.toUpperCase()">
+        </th>
+      </template>
+      <th scope="col" class="px-6 py-3 w-16">
         <span class="sr-only">Edit</span>
       </th>
     </tr>
@@ -19,9 +20,15 @@
     <tbody>
     <template x-for="item in refs[type].items">
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" x-text="item.name"></th>
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white" x-text="item.name"></th>
         <td class="px-6 py-4" x-text="item.code"></td>
-        <td class="px-6 py-4" x-text="item.defaultBreed" x-show="type === 'species'"></td>
+        <template x-for="provider in providers">
+          <td class="px-6 py-4 text-xs text-center text-gray-600">
+            <template x-if="item.providerRef && item.providerRef[provider.id]">
+              <span x-text="item.providerRef[provider.id].code"></span>
+            </template>
+          </td>
+        </template>
         <td class="px-6 py-4 text-right">
           <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
         </td>
