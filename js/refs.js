@@ -30,7 +30,7 @@ export const refs = () => {
       this.providers.forEach((provider) => {
         this.editingRefMappings.push({
           provider: provider.id,
-          ref: ref.providerRef.find((providerRef) => providerRef.provider.id === provider.id)
+          ref: ref.providerRef[provider.id]
         })
       })
       this.modal.show()
