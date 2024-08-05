@@ -42,12 +42,34 @@
                 </tr>
                 </thead>
                 <tbody>
-                <template x-for="mapping in editingRefMappings">
+                <template x-for="mapping in editingRefMappings" x-id="['text-input', 'dropdown-menu']">
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row"
                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white uppercase"
                         x-text="mapping.provider"></th>
-                    <td class="px-6 py-4" x-text="mapping.ref?.code"></td>
+                    <td class="px-6 py-4">
+                      <template x-if="mapping.ref?.code">
+                        <td class="pr-6 py-4" x-text="mapping.ref?.code"></td>
+                      </template>
+                      <template x-if="!mapping.ref?.code">
+                        <div x-data="providerRefTypeahead">
+                          <input :id="$id('text-input')" type="text" x-model="query" @input.debounce="search(mapping.provider, query)"
+                                 class="w-full px-4 py-2 g-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                 placeholder="Type something...">
+                          <div :id="$id('dropdown-menu')" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" :aria-labelledby="$id('text-input')">
+                              <template x-for="(result, index) in results" :key="index">
+                                <li>
+                                  <a href="#" @click="select(result)" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    <span x-text="result.code"></span> (<span x-text="result.name"></span>)
+                                  </a>
+                                </li>
+                              </template>
+                            </ul>
+                          </div>
+                        </div>
+                      </template>
+                    </td>
                   </tr>
                 </template>
                 </tbody>

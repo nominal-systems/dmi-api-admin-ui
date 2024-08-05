@@ -1,6 +1,7 @@
 import { Modal, Tabs } from 'flowbite'
-import { getProviders, getRefs } from "./api-client"
+import { getProviderRefs, getProviders, getRefs } from "./api-client"
 import table from './plugins/table'
+import { getQueryParams, setQueryParam } from './utils'
 
 const PAGE_SIZE = 20
 
@@ -17,13 +18,55 @@ export const refs = () => {
       breeds: null
     },
     syncing: false,
-    updateRef() {
-      //TODO(gb): implement ref update
+    updates: {},
+    updateRef(providerRefId) {
+      console.log(`updateRef= ${JSON.stringify(this.updates, null, 2)}`) // TODO(gb): remove trace
     },
 
     // Modal
     editingRef: {},
     editingRefMappings: [],
+    providerRefTypeahead() {
+      //TODO(gb): make these selections safer
+      const $targetEl = this.$el.getElementsByTagName('div')[0]
+      const $triggerEl = this.$el.getElementsByTagName('input')[0]
+
+      const options = {
+        placement: 'bottom',
+        triggerType: 'none',
+        offsetSkidding: 0,
+        offsetDistance: 10,
+        delay: 300,
+        ignoreClickOutsideClass: false,
+        onHide: () => {
+          console.log('dropdown has been hidden');
+        },
+        onShow: () => {
+          console.log('dropdown has been shown');
+        },
+        onToggle: () => {
+          console.log('dropdown has been toggled');
+        },
+      }
+
+      const dropdown = new Dropdown($targetEl, $triggerEl, options)
+
+      return {
+        query: '',
+        results: [],
+        select(ref) {
+          this.updates[ref.provider.id] = ref.code
+          dropdown.hide()
+        },
+        async search(provider, query) {
+          dropdown.show()
+          console.log(`search(${provider}, ${query})`) // TODO(gb): remove trace
+          const providerRefs = await getProviderRefs(provider, this.type, 1, 10)
+          this.results = providerRefs.data
+        }
+      }
+    },
+
     openModal(ref) {
       this.editingRef = ref
       this.editingRefMappings = []
@@ -57,11 +100,12 @@ export const refs = () => {
     initTabs() {
       this.type = 'sex'
       const tabOptions = {
-        defaultTabId: 'sex',
+        defaultTabId: getQueryParams('ref').ref || 'sex',
         activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: async (tab) => {
           this.activeTab = tab.getActiveTab()
+          setQueryParam('ref', this.activeTab.id)
           this.type = this.activeTab.id
           this.table = this.refs[this.type]
           await this.table.getPage(1)
@@ -117,6 +161,10 @@ export const refs = () => {
       this.initTabs()
       this.initModal()
       this.providers = await getProviders()
+
+      //TODO(gb): remove this
+      const speciesRefs = await getRefs('species', 1, 10)
+      this.openModal(speciesRefs.data[2])
     }
   }
 }

@@ -140,11 +140,7 @@ export const getProvider = async (id) => {
 }
 
 export const getProviderRefs = async (id, type, page, limit) => {
-  let refs = []
-  await apiGet(`/providers/${id}/refs/${type}?page=${page}&limit=${limit}`, (body) => {
-    refs = body
-  })
-  return refs
+  return await apiGet2(`/providers/${id}/refs/${type}?page=${page}&limit=${limit}`)
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {

@@ -4,7 +4,6 @@ export function isProviderPage() {
 
 export function navigateToProviderPage(url) {
   window.history.pushState({}, '', url)
-  // window.location.assign(`/providers#/${provider.id}`)
   setTimeout(() => {
     window.location.reload(true)
   }, 0);
@@ -18,6 +17,10 @@ export function setQueryParam(param, value) {
   let url = new URL(window.location)
   url.searchParams.set(param, value)
   window.history.pushState({}, '', url)
+}
+
+export function setHash(hash) {
+  window.location.hash = hash
 }
 
 export function getQueryParams() {
