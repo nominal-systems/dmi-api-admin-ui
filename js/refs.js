@@ -1,5 +1,5 @@
 import { Modal, Tabs } from 'flowbite'
-import { getProviders, getRefs, searchProviderRefs } from "./api-client"
+import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
 import { getQueryParams, setQueryParam } from './utils'
 
@@ -19,8 +19,17 @@ export const refs = () => {
     },
     syncing: false,
     updates: {},
-    updateRef(providerRefId) {
-      console.log(`updateRef= ${JSON.stringify(this.updates, null, 2)}`) // TODO(gb): remove trace
+    updatingRefs: false,
+    async updateRef() {
+      this.updatingRefs = true
+      for (const provider of Object.keys(this.updates)) {
+        const update = this.updates[provider]
+        await updateRefMapping(this.editingRef.id, update.ref.id)
+        update.done = true
+      }
+      this.closeModal()
+      // TODO(gb): show success message and refresh table
+      this.updatingRefs = false
     },
 
     // Modal
