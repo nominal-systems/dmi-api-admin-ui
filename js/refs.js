@@ -25,7 +25,17 @@ export const refs = () => {
 
     // Modal
     editingRef: {},
+    editingMapping: null,
     editingRefMappings: [],
+    isEditingMapping: false,
+    editMapping(mapping) {
+      this.isEditingMapping = true
+      this.editingMapping = mapping
+    },
+    cancelMappingEdit() {
+      this.isEditingMapping = false
+      this.editingMapping = null
+    },
     providerRefTypeahead() {
       //TODO(gb): make these selections safer
       const $targetEl = this.$el.getElementsByTagName('div')[0]
