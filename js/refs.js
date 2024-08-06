@@ -65,12 +65,15 @@ export const refs = () => {
         query: '',
         results: [],
         select(ref) {
-          this.updates[ref.provider.id] = ref.code
+          const mapping = this.editingRefMappings.find((mapping) => mapping.provider === ref.provider.id)
+          this.updates[ref.provider.id] = mapping
+          mapping.ref = ref
+          this.isEditingMapping = false
+          this.editingMapping = null
           dropdown.hide()
         },
         async search(provider, query) {
           dropdown.show()
-          console.log(`search(${provider}, ${query})`) // TODO(gb): remove trace
           const providerRefs = await getProviderRefs(provider, this.type, 1, 10)
           this.results = providerRefs.data
         }

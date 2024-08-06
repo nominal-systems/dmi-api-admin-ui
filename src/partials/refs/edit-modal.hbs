@@ -32,10 +32,10 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" class="px-6 py-3 w-24">
+                <th scope="col" class="px-6 py-3">
                   Provider
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 w-80">
                   Provider Code
                 </th>
                 <th scope="col" class="w-16">
@@ -52,28 +52,15 @@
                   <td class="px-6 py-4">
                     <template x-if="editingMapping?.provider !== mapping.provider">
                       <div>
-                        <span x-show="mapping.ref?.code">
+                        <span x-show="mapping.ref?.id">
                           <span x-text="mapping.ref?.code"></span> (<span x-text="mapping.ref?.name"></span>)
                         </span>
-                        <span x-show="!mapping.ref?.code" class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Not Set</span>
+                        <span x-show="!mapping.ref?.id" class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Not Set</span>
                       </div>
                     </template>
                     <template x-if="isEditingMapping && editingMapping?.provider === mapping.provider">
                       <div x-data="providerRefTypeahead">
-                        <input :id="$id('text-input')" type="text" x-model="query" @input.debounce="search(mapping.provider, query)"
-                               class="w-full px-4 py-2 g-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                               placeholder="Type something...">
-                        <div :id="$id('dropdown-menu')" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" :aria-labelledby="$id('text-input')">
-                            <template x-for="(result, index) in results" :key="index">
-                              <li>
-                                <a href="#" @click="select(result)" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                  <span x-text="result.code"></span> (<span x-text="result.name"></span>)
-                                </a>
-                              </li>
-                            </template>
-                          </ul>
-                        </div>
+                        {{> refs/provider-ref-typeahead }}
                       </div>
                     </template>
                   </td>
@@ -96,8 +83,27 @@
         </div>
       </div>
       <!-- Modal footer -->
+      <template x-if="Object.keys(updates).length > 0">
+        <div>
+          <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+            Updates:
+          </h2>
+          <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+            <template x-for="update in updates" :key="update.provider">
+              <li class="flex items-center">
+                <svg class="w-3.5 h-3.5 me-2 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+                <span>
+                  <span x-text="update.provider.toUpperCase()"></span>: map to <strong><span x-text="update.ref.code"></span> (<span x-text="update.ref.name"></span>)</strong>
+                </span>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </template>
       <div class="flex items-center p-6 space-x-2 rounded-b dark:border-gray-600">
-        <button type="button"
+        <button type="button" :disabled="Object.keys(updates).length === 0"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 @click="updateRef">
           Update
