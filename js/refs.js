@@ -1,5 +1,5 @@
 import { Modal, Tabs } from 'flowbite'
-import { getProviderRefs, getProviders, getRefs } from "./api-client"
+import { getProviders, getRefs, searchProviderRefs } from "./api-client"
 import table from './plugins/table'
 import { getQueryParams, setQueryParam } from './utils'
 
@@ -49,14 +49,9 @@ export const refs = () => {
         delay: 300,
         ignoreClickOutsideClass: false,
         onHide: () => {
-          console.log('dropdown has been hidden');
-        },
-        onShow: () => {
-          console.log('dropdown has been shown');
-        },
-        onToggle: () => {
-          console.log('dropdown has been toggled');
-        },
+          this.isEditingMapping = false
+          this.editingMapping = null
+        }
       }
 
       const dropdown = new Dropdown($targetEl, $triggerEl, options)
@@ -73,9 +68,9 @@ export const refs = () => {
           dropdown.hide()
         },
         async search(provider, query) {
-          dropdown.show()
-          const providerRefs = await getProviderRefs(provider, this.type, 1, 10)
+          const providerRefs = await searchProviderRefs(provider, this.type, query)
           this.results = providerRefs.data
+          dropdown.show()
         }
       }
     },

@@ -25,7 +25,14 @@
         <template x-for="provider in providers">
           <td class="px-6 py-4 text-xs text-center text-gray-600">
             <template x-if="item.providerRef && item.providerRef[provider.id]">
-              <span x-text="item.providerRef[provider.id].code"></span>
+              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
+                    x-text="item.providerRef[provider.id].code">
+              </span>
+            </template>
+            <template x-if="!item.providerRef || !item.providerRef[provider.id]">
+              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
+                Unset
+              </span>
             </template>
           </td>
         </template>

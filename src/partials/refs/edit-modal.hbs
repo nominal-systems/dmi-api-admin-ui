@@ -55,7 +55,7 @@
                         <span x-show="mapping.ref?.id">
                           <span x-text="mapping.ref?.code"></span> (<span x-text="mapping.ref?.name"></span>)
                         </span>
-                        <span x-show="!mapping.ref?.id" class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Not Set</span>
+                        <span x-show="!mapping.ref?.id" class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Unset</span>
                       </div>
                     </template>
                     <template x-if="isEditingMapping && editingMapping?.provider === mapping.provider">

@@ -139,8 +139,12 @@ export const getProvider = async (id) => {
   return provider
 }
 
-export const getProviderRefs = async (id, type, page, limit) => {
-  return await apiGet2(`/providers/${id}/refs/${type}?page=${page}&limit=${limit}`)
+export const getProviderRefs = async (provider, type, page, limit) => {
+  return await apiGet2(`/providers/${provider}/refs/${type}?page=${page}&limit=${limit}`)
+}
+
+export const searchProviderRefs = async (provider, type, query) => {
+  return await apiGet2(`/providers/${provider}/refs/${type}?page=1&limit=100&search=${query}`)
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {
