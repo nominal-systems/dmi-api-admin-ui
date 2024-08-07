@@ -116,7 +116,7 @@ export const updateIntegrationStatus = async (integrationId, operation) => {
 }
 
 export const getProviders = async () => {
-  return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska')
+  return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
 
 export const getRefs = async (type, page, limit) => {

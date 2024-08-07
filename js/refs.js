@@ -34,6 +34,7 @@ export const refs = () => {
       this.closeModal()
       await this.refs[type].getPage(0)
 
+      this.updates = {}
       this.updatingRefs = false
     },
 
