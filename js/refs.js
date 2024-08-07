@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import { Modal, Tabs } from 'flowbite'
 import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
@@ -27,8 +28,12 @@ export const refs = () => {
         await updateRefMapping(this.editingRef.id, update.ref.id)
         update.done = true
       }
+      const type = this.editingRef.type
+      Alpine.store('alert')
+        .set('info', `Mappings for ${this.editingRef.code} (${this.editingRef.name}) updated successfully!`)
       this.closeModal()
-      // TODO(gb): show success message and refresh table
+      await this.refs[type].getPage(0)
+
       this.updatingRefs = false
     },
 
@@ -178,10 +183,6 @@ export const refs = () => {
       this.initTabs()
       this.initModal()
       this.providers = await getProviders()
-
-      //TODO(gb): remove this
-      const speciesRefs = await getRefs('species', 1, 10)
-      this.openModal(speciesRefs.data[2])
     }
   }
 }
