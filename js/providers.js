@@ -1,4 +1,5 @@
-import { getDefaultBreeds, getIntegrationForProvider, getProviderRefs, syncProviderRefs } from './api-client'
+import Alpine from 'alpinejs'
+import { getDefaultBreeds, getIntegrationsForProvider, getProviderRefs, syncProviderRefs } from './api-client'
 import { getIdFromPath } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
@@ -18,14 +19,15 @@ export const providers = () => {
       breeds: null
     },
     syncing: false,
-    async syncProviderRefs() {
+    async syncRefs() {
       this.syncing = true
-      const integration = await getIntegrationForProvider(this.provider.id)
-      if (integration !== undefined) {
-        await syncProviderRefs(this.provider.id, this.type, integration.id, async (body) => {
-          this.syncing = false
-          await this.table.getPage(1)
-        })
+      const integrations = await getIntegrationsForProvider(this.provider.id)
+      if (integrations[0] !== undefined) {
+        const syncResult = await syncProviderRefs(this.provider.id, this.type, integrations[0].id)
+        this.syncing = false
+        Alpine.store('alert')
+          .set('info', `Reference data of type ${this.type} for ${this.provider.id.toUpperCase()} synchronized successfully!`)
+        await this.table.getPage(1)
       }
     },
 

@@ -103,12 +103,8 @@ export const getIntegration = async (id) => {
   return await apiGet2(`/integrations/${id}`)
 }
 
-export const getIntegrationForProvider = async (providerId) => {
-  let integration = {}
-  await apiGet(`/integrations?providerId=${providerId}`, (body) => {
-    integration = body[0]
-  })
-  return integration
+export const getIntegrationsForProvider = async (providerId) => {
+  return await apiGet2(`/integrations?providerId=${providerId}`)
 }
 
 export const updateIntegrationStatus = async (integrationId, operation) => {
@@ -160,9 +156,7 @@ export const getDefaultBreeds = async (providerId, speciesCodes) => {
 }
 
 export const syncProviderRefs = async (provider, type, integrationId, next) => {
-  await apiPost(`/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null, (body) => {
-    next(body)
-  })
+  return await apiPost(`/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null)
 }
 
 export const getExternalRequests = async (providers, status, page, limit) => {
