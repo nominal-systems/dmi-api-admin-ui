@@ -1,6 +1,5 @@
 import 'regenerator-runtime/runtime'
 import Alpine from 'alpinejs'
-import 'flowbite'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
@@ -126,6 +125,10 @@ Alpine.store('alert', {
   set(level, html) {
     this.level = level
     this.html = html
+  },
+  close() {
+    this.level = null
+    this.html = null
   }
 })
 
