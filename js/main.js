@@ -14,6 +14,7 @@ import { externalRequests } from './external-requests'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 import config from './config'
+import dropdown from './plugins/dropdown'
 
 
 if (process.env.NODE_ENV === 'development') {
@@ -135,6 +136,9 @@ Alpine.store('alert', {
 // Custom Directives
 dateDirective()
 codeDirective()
+
+// Plugins
+Alpine.plugin(dropdown)
 
 // Alpine init
 window.events = events

@@ -37,7 +37,21 @@ export const integrations = {
   // Filter
   filter: {
     organizations: [],
-    providers: []
+    providers: [],
+    status: {
+      type: 'checkbox',
+      label: 'Status',
+      items: [
+        {
+          value: 'RUNNING',
+          label: 'Running'
+        },
+        {
+          value: 'STOPPED',
+          label: 'Stopped'
+        }
+      ]
+    }
   },
   async initFilter() {
     const query = getQueryParams()
