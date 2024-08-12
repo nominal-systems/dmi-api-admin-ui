@@ -2,10 +2,7 @@ import { Dropdown } from 'flowbite'
 
 export default function (Alpine) {
   const defaultOptions = {
-    items: [],
-    toggle: false,
     toggleLabel: 'Select All',
-    dirty: false
   }
 
   Alpine.directive('dropdown', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
@@ -29,25 +26,35 @@ export default function (Alpine) {
     const $buttonEl = el.querySelector('[x-dropdown\\:button]')
     const $menuEl = el.querySelector('[x-dropdown\\:menu]')
     const $toggleEl = el.querySelector('[x-dropdown\\:toggle] input')
+    let $itemEl = null
+    document.addEventListener('alpine:initialized', () => {
+      $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      for (const item of $itemEl) {
+        item.addEventListener('click', (e) => {
+          this.state.dirty = isDirty($itemEl)
+          this.state.toggle = countChecked($itemEl) === $itemEl.length
+        })
+      }
+    })
 
     // Dropdown data
     const options = Object.assign({}, defaultOptions, evaluate(expression))
-    Object.assign(this, options)
-    this.items = this.items.map(item => {
-      item.checked = false
-      return item
+    this.label = options.label
+    this.state = Alpine.reactive({
+      toggle: false,
+      dirty: false
     })
+    this.items = Alpine.reactive(options.items)
+    this.toggleLabel = options.toggleLabel
 
     // Toggle
     $toggleEl.addEventListener('click', (e) => {
       this.toggle = $toggleEl.checked
-      this.items.map(item => {
-        item.checked = $toggleEl.checked
+      $itemEl.forEach(item => {
+        item.checked = this.toggle
       })
-      //TODO(gb): should set a dirty class on the dropdown button
+      this.state.dirty = isDirty($itemEl)
     })
-
-    // TODO (gb) add event listener on menu item change and update the toggle state
 
     // Dropdown
     new Dropdown($menuEl, $buttonEl, {
@@ -68,4 +75,19 @@ export default function (Alpine) {
       },
     })
   })
+}
+
+function countChecked($nodeList) {
+  let checked = 0
+  $nodeList.forEach(item => {
+    if (item.checked) {
+      checked += 1
+    }
+  })
+
+  return checked
+}
+
+function isDirty($nodeList) {
+  return countChecked($nodeList) > 0
 }
