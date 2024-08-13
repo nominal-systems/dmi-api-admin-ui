@@ -19,6 +19,12 @@ export function setQueryParam(param, value) {
   window.history.pushState({}, '', url)
 }
 
+export function removeQueryParam(param) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(param);
+  window.history.replaceState({}, document.title, url.toString());
+}
+
 export function setHash(hash) {
   window.location.hash = hash
 }

@@ -1,7 +1,9 @@
 import { Dropdown } from 'flowbite'
+import { getQueryParams, removeQueryParam, setQueryParam } from '../utils'
 
 export default function (Alpine) {
   const defaultOptions = {
+    updateQuery: false,
     toggleLabel: 'Select All',
   }
 
@@ -23,15 +25,28 @@ function handleRoot(el, Alpine, options) {
   Alpine.bind(el, {
     'x-data'() {
       return {
-        init() {
+        _id: options.id,
+        label: options.label,
+        toggleLabel: options.toggleLabel,
+        dirty: false,
+        toggle: false,
+        items: [],
+        dropdown: null,
+        async init() {
+          const items = [...await options.items()]
+          if (options.updateQuery) {
+            const query = getQueryParams()
+            if (query[this._id] !== undefined) {
+              items.forEach(item => {
+                item.checked = query[this._id].includes(item.value)
+                this.dirty = true
+              })
+            }
+          }
+          this.items = items
           const $buttonEl = el.querySelector('[x-dropdown\\:button]')
           const $menuEl = el.querySelector('[x-dropdown\\:menu]')
-          let $itemEl = undefined
-          setTimeout(() => {
-            $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
-          })
-
-          new Dropdown($menuEl, $buttonEl, {
+          this.dropdown = new Dropdown($menuEl, $buttonEl, {
             placement: 'bottom',
             triggerType: 'click',
             offsetSkidding: 0,
@@ -39,22 +54,40 @@ function handleRoot(el, Alpine, options) {
             delay: 300,
             ignoreClickOutsideClass: false
           })
-          el.addEventListener('selectionChanged', (e) => {
-            this.dirty = isDirty($itemEl)
-            this.toggle = countChecked($itemEl) === $itemEl.length
-          })
-          el.addEventListener('selectAllToggled', (e) => {
-            $itemEl.forEach(item => {
-              item.checked = this.toggle
-            })
-            this.dirty = isDirty($itemEl)
-          })
-        },
-        label: options.label,
-        toggleLabel: options.toggleLabel,
-        dirty: false,
-        toggle: false,
-        items: options.items
+        }
+      }
+    },
+    '@selectionChanged'() {
+      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      this.dirty = isDirty($itemEl)
+      if (options.updateQuery) {
+        this.$dispatch('updateQueryParams')
+        this.$dispatch('filter')
+      }
+    },
+    '@itemClicked'() {
+      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      this.toggle = countChecked($itemEl) === $itemEl.length
+      this.$dispatch('selectionChanged', { el: this.$el })
+    },
+    '@selectAllToggled'() {
+      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      $itemEl.forEach(item => {
+        item.checked = this.toggle
+      })
+      this.$dispatch('selectionChanged', { el: this.$el })
+    },
+    '@updateQueryParams'() {
+      const checked = []
+      el.querySelectorAll('[x-dropdown\\:item] input').forEach(item => {
+        if (item.checked) {
+          checked.push(item.value)
+        }
+      })
+      if (checked.length > 0) {
+        setQueryParam(this._id, checked.join(','))
+      } else {
+        removeQueryParam(this._id)
       }
     }
   })
@@ -73,7 +106,7 @@ function handleToggle(el, Alpine) {
 function handleItem(el, Alpine) {
   Alpine.bind(el.querySelector('input'), {
     '@click'() {
-      this.$dispatch('selectionChanged', { el: this.$el })
+      this.$dispatch('itemClicked', { el: this.$el })
     }
   })
 }

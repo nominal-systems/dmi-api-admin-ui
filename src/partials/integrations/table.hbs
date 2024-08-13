@@ -16,7 +16,7 @@
         </tr>
         </thead>
         <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-        <template x-for="integration in integrations">
+        <template x-for="integration in integrations" @filter.window="filterIntegrations">
           <tr class="text-gray-700 dark:text-gray-400" x-show="integration.show === true">
             <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
             <td class="px-4 py-3">

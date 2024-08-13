@@ -1,8 +1,7 @@
-import { getIntegrations, getOrganizations, updateIntegrationStatus } from './api-client'
+import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
-import { getQueryParams, setQueryParam } from './utils'
-import { PROVIDERS } from './constants/provider-list'
+import { getQueryParams } from './utils'
 
 export const integrations = {
   integrations: [],
@@ -36,52 +35,60 @@ export const integrations = {
 
   // Filter
   filter: {
-    organizations: [],
-    providers: [],
+    organization: {
+      id: 'organization',
+      type: 'checkbox',
+      label: 'Organization',
+      updateQuery: true,
+      items: async () => {
+        return (await getOrganizations()).map((org) => {
+          return {
+            label: org.name,
+            value: org.id
+          }
+        })
+      }
+    },
+    provider: {
+      id: 'provider',
+      type: 'checkbox',
+      label: 'Provider',
+      updateQuery: true,
+      items: async () => {
+        return (await getProviders()).map((provider) => {
+          return {
+            label: provider.description,
+            value: provider.id
+          }
+        })
+      }
+    },
     status: {
+      id: 'status',
       type: 'checkbox',
       label: 'Status',
-      items: [
-        {
-          value: 'RUNNING',
-          label: 'Running'
-        },
-        {
-          value: 'STOPPED',
-          label: 'Stopped'
-        }
-      ]
+      updateQuery: true,
+      items: () => {
+        return [
+          {
+            value: 'RUNNING',
+            label: 'Running'
+          },
+          {
+            value: 'STOPPED',
+            label: 'Stopped'
+          }
+        ]
+      }
     }
   },
-  async initFilter() {
-    const query = getQueryParams()
-    const organizations = await getOrganizations()
-    this.filter.organizations = organizations.map((org) => {
-      org.checked = query.organizations !== undefined ? query.organizations.includes(org.id) : true
-      return org
-    })
-    this.filter.providers = Object.keys(PROVIDERS).map((key) => {
-      return {
-        label: PROVIDERS[key].description,
-        value: PROVIDERS[key].id,
-        checked: query.providers !== undefined ? query.providers.split(',').includes(PROVIDERS[key].id) : true
-      }
-    })
-    this.updateQueryParams()
-  },
-  updateQueryParams() {
-    setQueryParam('organizations', this.filter.organizations.filter((org) => org.checked).map((org) => org.id))
-    setQueryParam('providers', this.filter.providers.filter((provider) => provider.checked).map((provider) => provider.value))
-  },
   filterIntegrations() {
-    this.updateQueryParams()
     this.integrations.map((integration) => {
       integration.show = this.showIntegration(integration)
     })
   },
 
   async fetchIntegrations() {
-
     // TODO(gb): eventually do filtering in backend
     this.integrations = (await getIntegrations()).map(integration => {
       return {
@@ -112,14 +119,14 @@ export const integrations = {
   },
   showIntegration(integration) {
     const query = getQueryParams()
-    const isFromOrganization = query.organizations === undefined ? true : query.organizations.split(',').includes(integration.practice.organization.id)
-    const isFromProvider = query.providers === undefined ? true : query.providers.split(',').includes(integration.providerConfiguration.providerId)
-    return isFromOrganization && isFromProvider
+    const isFromOrganization = query.organization === undefined ? true : query.organization.split(',').includes(integration.practice.organization.id)
+    const isFromProvider = query.provider === undefined ? true : query.provider.split(',').includes(integration.providerConfiguration.providerId)
+    const isInStatus = query.status === undefined ? true : query.status.split(',').includes(integration.status)
+    return isFromOrganization && isFromProvider && isInStatus
   },
 
   async init() {
     this.initModal()
-    await this.initFilter()
     await this.fetchIntegrations()
   }
 }
