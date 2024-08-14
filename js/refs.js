@@ -22,6 +22,7 @@ export const refs = () => {
     syncing: false,
     updates: {},
     updatingRefs: false,
+    fetching: true,
     search: {
       sexes: {
         placeholder: 'Search by name...'
@@ -51,7 +52,12 @@ export const refs = () => {
     },
     async fetch($event) {
       this.query = $event.detail.query
+      await this.doFetch()
+    },
+    async doFetch() {
+      this.fetching = true
       await this.refs[this.type].getPage(1)
+      this.fetching = false
     },
 
     // Modal
@@ -148,8 +154,7 @@ export const refs = () => {
           setQueryParam('ref', this.activeTab.id)
           this.type = this.activeTab.id
           this.table = this.refs[this.type]
-          await this.table.getPage(1)
-
+          await this.doFetch()
         }
       }
       const tabElements = [

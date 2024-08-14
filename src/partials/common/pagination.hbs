@@ -1,4 +1,4 @@
-<nav class="flex items-center justify-between p-4" aria-label="Table navigation" x-show="total > 0">
+<nav class="flex items-center justify-between p-4" aria-label="Table navigation" x-show="total > 0 && !fetching">
     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
       Showing <span class="font-semibold text-gray-900 dark:text-white"><span x-text="resultsStart"></span>-<span x-text="resultsEnd"></span></span> of <span class="font-semibold text-gray-900 dark:text-white" x-text="total"></span>
     </span>

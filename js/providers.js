@@ -18,7 +18,9 @@ export const providers = () => {
       species: null,
       breeds: null
     },
+    syncing: false,
     query: null,
+    fetching: true,
     search: {
       sexes: {
         placeholder: 'Search by name...'
@@ -32,9 +34,13 @@ export const providers = () => {
     },
     async fetch($event) {
       this.query = $event.detail.query
-      await this.refs[this.type].getPage(1)
+      await this.doFetch()
     },
-    syncing: false,
+    async doFetch() {
+      this.fetching = true
+      await this.refs[this.type].getPage(1)
+      this.fetching = false
+    },
     async syncRefs() {
       this.syncing = true
       const integrations = await getIntegrationsForProvider(this.provider.id)
@@ -56,10 +62,11 @@ export const providers = () => {
         activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: async (tab) => {
+          this.query = null
           this.activeTab = tab.getActiveTab()
           this.type = this.activeTab.id
           this.table = this.refs[this.type]
-          await this.table.getPage(1)
+          await this.doFetch()
         }
       }
       const tabElements = [
