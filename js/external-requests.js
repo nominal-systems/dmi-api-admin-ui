@@ -1,12 +1,10 @@
-import { getExternalRequest, getExternalRequests } from './api-client'
+import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
-import { PROVIDERS } from './constants/provider-list'
+import { getQueryParams } from './utils'
 
 export const externalRequests = () => {
   return {
-    providers: [],
-
     // Modal
     modal: null,
     externalRequest: null,
@@ -30,20 +28,36 @@ export const externalRequests = () => {
 
     // Filter
     filter: {
-      status: [
-        { label: '2xx', value: '2xx', checked: false },
-        { label: '3xx', value: '3xx', checked: false },
-        { label: '4xx', value: '4xx', checked: true },
-        { label: '5xx', value: '5xx', checked: true },
-      ],
-      providers: []
+      status: {
+        id: 'status',
+        type: 'checkbox',
+        label: 'Response Status',
+        updateQuery: true,
+        items() {
+          return [
+            { label: '2xx', value: '2xx', checked: false },
+            { label: '3xx', value: '3xx', checked: false },
+            { label: '4xx', value: '4xx', checked: true },
+            { label: '5xx', value: '5xx', checked: true },
+          ]
+        }
+      },
+      provider: {
+        id: 'provider',
+        type: 'checkbox',
+        label: 'Provider',
+        updateQuery: true,
+        async items() {
+          return (await getProviders()).map((provider) => {
+            return {
+              label: provider.description,
+              value: provider.id,
+            }
+          })
+        }
+      }
     },
     fetching: true,
-    initFilter() {
-      this.filter.providers = Object.keys(PROVIDERS).map((key) => {
-        return { label: PROVIDERS[key].description, value: PROVIDERS[key].id, checked: true }
-      })
-    },
     async search() {
       this.fetching = true
       await this.table.getPage(1)
@@ -59,9 +73,10 @@ export const externalRequests = () => {
           pagesMax: 10,
         }, async (page, pageSize) => {
           this.fetching = true
-          const filter = JSON.parse(JSON.stringify(this.filter))
-          const status = filter.status.filter((s) => s.checked).map((s) => s.value)
-          const providers = filter.providers.filter((p) => p.checked).map((p) => p.value)
+          const query = getQueryParams()
+          const status = query.status ? query.status.split(',') : undefined
+          const providers = query.provider ? query.provider.split(',') : undefined
+
           const externalRequests = await getExternalRequests(providers, status, page, pageSize)
           this.fetching = false
           return externalRequests
@@ -69,7 +84,6 @@ export const externalRequests = () => {
     },
 
     async init() {
-      this.initFilter()
       this.initTable()
       this.initModal()
     }

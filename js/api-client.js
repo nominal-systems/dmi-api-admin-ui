@@ -169,11 +169,14 @@ export const syncProviderRefs = async (provider, type, integrationId, next) => {
 }
 
 export const getExternalRequests = async (providers, status, page, limit) => {
-  let result = {}
-  await apiGet(`/external-requests?providers=${providers}&status=${status}&page=${page}&limit=${limit}`, (body) => {
-    result = body
-  })
-  return result
+  let qs = `page=${page}&limit=${limit}`
+  if (providers !== undefined) {
+    qs += `&providers=${providers.join(',')}`
+  }
+  if (status !== undefined) {
+    qs += `&status=${status.join(',')}`
+  }
+  return await apiGet2(`/external-requests?${qs}`)
 }
 
 export const getExternalRequest = async (id) => {

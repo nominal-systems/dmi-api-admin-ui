@@ -42,6 +42,20 @@ function handleRoot(el, Alpine, options) {
                 this.dirty = true
               })
             }
+
+            // Set query params
+            const checked = []
+            items.forEach(item => {
+              if (item.checked) {
+                checked.push(item.value)
+              }
+            })
+            if (checked.length > 0) {
+              setQueryParam(this._id, checked.join(','))
+              this.dirty = true
+            } else {
+              removeQueryParam(this._id)
+            }
           }
           this.items = items
           const $buttonEl = el.querySelector('[x-dropdown\\:button]')
