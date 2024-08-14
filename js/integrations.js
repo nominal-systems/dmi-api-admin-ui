@@ -8,6 +8,7 @@ export const integrations = {
   operation: null,
   selectedIntegration: null,
   inProgress: false,
+  fetching: true,
   error: null,
 
   // Modal
@@ -90,6 +91,7 @@ export const integrations = {
 
   async fetchIntegrations() {
     // TODO(gb): eventually do filtering in backend
+    this.fetching = true
     this.integrations = (await getIntegrations()).map(integration => {
       return {
         ...integration,
@@ -98,6 +100,7 @@ export const integrations = {
         show: this.showIntegration(integration)
       }
     })
+    this.fetching = false
   },
   async updateIntegrationStatus() {
     this.error = null

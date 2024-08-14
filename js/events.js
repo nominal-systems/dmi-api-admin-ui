@@ -6,17 +6,20 @@ import config from './config'
 export const events = {
   // Events
   table: null,
+  fetching: true,
   initTable() {
     this.table = table(
       {
         pageSize: 20,
         pagesMax: 10,
       }, async (page, pageSize) => {
+        this.fetching = true
         const events = await getEvents(page, pageSize)
         events.data.map((ev) => {
           ev.url = `${config.get('UI_BASE')}/events/${ev._id}`
           return ev
         })
+        this.fetching = false
         return events
       })
   },

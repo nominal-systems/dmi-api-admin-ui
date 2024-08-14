@@ -38,13 +38,16 @@ export const externalRequests = () => {
       ],
       providers: []
     },
+    fetching: true,
     initFilter() {
       this.filter.providers = Object.keys(PROVIDERS).map((key) => {
         return { label: PROVIDERS[key].description, value: PROVIDERS[key].id, checked: true }
       })
     },
     async search() {
+      this.fetching = true
       await this.table.getPage(1)
+      this.fetching = false
     },
 
     // Table
@@ -55,10 +58,13 @@ export const externalRequests = () => {
           pageSize: 20,
           pagesMax: 10,
         }, async (page, pageSize) => {
+          this.fetching = true
           const filter = JSON.parse(JSON.stringify(this.filter))
           const status = filter.status.filter((s) => s.checked).map((s) => s.value)
           const providers = filter.providers.filter((p) => p.checked).map((p) => p.value)
-          return await getExternalRequests(providers, status, page, pageSize)
+          const externalRequests = await getExternalRequests(providers, status, page, pageSize)
+          this.fetching = false
+          return externalRequests
         })
     },
 
