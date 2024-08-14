@@ -117,11 +117,11 @@ export const getProviders = async () => {
 }
 
 export const getRefs = async (type, query, page, limit) => {
-  let url = `/refs/${type}?page=${page}&limit=${limit}`
+  let queryString = `page=${page}&limit=${limit}`
   if (!isNullOrUndefinedOrEmpty(query)) {
-    url += `&search=${query}`
+    queryString += `&search=${query}`
   }
-  const refs = await apiGet2(url)
+  const refs = await apiGet2(`/refs/${type}?${queryString}`)
   refs.data.map((ref) => {
     ref.providerRef = ref.providerRef.reduce((acc, item) => {
       acc[item.provider.id] = item;
@@ -144,8 +144,12 @@ export const getProvider = async (id) => {
   return provider
 }
 
-export const getProviderRefs = async (provider, type, page, limit) => {
-  return await apiGet2(`/providers/${provider}/refs/${type}?page=${page}&limit=${limit}`)
+export const getProviderRefs = async (provider, type, query, page, limit) => {
+  let queryString = `page=${page}&limit=${limit}`
+  if (!isNullOrUndefinedOrEmpty(query)) {
+    queryString += `&search=${query}`
+  }
+  return await apiGet2(`/providers/${provider}/refs/${type}?${queryString}`)
 }
 
 export const searchProviderRefs = async (provider, type, query) => {

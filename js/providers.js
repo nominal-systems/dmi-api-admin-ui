@@ -18,6 +18,22 @@ export const providers = () => {
       species: null,
       breeds: null
     },
+    query: null,
+    search: {
+      sexes: {
+        placeholder: 'Search by name...'
+      },
+      species: {
+        placeholder: 'Search by name...'
+      },
+      breeds: {
+        placeholder: 'Search by name...'
+      }
+    },
+    async fetch($event) {
+      this.query = $event.detail.query
+      await this.refs[this.type].getPage(1)
+    },
     syncing: false,
     async syncRefs() {
       this.syncing = true
@@ -90,14 +106,14 @@ export const providers = () => {
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
-          return await getProviderRefs(this.provider.id, 'sex', page, pageSize)
+          return await getProviderRefs(this.provider.id, 'sex', this.query, page, pageSize)
         }
       )
       this.refs.species = table(
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
-          const refs = await getProviderRefs(this.provider.id, 'species', page, pageSize)
+          const refs = await getProviderRefs(this.provider.id, 'species', this.query, page, pageSize)
           const defaults = await getDefaultBreeds(this.provider.id, refs.data.map((r) => r.code))
           defaults.forEach((defaultBreed) => {
             const ref = refs.data.find((r) => r.code === defaultBreed.species)
@@ -112,7 +128,7 @@ export const providers = () => {
         {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
-          return await getProviderRefs(this.provider.id, 'breed', page, pageSize)
+          return await getProviderRefs(this.provider.id, 'breed', this.query, page, pageSize)
         }
       )
     },
