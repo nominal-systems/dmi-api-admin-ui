@@ -41,6 +41,13 @@
         </td>
       </tr>
     </template>
+    <template x-if="refs[type].total === 0">
+      <tr class="border-b border-b-gray-700">
+        <td class="px-6 py-4 text-center" :colspan="3 + providers.length">
+          No results match your search query
+        </td>
+      </tr>
+    </template>
     </tbody>
   </table>
 
