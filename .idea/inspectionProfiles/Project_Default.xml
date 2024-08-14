@@ -4,13 +4,16 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="6">
+          <list size="9">
             <item index="0" class="java.lang.String" itemvalue="x-date" />
             <item index="1" class="java.lang.String" itemvalue="x-code" />
             <item index="2" class="java.lang.String" itemvalue="x-dropdown:button" />
             <item index="3" class="java.lang.String" itemvalue="x-dropdown:menu" />
             <item index="4" class="java.lang.String" itemvalue="x-dropdown:item" />
             <item index="5" class="java.lang.String" itemvalue="x-dropdown:toggle" />
+            <item index="6" class="java.lang.String" itemvalue="x-search" />
+            <item index="7" class="java.lang.String" itemvalue="x-search:input" />
+            <item index="8" class="java.lang.String" itemvalue="x-search:button" />
           </list>
         </value>
       </option>

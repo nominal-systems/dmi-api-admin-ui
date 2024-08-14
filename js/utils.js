@@ -39,3 +39,7 @@ export function getQueryParams() {
 
   return params;
 }
+
+export function isNullOrUndefinedOrEmpty(value) {
+  return value === null || value === undefined || value === ''
+}

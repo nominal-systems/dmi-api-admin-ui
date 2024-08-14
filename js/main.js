@@ -15,6 +15,7 @@ import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 import config from './config'
 import dropdown from './plugins/dropdown'
+import searchInput from './plugins/search-input'
 
 
 if (process.env.NODE_ENV === 'development') {
@@ -139,6 +140,7 @@ codeDirective()
 
 // Plugins
 Alpine.plugin(dropdown)
+Alpine.plugin(searchInput)
 
 // Alpine init
 window.events = events

@@ -1,5 +1,6 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 import config from './config'
+import { isNullOrUndefinedOrEmpty } from './utils'
 
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
@@ -115,8 +116,12 @@ export const getProviders = async () => {
   return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
 
-export const getRefs = async (type, page, limit) => {
-  const refs = await apiGet2(`/refs/${type}?page=${page}&limit=${limit}`)
+export const getRefs = async (type, query, page, limit) => {
+  let url = `/refs/${type}?page=${page}&limit=${limit}`
+  if (!isNullOrUndefinedOrEmpty(query)) {
+    url += `&search=${query}`
+  }
+  const refs = await apiGet2(url)
   refs.data.map((ref) => {
     ref.providerRef = ref.providerRef.reduce((acc, item) => {
       acc[item.provider.id] = item;

@@ -18,30 +18,60 @@
   </ul>
 </div>
 <div id="tabContentExample">
+  <!-- Sexes -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="sexes" role="tabpanel" aria-labelledby="sexes-tab" x-data="refs.sexes">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+    <div class="flex items-center mb-3">
+      <h3 class="flex-none w-56 my-3 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Sexes (<span x-text="total"></span>)
       </h3>
-      {{> refs/sync-button }}
+      <div class="flex-1">
+        <div x-search="search.sexes">
+          {{> refs/search }}
+        </div>
+      </div>
+
+      <div class="flex-none text-right w-24">
+        {{> refs/sync-button }}
+      </div>
     </div>
     {{> refs/table }}
   </div>
+
+  <!-- Species -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="species" role="tabpanel" aria-labelledby="species-tab" x-data="refs.species">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+    <div class="flex items-center mb-3">
+      <h3 class="flex-none w-56 my-3 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Species (<span x-text="total"></span>)
       </h3>
-      {{> refs/sync-button }}
+
+      <div class="flex-1">
+        <div x-search="search.species">
+          {{> refs/search }}
+        </div>
+      </div>
+
+      <div class="flex-none text-right w-24">
+        {{> refs/sync-button }}
+      </div>
     </div>
     {{> refs/table }}
   </div>
+
+  <!-- Breeds -->
   <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="breeds" role="tabpanel" aria-labelledby="breeds-tab" x-data="refs.breeds">
-    <div class="flex items-center justify-between">
-      <h3 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
+    <div class="flex items-center mb-3">
+      <h3 class="flex-none w-56 my-3 text-xl font-semibold text-gray-700 dark:text-gray-200">
         Breeds (<span x-text="total"></span>)
       </h3>
-      {{> refs/sync-button }}
+      <div class="flex-1">
+        <div x-search="search.breeds">
+          {{> refs/search }}
+        </div>
+      </div>
+
+      <div class="flex-none text-right w-24">
+        {{> refs/sync-button }}
+      </div>
     </div>
     {{> refs/table }}
   </div>
