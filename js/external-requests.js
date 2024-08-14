@@ -55,6 +55,20 @@ export const externalRequests = () => {
             }
           })
         }
+      },
+      method: {
+        id: 'method',
+        type: 'checkbox',
+        label: 'Request Method',
+        updateQuery: true,
+        items() {
+          return [
+            { label: 'GET', value: 'GET' },
+            { label: 'POST', value: 'POST' },
+            { label: 'PUT', value: 'PUT' },
+            { label: 'DELETE', value: 'DELETE' },
+          ]
+        }
       }
     },
     fetching: true,
@@ -76,8 +90,9 @@ export const externalRequests = () => {
           const query = getQueryParams()
           const status = query.status ? query.status.split(',') : undefined
           const providers = query.provider ? query.provider.split(',') : undefined
+          const method = query.method ? query.method.split(',') : undefined
 
-          const externalRequests = await getExternalRequests(providers, status, page, pageSize)
+          const externalRequests = await getExternalRequests(providers, status, method, page, pageSize)
           this.fetching = false
           return externalRequests
         })
