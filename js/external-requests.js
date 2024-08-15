@@ -1,7 +1,7 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
-import { getQueryParams } from './utils'
+import { getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './utils'
 
 export const externalRequests = () => {
   return {
@@ -10,6 +10,8 @@ export const externalRequests = () => {
     externalRequest: null,
     async openModal(externalRequest) {
       this.externalRequest = await getExternalRequest(externalRequest._id)
+      this.externalRequest.statusText = mapHttpStatusText(this.externalRequest.status)
+      this.externalRequest.color = mapHttpStatusColor(this.externalRequest.status)
       this.modal.show()
     },
     closeModal() {
