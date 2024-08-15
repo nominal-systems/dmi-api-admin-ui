@@ -54,6 +54,13 @@
           </td>
         </tr>
       </template>
+      <template x-if="!fetching && table.items?.length === 0">
+        <tr class="border-b border-b-gray-700 text-sm text-left text-gray-500 dark:text-gray-400">
+          <td class="px-6 py-4 text-center" colspan="6">
+            No events match your filter criteria
+          </td>
+        </tr>
+      </template>
       </tbody>
     </table>
 
