@@ -86,3 +86,18 @@ export function mapHttpStatusColor(status) {
       return 'gray'
   }
 }
+
+export function mapHttpMethodColor(method) {
+  switch (method) {
+    case 'GET':
+      return 'green'
+    case 'POST':
+      return 'yellow'
+    case 'PUT':
+      return 'blue'
+    case 'DELETE':
+      return 'red'
+    default:
+      return 'gray'
+  }
+}

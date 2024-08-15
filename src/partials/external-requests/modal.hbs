@@ -2,6 +2,7 @@
   <div class="relative p-4 w-full max-w-4xl h-full md:h-auto">
     <!-- Modal content -->
     <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+
       <!-- Modal header -->
       <div class="flex justify-between items-start pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
         <div>
@@ -21,39 +22,46 @@
           <span class="sr-only">Close modal</span>
         </button>
       </div>
+
       <!-- Modal body -->
       <div class="mt-4 mb-6">
-        <div class="mb-4" x-show="externalRequest?.payload">
+        <div class="mb-4">
           <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
             Request
           </h4>
           <p class="text-sm text-left text-gray-500 dark:text-gray-400">
             <code>
-              <span class="bg-yellow-100 text-yellow-800 font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300" x-text="externalRequest?.method"></span>
+              <span class="font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 border"
+                    :class="`bg-${externalRequest?.methodColor}-100 text-${externalRequest?.methodColor}-800 dark:text-${externalRequest?.methodColor}-300 border-${externalRequest?.methodColor}-300`"
+                    x-text="externalRequest?.method"></span>
               <span x-text="externalRequest?.url"></span>
             </code>
           </p>
-          <div class="flex whitespace-pre-wrap rounded-lg mt-3 p-4 bg-gray-900 text-sm text-gray-200 max-h-48 overflow-scroll">
-            <code x-code="externalRequest?.payload"></code>
-          </div>
+          <template x-if="externalRequest?.payload">
+            <div x-data="{ code: externalRequest.payload, copied: false }">
+              {{> common/code }}
+            </div>
+          </template>
         </div>
         <div class="mb-4" x-show="externalRequest?.body">
           <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
             Response
           </h4>
-          <span class="bg-red-100 font-medium me-2 px-2.5 py-0.5 rounded"
-                :class="`text-${externalRequest?.color}-800 dark:bg-${externalRequest?.color}-900 dark:text-${externalRequest?.color}-300`">
+          <span class="font-medium me-2 px-2.5 py-0.5 rounded"
+                :class="`bg-${externalRequest?.color}-100 text-${externalRequest?.color}-800 dark:bg-${externalRequest?.color}-900 dark:text-${externalRequest?.color}-300`">
             <span x-text="externalRequest?.status"></span> <span x-text="externalRequest?.statusText"></span>
           </span>
-          <div class="flex whitespace-pre-wrap rounded-lg mt-3 p-4 bg-gray-900 text-sm text-gray-200 max-h-48 overflow-scroll">
-            <code x-code="externalRequest?.body"></code>
-          </div>
+          <template x-if="externalRequest?.body">
+            <div x-data="{ code: externalRequest.body, copied: false }">
+              {{> common/code }}
+            </div>
+          </template>
         </div>
       </div>
     </div>
-
   </div>
 </div>
-<div class="w-0 h-0 dark:text-green-300"></div>
-<div class="w-0 h-0 dark:text-green-800"></div>
-<div class="w-0 h-0 dark:bg-green-900"></div>
+<div class="bg-green-100 text-green-800 dark:text-green-300 dark:bg-green-900"></div>
+<div class="bg-blue-100 text-blue-800 dark:text-blue-300 dark:bg-blue-900"></div>
+<div class="bg-yellow-100 text-yellow-800 dark:text-yellow-300 dark:bg-yellow-900"></div>
+<div class="bg-red-100 text-red-800 dark:text-red-300 dark:bg-red-900"></div>

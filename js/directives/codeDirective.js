@@ -31,7 +31,7 @@ export default () => {
           text = code
         }
 
-        el.textContent = text
+        el.textContent = `\n${text}`
       })
     })
   })

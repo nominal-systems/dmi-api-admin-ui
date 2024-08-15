@@ -16,7 +16,7 @@ import codeDirective from './directives/codeDirective'
 import config from './config'
 import dropdown from './plugins/dropdown'
 import searchInput from './plugins/search-input'
-
+import Clipboard from "@ryangjchandler/alpine-clipboard"
 
 if (process.env.NODE_ENV === 'development') {
   config.log()
@@ -141,6 +141,7 @@ codeDirective()
 // Plugins
 Alpine.plugin(dropdown)
 Alpine.plugin(searchInput)
+Alpine.plugin(Clipboard)
 
 // Alpine init
 window.events = events
