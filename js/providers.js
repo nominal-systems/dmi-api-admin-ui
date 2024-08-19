@@ -96,6 +96,10 @@ export const providers = () => {
       this.editingRef = ref
       this.modal.show()
     },
+    closeModal() {
+      this.editingRef = null
+      this.modal.hide()
+    },
     initModal() {
       const targetE = this.$refs['providerRefModal']
       const modalOptions = {
