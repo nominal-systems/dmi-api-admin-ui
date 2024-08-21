@@ -6,6 +6,7 @@ export default function (Alpine) {
     updateQuery: false,
     toggleEnabled: true,
     toggleLabel: 'Select All',
+    datePickerLabel: 'On'
   }
 
   Alpine.directive('dropdown', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
@@ -18,6 +19,8 @@ export default function (Alpine) {
       handleItem(el, Alpine)
     } else if (value === 'toggle') {
       handleToggle(el, Alpine)
+    } else if (value === 'datepicker') {
+      handleDatepicker(el, Alpine)
     }
   })
 }
@@ -30,6 +33,8 @@ function handleRoot(el, Alpine, options) {
         label: options.label,
         toggleLabel: options.toggleLabel,
         toggleEnabled: options.toggleEnabled,
+        datePickerLabel: options.datePickerLabel,
+        datePickerValue: null,
         type: options.type,
         inputType: options.type === 'date' ? 'radio' : 'checkbox',
         dirty: false,
@@ -64,14 +69,17 @@ function handleRoot(el, Alpine, options) {
           this.items = items
           const $buttonEl = el.querySelector('[x-dropdown\\:button]')
           const $menuEl = el.querySelector('[x-dropdown\\:menu]')
-          this.dropdown = new Dropdown($menuEl, $buttonEl, {
+          const dropdownOptions = {
             placement: 'bottom',
             triggerType: 'click',
             offsetSkidding: 0,
             offsetDistance: 10,
-            delay: 300,
-            ignoreClickOutsideClass: false
-          })
+            delay: 300
+          }
+          if (options.type === 'date') {
+            dropdownOptions.ignoreClickOutsideClass = 'datepicker'
+          }
+          this.dropdown = new Dropdown($menuEl, $buttonEl, dropdownOptions)
         }
       }
     },
@@ -117,6 +125,25 @@ function handleToggle(el, Alpine) {
     '@click'() {
       this.toggle = !this.toggle
       this.$dispatch('selectAllToggled', { el: this.$el })
+    }
+  })
+}
+
+function handleDatepicker(el, Alpine) {
+  const $datePickerRadioInput = el.querySelector('input')
+  const $datePickerInput = el.querySelector('label input')
+  Alpine.bind($datePickerRadioInput, {
+    '@input'() {
+      setQueryParam(this._id, this.datePickerValue)
+      this.$dispatch('filter')
+    }
+  })
+  Alpine.bind($datePickerInput, {
+    '@datePickerInput'(ev) {
+      this.datePickerValue = ev.detail.date
+      $datePickerRadioInput.checked = true
+      setQueryParam(this._id, this.datePickerValue)
+      this.$dispatch('filter')
     }
   })
 }
