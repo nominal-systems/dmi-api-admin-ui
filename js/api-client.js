@@ -168,7 +168,7 @@ export const syncProviderRefs = async (provider, type, integrationId, next) => {
   return await apiPost(`/refs/sync/${provider}/${type}?integrationId=${integrationId}`, null)
 }
 
-export const getExternalRequests = async (providers, status, method, page, limit) => {
+export const getExternalRequests = async (providers, status, method, date, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (providers !== undefined) {
     qs += `&providers=${providers.join(',')}`
@@ -178,6 +178,9 @@ export const getExternalRequests = async (providers, status, method, page, limit
   }
   if (status !== undefined) {
     qs += `&status=${status.join(',')}`
+  }
+  if (date !== undefined) {
+    qs += `&date=${date}`
   }
   return await apiGet2(`/external-requests?${qs}`)
 }

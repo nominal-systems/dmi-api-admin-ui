@@ -4,6 +4,7 @@ import { getQueryParams, removeQueryParam, setQueryParam } from '../utils'
 export default function (Alpine) {
   const defaultOptions = {
     updateQuery: false,
+    toggleEnabled: true,
     toggleLabel: 'Select All',
   }
 
@@ -28,6 +29,9 @@ function handleRoot(el, Alpine, options) {
         _id: options.id,
         label: options.label,
         toggleLabel: options.toggleLabel,
+        toggleEnabled: options.toggleEnabled,
+        type: options.type,
+        inputType: options.type === 'date' ? 'radio' : 'checkbox',
         dirty: false,
         toggle: false,
         items: [],

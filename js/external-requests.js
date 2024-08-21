@@ -2,6 +2,8 @@ import { getExternalRequest, getExternalRequests, getProviders } from './api-cli
 import { Modal } from 'flowbite'
 import table from './plugins/table'
 import { getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './utils'
+import moment from 'moment'
+import { DATE_FORMAT } from './constants/date-format'
 
 export const externalRequests = () => {
   return {
@@ -72,6 +74,25 @@ export const externalRequests = () => {
             { label: 'DELETE', value: 'DELETE' },
           ]
         }
+      },
+      date: {
+        id: 'date',
+        type: 'date',
+        label: 'Date',
+        updateQuery: true,
+        toggleEnabled: false,
+        items() {
+          const today = moment().startOf('day').format(DATE_FORMAT)
+          const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
+          const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+          const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+          return [
+            { label: 'Today', value: today },
+            { label: 'Yesterday', value: yesterday },
+            { label: 'Last 7 days', value: lastWeek },
+            { label: 'Last 30 days', value: lastMonth }
+          ]
+        }
       }
     },
     fetching: true,
@@ -91,11 +112,12 @@ export const externalRequests = () => {
         }, async (page, pageSize) => {
           this.fetching = true
           const query = getQueryParams()
-          const status = query.status ? query.status.split(',') : undefined
           const providers = query.provider ? query.provider.split(',') : undefined
           const method = query.method ? query.method.split(',') : undefined
+          const status = query.status ? query.status.split(',') : undefined
+          const date = query.date ? query.date.split(',') : undefined
 
-          const externalRequests = await getExternalRequests(providers, status, method, page, pageSize)
+          const externalRequests = await getExternalRequests(providers, status, method, date, page, pageSize)
           this.fetching = false
           return externalRequests
         })
