@@ -69,6 +69,7 @@ export const providers = () => {
           await this.doFetch()
         }
       }
+      const tabsElement = document.querySelector('#tabExample')
       const tabElements = [
         {
           id: 'sexes',
@@ -86,7 +87,7 @@ export const providers = () => {
           targetEl: document.querySelector('#breeds')
         }
       ]
-      this.tabs = new Tabs(tabElements, tabOptions)
+      this.tabs = new Tabs(tabsElement, tabElements, tabOptions)
     },
 
     // Modal

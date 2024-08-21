@@ -145,7 +145,7 @@ export const refs = () => {
     initTabs() {
       this.type = 'sex'
       const tabOptions = {
-        defaultTabId: getQueryParams('ref').ref || 'sex',
+        defaultTabId: getQueryParams('ref').ref || 'sexes',
         activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: async (tab) => {
@@ -157,6 +157,7 @@ export const refs = () => {
           await this.doFetch()
         }
       }
+      const tabsElement = document.querySelector('#tabExample')
       const tabElements = [
         {
           id: 'sexes',
@@ -174,7 +175,7 @@ export const refs = () => {
           targetEl: document.querySelector('#breeds')
         }
       ]
-      this.tabs = new Tabs(tabElements, tabOptions)
+      this.tabs = new Tabs(tabsElement, tabElements, tabOptions)
     },
 
     // Tables
