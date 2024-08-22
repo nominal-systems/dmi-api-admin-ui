@@ -2,16 +2,16 @@
   <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" @filter.window="fetch">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
     <tr>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-1/2">
         Name
       </th>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py3">
         Code
       </th>
-      <th scope="col" class="px-6 py-3" x-show="type === 'species'">
+      <th scope="col" class="px-6 py-3 w-56" x-show="type === 'species'">
         Default breed
       </th>
-      <th scope="col" class="px-6 py-3">
+      <th scope="col" class="px-6 py-3 w-24">
         <span class="sr-only">Edit</span>
       </th>
     </tr>
@@ -20,9 +20,26 @@
     <template x-if="!fetching">
       <template x-for="item in refs[type].items">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" x-text="item.name"></th>
-          <td class="px-6 py-4" x-text="item.code"></td>
-          <td class="px-6 py-4" x-text="item.defaultBreed" x-show="type === 'species'"></td>
+          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              x-text="item.name">
+          </th>
+          <td class="px-6 py-4">
+            <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500"
+                  x-text="item.code">
+            </span>
+          </td>
+          <td class="px-6 py-4" x-show="type === 'species'">
+            <template x-if="item.defaultBreed">
+              <div>
+                <span x-text="item.defaultBreed.name"></span> (<span x-text="item.defaultBreed.code"></span>)
+              </div>
+            </template>
+            <template x-if="!item.defaultBreed">
+              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
+                Unset
+              </span>
+            </template>
+          </td>
           <td class="px-6 py-4 text-right">
             <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
           </td>
@@ -31,7 +48,7 @@
     </template>
     <template x-if="fetching">
       <tr class="border-b border-b-gray-700">
-        <td class="px-6 py-4 text-center" :colspan="3 + providers.length">
+        <td class="px-6 py-4 text-center" :colspan="type === 'species' ? 3 : 2">
           <div class="text-center">
             <div role="status">
               <svg aria-hidden="true" class="inline w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

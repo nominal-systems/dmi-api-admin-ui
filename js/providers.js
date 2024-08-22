@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs'
 import { getDefaultBreeds, getIntegrationsForProvider, getProviderRefs, syncProviderRefs } from './api-client'
-import { getIdFromPath } from './utils'
+import { getIdFromPath, getQueryParams, setQueryParam } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
 import { PROVIDERS } from './constants/provider-list'
@@ -58,12 +58,13 @@ export const providers = () => {
     activeTab: null,
     initTabs() {
       const tabOptions = {
-        defaultTabId: 'sexes',
+        defaultTabId: getQueryParams('refType').refType || 'sexes',
         activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: async (tab) => {
           this.query = null
           this.activeTab = tab.getActiveTab()
+          setQueryParam('refType', this.activeTab.id)
           this.type = this.activeTab.id
           this.table = this.refs[this.type]
           await this.doFetch()
@@ -126,12 +127,14 @@ export const providers = () => {
           pageSize: PAGE_SIZE
         }, async (page, pageSize) => {
           const refs = await getProviderRefs(this.provider.id, 'species', this.query, page, pageSize)
-          const defaults = await getDefaultBreeds(this.provider.id, refs.data.map((r) => r.code))
-          defaults.forEach((defaultBreed) => {
-            const ref = refs.data.find((r) => r.code === defaultBreed.species)
-            if (ref !== undefined) {
-              ref.defaultBreed = defaultBreed.defaultBreed
+          const speciesCodes = refs.data.map((r) => r.code)
+          const defaultsBreeds = await getDefaultBreeds(this.provider.id, [...new Set(speciesCodes)])
+          refs.data = refs.data.map((ref) => {
+            const defaultBreed = defaultsBreeds.find((defaultBreed) => defaultBreed.species === ref.code)
+            if (defaultBreed !== undefined) {
+              ref.defaultBreed = defaultBreed
             }
+            return ref
           })
           return refs
         }
