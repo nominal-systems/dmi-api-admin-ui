@@ -5,9 +5,13 @@ import { isNullOrUndefinedOrEmpty } from './utils'
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
 
-const apiPost = async (url, body, next) => {
+const apiPost = async (url, body) => {
+  return await apiRequest('POST', url, body)
+}
+
+const apiRequest = async (method, url, body) => {
   const req = {
-    method: 'POST',
+    method: method,
     headers: {
       Authorization: `Bearer ${getTokenFromLocalStorage()}`
     }
@@ -40,8 +44,6 @@ const apiPost = async (url, body, next) => {
     }
     throw error
   }
-
-
 }
 
 function apiGet(url, next) {
@@ -162,6 +164,10 @@ export const getDefaultBreeds = async (providerId, speciesCodes) => {
     defaultBreeds = body
   })
   return defaultBreeds
+}
+
+export const setDefaultBreed = async (providerId, speciesCode, breedCode) => {
+  return await apiRequest('PUT', `/providers/${providerId}/defaultBreed?species=${speciesCode}&breed=${breedCode}`, {})
 }
 
 export const syncProviderRefs = async (provider, type, integrationId, next) => {

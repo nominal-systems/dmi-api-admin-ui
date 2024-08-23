@@ -11,7 +11,7 @@
       <th scope="col" class="px-6 py-3 w-56" x-show="type === 'species'">
         Default breed
       </th>
-      <th scope="col" class="px-6 py-3 w-24">
+      <th scope="col" class="px-6 py-3 w-24" x-show="type === 'species'">
         <span class="sr-only">Edit</span>
       </th>
     </tr>
@@ -40,7 +40,7 @@
               </span>
             </template>
           </td>
-          <td class="px-6 py-4 text-right">
+          <td class="px-6 py-4 text-right" x-show="type === 'species'">
             <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
           </td>
         </tr>
@@ -48,7 +48,7 @@
     </template>
     <template x-if="fetching">
       <tr class="border-b border-b-gray-700">
-        <td class="px-6 py-4 text-center" :colspan="type === 'species' ? 3 : 2">
+        <td class="px-6 py-4 text-center" :colspan="type === 'species' ? 4 : 2">
           <div class="text-center">
             <div role="status">
               <svg aria-hidden="true" class="inline w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +62,7 @@
     </template>
     <template x-if="refs[type].total === 0">
       <tr class="border-b border-b-gray-700">
-        <td class="px-6 py-4 text-center" :colspan="3 + providers.length">
+        <td class="px-6 py-4 text-center" :colspan="type === 'species' ? 4 : 2">
           No results match your search query
         </td>
       </tr>

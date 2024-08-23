@@ -1,5 +1,12 @@
 import Alpine from 'alpinejs'
-import { getDefaultBreeds, getIntegrationsForProvider, getProviderRefs, syncProviderRefs } from './api-client'
+import {
+  getDefaultBreeds,
+  getIntegrationsForProvider,
+  getProviderRefs,
+  searchProviderRefs,
+  setDefaultBreed,
+  syncProviderRefs
+} from './api-client'
 import { getIdFromPath, getQueryParams, setQueryParam } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
@@ -94,6 +101,22 @@ export const providers = () => {
     // Modal
     modal: null,
     editingRef: null,
+    editingDefaultBreed: null,
+    isEditingDefaultBreed: false,
+    async updateDefaultBreed() {
+      const speciesCode = this.editingRef.code
+      const defaultBreedCode = this.editingRef.defaultBreed.code
+      const providerId = this.editingRef.provider.id
+      await setDefaultBreed(providerId, speciesCode, defaultBreedCode)
+      await this.doFetch()
+      this.closeModal()
+    },
+    editDefaultBreed() {
+      this.isEditingDefaultBreed = true
+    },
+    cancelDefaultBreedEdit() {
+      this.isEditingDefaultBreed = false
+    },
     openModal(ref) {
       this.editingRef = ref
       this.modal.show()
@@ -111,6 +134,41 @@ export const providers = () => {
         closable: true
       }
       this.modal = new Modal(targetE, modalOptions)
+    },
+    providerRefTypeahead() {
+      const $targetEl = this.$el.getElementsByTagName('div')[0]
+      const $triggerEl = this.$el.getElementsByTagName('input')[0]
+
+      const options = {
+        placement: 'bottom',
+        triggerType: 'none',
+        offsetSkidding: 0,
+        offsetDistance: 10,
+        delay: 300,
+        ignoreClickOutsideClass: false,
+        onHide: () => {
+          this.isEditingDefaultBreed = false
+        }
+      }
+
+      const dropdown = new Dropdown($targetEl, $triggerEl, options)
+
+      return {
+        query: '',
+        results: [],
+        mapping: {
+          provider: this.provider.id
+        },
+        select(breed) {
+          this.editingRef.defaultBreed = breed
+          dropdown.hide()
+        },
+        async search(provider, query) {
+          const breeds = await searchProviderRefs(provider, 'breed', query)
+          this.results = breeds.data
+          dropdown.show()
+        }
+      }
     },
 
     // Tables
