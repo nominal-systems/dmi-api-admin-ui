@@ -2,17 +2,25 @@ import { Dropdown } from 'flowbite'
 import { getQueryParams, removeQueryParam, setQueryParam } from '../utils'
 
 export default function (Alpine) {
-  const defaultOptions = {
+  const defaultConfig = {
     updateQuery: false,
     toggleEnabled: true,
     toggleLabel: 'Select All',
-    datePickerLabel: 'On'
+    datePickerLabel: 'On',
+    dropdownOptions: {
+      placement: 'bottom',
+      triggerType: 'click',
+      offsetSkidding: 0,
+      offsetDistance: 10,
+      delay: 300,
+      width: '48'
+    }
   }
 
   Alpine.directive('dropdown', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
     if (!value) {
-      const options = Object.assign({}, defaultOptions, evaluate(expression))
-      handleRoot(el, Alpine, options)
+      const config = Object.assign({}, defaultConfig, evaluate(expression))
+      handleRoot(el, Alpine, config)
     } else if (value === 'button') {
     } else if (value === 'menu') {
     } else if (value === 'item') {
@@ -25,25 +33,26 @@ export default function (Alpine) {
   })
 }
 
-function handleRoot(el, Alpine, options) {
+function handleRoot(el, Alpine, config) {
   Alpine.bind(el, {
     'x-data'() {
       return {
-        _id: options.id,
-        label: options.label,
-        toggleLabel: options.toggleLabel,
-        toggleEnabled: options.toggleEnabled,
-        datePickerLabel: options.datePickerLabel,
+        _id: config.id,
+        label: config.label,
+        toggleLabel: config.toggleLabel,
+        toggleEnabled: config.toggleEnabled,
+        datePickerLabel: config.datePickerLabel,
         datePickerValue: null,
-        type: options.type,
-        inputType: options.type === 'date' ? 'radio' : 'checkbox',
+        type: config.type,
+        inputType: config.type === 'date' ? 'radio' : 'checkbox',
         dirty: false,
         toggle: false,
         items: [],
+        dropdownOptions: {},
         dropdown: null,
         async init() {
-          const items = [...await options.items()]
-          if (options.updateQuery) {
+          const items = [...await config.items()]
+          if (config.updateQuery) {
             const query = getQueryParams()
             if (query[this._id] !== undefined) {
               items.forEach(item => {
@@ -69,24 +78,18 @@ function handleRoot(el, Alpine, options) {
           this.items = items
           const $buttonEl = el.querySelector('[x-dropdown\\:button]')
           const $menuEl = el.querySelector('[x-dropdown\\:menu]')
-          const dropdownOptions = {
-            placement: 'bottom',
-            triggerType: 'click',
-            offsetSkidding: 0,
-            offsetDistance: 10,
-            delay: 300
+          this.dropdownOptions = config.dropdownOptions
+          if (config.type === 'date') {
+            this.dropdownOptions.ignoreClickOutsideClass = 'datepicker'
           }
-          if (options.type === 'date') {
-            dropdownOptions.ignoreClickOutsideClass = 'datepicker'
-          }
-          this.dropdown = new Dropdown($menuEl, $buttonEl, dropdownOptions)
+          this.dropdown = new Dropdown($menuEl, $buttonEl, this.dropdownOptions)
         }
       }
     },
     '@selectionChanged'() {
       const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
       this.dirty = isDirty($itemEl)
-      if (options.updateQuery) {
+      if (config.updateQuery) {
         this.$dispatch('updateQueryParams')
         this.$dispatch('filter')
       }

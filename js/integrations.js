@@ -62,6 +62,9 @@ export const integrations = {
             value: provider.id
           }
         })
+      },
+      dropdownOptions: {
+        width: '52'
       }
     },
     status: {

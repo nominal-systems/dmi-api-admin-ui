@@ -59,6 +59,9 @@ export const externalRequests = () => {
               value: provider.id,
             }
           })
+        },
+        dropdownOptions: {
+          width: '52'
         }
       },
       method: {
