@@ -1,10 +1,11 @@
-import { getEvents } from './api-client'
+import { getEvents, getIntegrations } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
 import config from './config'
+import { getQueryParams } from './utils'
 
 export const events = {
-  // Events
+  // Table
   table: null,
   fetching: true,
   initTable() {
@@ -14,7 +15,10 @@ export const events = {
         pagesMax: 10,
       }, async (page, pageSize) => {
         this.fetching = true
-        const events = await getEvents(page, pageSize)
+        const query = getQueryParams()
+        const integrations = query.integration ? query.integration.split(',') : undefined
+
+        const events = await getEvents(integrations, page, pageSize)
         events.data.map((ev) => {
           ev.url = `${config.get('UI_BASE')}/events/${ev._id}`
           return ev
@@ -22,6 +26,30 @@ export const events = {
         this.fetching = false
         return events
       })
+  },
+  async fetch(page, pageSize) {
+    await this.table.getPage(1)
+  },
+
+  // Table filter
+  filter: {
+    integration: {
+      id: 'integration',
+      type: 'checkbox',
+      label: 'Integration',
+      updateQuery: true,
+      items: async () => {
+        return (await getIntegrations()).map((integration) => {
+          return {
+            label: integration.id,
+            value: integration.id
+          }
+        })
+      },
+      dropdownOptions: {
+        width: '84'
+      }
+    },
   },
 
   // Modal

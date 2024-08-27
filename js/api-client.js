@@ -90,8 +90,12 @@ export const getOrganizations = async () => {
   return await apiGet2('/organizations')
 }
 
-export const getEvents = async (page, limit) => {
-  return await apiGet2(`/events?page=${page}&limit=${limit}`)
+export const getEvents = async (integrations, page, limit) => {
+  let qs = `page=${page}&limit=${limit}`
+  if (integrations !== undefined) {
+    qs += `&integrations=${integrations.join(',')}`
+  }
+  return await apiGet2(`/events?${qs}`)
 }
 
 export const getEvent = async (id) => {
