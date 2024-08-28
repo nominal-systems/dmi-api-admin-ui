@@ -17,8 +17,9 @@ export const events = {
         this.fetching = true
         const query = getQueryParams()
         const integrations = query.integration ? query.integration.split(',') : undefined
+        const types = query.type ? query.type.split(',') : undefined
 
-        const events = await getEvents(integrations, page, pageSize)
+        const events = await getEvents(integrations, types, page, pageSize)
         events.data.map((ev) => {
           ev.url = `${config.get('UI_BASE')}/events/${ev._id}`
           return ev
@@ -50,6 +51,20 @@ export const events = {
         width: '84'
       }
     },
+    type: {
+      id: 'type',
+      type: 'checkbox',
+      label: 'Type',
+      updateQuery: true,
+      items() {
+        return [
+          { label: 'Order Created', value: 'order:created' },
+          { label: 'Order Updated', value: 'order:updated' },
+          { label: 'Report Created', value: 'report:created' },
+          { label: 'Report Updated', value: 'report:updated' }
+        ]
+      }
+    }
   },
 
   // Modal
