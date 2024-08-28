@@ -3,6 +3,8 @@ import { Modal } from 'flowbite'
 import table from './plugins/table'
 import config from './config'
 import { getQueryParams } from './utils'
+import moment from 'moment'
+import { DATE_FORMAT } from './constants/date-format'
 
 export const events = {
   // Table
@@ -18,8 +20,9 @@ export const events = {
         const query = getQueryParams()
         const integrations = query.integration ? query.integration.split(',') : undefined
         const types = query.type ? query.type.split(',') : undefined
+        const date = query.date ? query.date.split(',') : undefined
 
-        const events = await getEvents(integrations, types, page, pageSize)
+        const events = await getEvents(integrations, types, date, page, pageSize)
         events.data.map((ev) => {
           ev.url = `${config.get('UI_BASE')}/events/${ev._id}`
           return ev
@@ -62,6 +65,25 @@ export const events = {
           { label: 'Order Updated', value: 'order:updated' },
           { label: 'Report Created', value: 'report:created' },
           { label: 'Report Updated', value: 'report:updated' }
+        ]
+      }
+    },
+    date: {
+      id: 'date',
+      type: 'date',
+      label: 'Date',
+      updateQuery: true,
+      toggleEnabled: false,
+      items() {
+        const today = moment().startOf('day').format(DATE_FORMAT)
+        const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
+        const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+        const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+        return [
+          { label: 'Today', value: today },
+          { label: 'Yesterday', value: yesterday },
+          { label: 'Last 7 days', value: lastWeek },
+          { label: 'Last 30 days', value: lastMonth }
         ]
       }
     }
