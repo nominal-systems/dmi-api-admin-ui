@@ -1,4 +1,4 @@
-import { getEvents, getIntegrations } from './api-client'
+import { getEvent, getEvents, getIntegrations } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
 import config from './config'
@@ -92,8 +92,8 @@ export const events = {
   // Modal
   modal: null,
   modalEvent: null,
-  openModal(ev) {
-    this.modalEvent = ev
+  async openModal(ev) {
+    this.modalEvent = await getEvent(ev._id)
     this.modal.show()
   },
   closeModal() {
