@@ -105,6 +105,10 @@ export const getEvents = async (integrations, types, date, page, limit) => {
   return await apiGet2(`/events?${qs}`)
 }
 
+export const getEventsStats = async (startDate, endDate) => {
+  return await apiGet2(`/events/stats?startDate=${startDate}&endDate=${endDate}`)
+}
+
 export const getEvent = async (id) => {
   return await apiGet2(`/events/${id}`)
 }
@@ -200,6 +204,10 @@ export const getExternalRequests = async (providers, status, method, date, page,
     qs += `&date=${date}`
   }
   return await apiGet2(`/external-requests?${qs}`)
+}
+
+export const getExternalRequestsStats = async (startDate, endDate) => {
+  return await apiGet2(`/external-requests/stats?startDate=${startDate}&endDate=${endDate}`)
 }
 
 export const getExternalRequest = async (id) => {

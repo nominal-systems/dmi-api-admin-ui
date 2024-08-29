@@ -4,6 +4,7 @@ import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
 import { getIdFromPath, isProviderPage, navigateToProviderPage } from './utils'
+import { dashboard } from './dashboard'
 import { events } from './events'
 import { eventPage } from './event-page'
 import { refs } from './refs'
@@ -146,6 +147,7 @@ Alpine.plugin(searchInput)
 Alpine.plugin(Clipboard)
 
 // Alpine init
+window.dashboard = dashboard
 window.events = events
 window.eventPage = eventPage
 window.refs = refs
