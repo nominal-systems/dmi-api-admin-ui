@@ -1,11 +1,11 @@
 {{!< base}}
 
 <main class="h-full overflow-y-auto" x-data="dashboard">
+  <!-- Today -->
   <div class="container px-6 mx-auto grid">
     <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-      Dashboard
+      Today
     </h2>
-
     <div>
       {{> dashboard/cards }}
     </div>
@@ -21,7 +21,19 @@
 
     <!-- Recent Activity -->
     <h2 class="my-6 text-xl font-semibold text-gray-700 dark:text-gray-200">
-      Recent Activity
+      Last 7 days
     </h2>
+
+    <div class="grid grid-cols-2">
+      <div class="grid">
+        <template x-if="charts.provider_api_errors !== null">
+          <div x-data="{ series: charts.provider_api_errors, title: 'Provider API errors' }">
+            {{> dashboard/charts }}
+          </div>
+        </template>
+      </div>
+    </div>
+
+
   </div>
 </main>

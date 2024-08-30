@@ -19,6 +19,7 @@ import dropdown from './plugins/dropdown'
 import searchInput from './plugins/search-input'
 import Clipboard from "@ryangjchandler/alpine-clipboard"
 import datepicker from './plugins/datepicker'
+import chart from './plugins/chart'
 
 if (process.env.NODE_ENV === 'development') {
   config.log()
@@ -141,6 +142,7 @@ dateDirective()
 codeDirective()
 
 // Plugins
+Alpine.plugin(chart)
 Alpine.plugin(dropdown)
 Alpine.plugin(datepicker)
 Alpine.plugin(searchInput)
