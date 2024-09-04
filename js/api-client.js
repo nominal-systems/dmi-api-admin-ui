@@ -105,8 +105,15 @@ export const getEvents = async (integrations, types, date, page, limit) => {
   return await apiGet2(`/events?${qs}`)
 }
 
-export const getEventsStats = async (startDate, endDate) => {
-  return await apiGet2(`/events/stats?startDate=${startDate}&endDate=${endDate}`)
+export const getEventsStats = async (types, startDate, endDate, groupBy) => {
+  let qs = `startDate=${startDate}&endDate=${endDate}`
+  if (types !== undefined) {
+    qs += `&types=${types.join(',')}`
+  }
+  if (groupBy !== undefined) {
+    qs += `&groupBy=${groupBy.join(',')}`
+  }
+  return await apiGet2(`/events/stats?${qs}`)
 }
 
 export const getEvent = async (id) => {
