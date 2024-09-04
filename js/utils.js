@@ -1,12 +1,12 @@
 export function isProviderPage() {
-  return window.location.pathname.includes('/providers/');
+  return window.location.pathname.includes('/providers/')
 }
 
 export function navigateToProviderPage(url) {
   window.history.pushState({}, '', url)
   setTimeout(() => {
     window.location.reload(true)
-  }, 0);
+  }, 0)
 }
 
 export function getIdFromPath() {
@@ -20,9 +20,9 @@ export function setQueryParam(param, value) {
 }
 
 export function removeQueryParam(param) {
-  const url = new URL(window.location.href);
-  url.searchParams.delete(param);
-  window.history.replaceState({}, document.title, url.toString());
+  const url = new URL(window.location.href)
+  url.searchParams.delete(param)
+  window.history.replaceState({}, document.title, url.toString())
 }
 
 export function setHash(hash) {
@@ -37,7 +37,7 @@ export function getQueryParams() {
     params[key] = value
   }
 
-  return params;
+  return params
 }
 
 export function isNullOrUndefinedOrEmpty(value) {
@@ -100,4 +100,24 @@ export function mapHttpMethodColor(method) {
     default:
       return 'gray'
   }
+}
+
+export function isObject(item) {
+  return item && typeof item === 'object' && !Array.isArray(item)
+}
+
+export function deepMerge(target, source) {
+  for (const key in source) {
+    if (isObject(source[key])) {
+      if (!target[key]) {
+        target[key] = {}
+      }
+      deepMerge(target[key], source[key])
+    } else if (Array.isArray(source[key])) {
+      target[key] = source[key]
+    } else {
+      target[key] = source[key]
+    }
+  }
+  return target
 }

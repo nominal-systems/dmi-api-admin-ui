@@ -24,10 +24,17 @@
       Last 7 days
     </h2>
 
-    <div class="grid grid-cols-2">
+    <div class="grid grid-cols-2 gap-8">
       <div class="grid">
-        <template x-if="charts.provider_api_errors !== null">
-          <div x-data="{ series: charts.provider_api_errors, title: 'Provider API errors' }">
+        <template x-if="charts.provider_api_errors.series !== null">
+          <div x-data="{ series: charts.provider_api_errors.series, options: charts.provider_api_errors.options, title: 'Provider API errors' }">
+            {{> dashboard/charts }}
+          </div>
+        </template>
+      </div>
+      <div class="grid">
+        <template x-if="charts.events.series !== null">
+          <div x-data="{ series: charts.events.series, options: charts.events.options, title: 'Orders created' }">
             {{> dashboard/charts }}
           </div>
         </template>

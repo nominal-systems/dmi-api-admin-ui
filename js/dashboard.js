@@ -10,7 +10,18 @@ export const dashboard = () => {
       provider_errors_today: 0
     },
     charts: {
-      provider_api_errors: null
+      provider_api_errors: {
+        series: null,
+        options: {
+          chart: { stacked: true }
+        }
+      },
+      events: {
+        series: null,
+        options: {
+          colors: ['#0E9F6E']
+        }
+      }
     },
 
     async init() {
@@ -25,19 +36,21 @@ export const dashboard = () => {
       // Last 7 days
       const startOfLast7Days = moment().utc().subtract(7, 'days').startOf('day').utc().toISOString()
       const last7DaysExternalRequestsStats = await getExternalRequestsStats(startOfLast7Days, endOfToday)
+      const last7DaysEventsStats = await getEventsStats(startOfLast7Days, endOfToday)
 
       this.stats.integrations_running = runningIntegrations.length
       this.stats.orders_created_today = eventStats.find((s) => s.type === 'order:created')?.count || 0
       this.stats.reports_updated_today = eventStats.find((s) => s.type === 'report:updated')?.count || 0
       this.stats.provider_errors_today = todayExternalRequestsStats.reduce((acc, s) => acc + s.count, 0)
-      this.charts.provider_api_errors = createExternalRequestsSeries(last7DaysExternalRequestsStats, startOfLast7Days, endOfToday)
+      this.charts.provider_api_errors.series = createExternalRequestsSeries(last7DaysExternalRequestsStats, 'provider', startOfLast7Days, endOfToday)
+      this.charts.events.series = createExternalRequestsSeries(last7DaysEventsStats, 'type', startOfLast7Days, endOfToday)
     }
   }
 }
 
-function createExternalRequestsSeries(data, startDate, endDate, granularity = 'day') {
+function createExternalRequestsSeries(data, grouping, startDate, endDate, granularity = 'day') {
   const series = []
-  const providers = [...new Set(data.map((d) => d.provider))]
+  const groups = [...new Set(data.map((d) => d[grouping]))]
 
   // Build Time Series
   const start = new Date(startDate)
@@ -60,8 +73,8 @@ function createExternalRequestsSeries(data, startDate, endDate, granularity = 'd
     timeSeries.push({ x, y: 0 });
   }
 
-  providers.forEach((provider) => {
-    const providerData = data.filter((d) => d.provider === provider)
+  groups.forEach((provider) => {
+    const providerData = data.filter((d) => d[grouping] === provider)
     series.push({
       name: provider,
       data: [...timeSeries].map((ts) => {
