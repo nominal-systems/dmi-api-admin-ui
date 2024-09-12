@@ -1,5 +1,6 @@
 import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api-client'
 import moment from 'moment'
+import { QUERY_DATE_FORMAT } from './constants/query-date-format'
 
 export const dashboard = () => {
   return {
@@ -28,13 +29,13 @@ export const dashboard = () => {
       const runningIntegrations = (await getIntegrations()).filter((i) => i.status === 'RUNNING')
 
       // Today
-      const startOfToday = moment().utc().startOf('day').local().toISOString()
-      const endOfToday = moment().utc().endOf('day').toISOString()
+      const startOfToday = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
+      const endOfToday = moment().utc().endOf('day').format(QUERY_DATE_FORMAT)
       const eventStats = await getEventsStats(undefined, startOfToday, endOfToday, ['type'])
       const todayExternalRequestsStats = await getExternalRequestsStats(startOfToday, endOfToday)
 
       // Last 7 days
-      const startOfLast7Days = moment().utc().subtract(7, 'days').startOf('day').utc().toISOString()
+      const startOfLast7Days = moment().utc().subtract(6, 'days').startOf('day').utc().format(QUERY_DATE_FORMAT)
       const last7DaysExternalRequestsStats = await getExternalRequestsStats(startOfLast7Days, endOfToday)
       const last7DaysEventsStats = await getEventsStats(['order:created'], startOfLast7Days, endOfToday, ['createdAt'])
 
