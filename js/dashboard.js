@@ -52,8 +52,8 @@ export const dashboard = () => {
       this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)
 
       // Charts
-      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, 'provider', sevenDaysAgo, today)
-      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, 'type', sevenDaysAgo, today)
+      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, sevenDaysAgo, today, { grouping: 'provider' })
+      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, sevenDaysAgo, today, { seriesName: 'Orders created' })
     }
   }
 }

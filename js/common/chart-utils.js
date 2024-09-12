@@ -1,6 +1,13 @@
-export function createTimeSeries(data, grouping, startDate, endDate, granularity = 'day') {
+export function createTimeSeries(data, startDate, endDate, options = {}) {
+  const defaultOptions = {
+    granularity: 'day',
+    seriesName: 'Series',
+  }
+  const opts = Object.assign({}, defaultOptions, options)
   const series = []
-  const groups = [...new Set(data.map((d) => d[grouping]))]
+  const groups = [...new Set(data.map((d) => {
+    return opts.grouping !== undefined ? d[opts.grouping] : opts.seriesName
+  }))]
 
   // Build Time Series
   const start = new Date(startDate)
@@ -8,13 +15,13 @@ export function createTimeSeries(data, grouping, startDate, endDate, granularity
   const timeSeries = [];
   while (start <= end) {
     let x;
-    if (granularity === 'month') {
+    if (opts.granularity === 'month') {
       x = start.toISOString().slice(0, 7); // YYYY-MM
       start.setMonth(start.getMonth() + 1);
-    } else if (granularity === 'day') {
+    } else if (opts.granularity === 'day') {
       x = start.toISOString().slice(0, 10); // YYYY-MM-DD
       start.setDate(start.getDate() + 1);
-    } else if (granularity === 'hours') {
+    } else if (opts.granularity === 'hours') {
       x = start.toISOString().slice(0, 13); // YYYY-MM-DDTHH
       start.setHours(start.getHours() + 1);
     } else {
@@ -25,7 +32,9 @@ export function createTimeSeries(data, grouping, startDate, endDate, granularity
 
   // Grouping
   groups.forEach((group) => {
-    const providerData = data.filter((d) => d[grouping] === group)
+    const providerData = data.filter((d) => {
+      return opts.grouping !== undefined ? d[opts.grouping] === group : true
+    })
     series.push({
       name: group,
       data: [...timeSeries].map((ts) => {
@@ -34,10 +43,10 @@ export function createTimeSeries(data, grouping, startDate, endDate, granularity
           x: ts.x,
           y: providerData.reduce((sum, item) => {
             if (
-              (granularity === 'year' && item.year === intervalParts[0]) ||
-              (granularity === 'month' && item.year === intervalParts[0] && item.month === intervalParts[1]) ||
-              (granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
-              (granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
+              (opts.granularity === 'year' && item.year === intervalParts[0]) ||
+              (opts.granularity === 'month' && item.year === intervalParts[0] && item.month === intervalParts[1]) ||
+              (opts.granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
+              (opts.granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
             ) {
               sum += item.count;
             }
