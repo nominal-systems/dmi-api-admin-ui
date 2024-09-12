@@ -3,13 +3,6 @@ import { deepMerge } from '../utils'
 
 export default function (Alpine) {
   const defaultOptions = {
-    colors: [
-      '#ea5545',
-      '#ef9b20',
-      '#87bc45',
-      '#27aeef',
-      '#b33dc6'
-    ],
     chart: {
       type: 'bar',
       height: '300px',
@@ -17,6 +10,9 @@ export default function (Alpine) {
       toolbar: {
         show: false,
       },
+    },
+    noData: {
+      text: 'No data in the current filter'
     },
     plotOptions: {
       bar: {

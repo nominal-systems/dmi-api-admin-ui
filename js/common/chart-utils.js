@@ -1,13 +1,17 @@
 export function createTimeSeries(data, startDate, endDate, options = {}) {
   const defaultOptions = {
     granularity: 'day',
-    series: ['Series'],
+    series: [
+      {
+        label: 'Series 1',
+      }
+    ],
   }
   const opts = Object.assign({}, defaultOptions, options)
 
   // Build Time Series
-  const series = opts.series.map((name) => {
-    return { name, data: [] }
+  const series = opts.series.map((s) => {
+    return { name: s.label, id: s.id, data: [] }
   })
   const start = new Date(startDate)
   const end = new Date(endDate)
@@ -32,7 +36,7 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
   // Grouping
   series.forEach((s) => {
     const seriesData = data.filter((d) => {
-      return opts.grouping !== undefined ? d[opts.grouping] === s.name : true
+      return opts.grouping !== undefined ? d[opts.grouping] === s.id : true
     })
     s.data = [...timeSeries].map((ts) => {
       const intervalParts = ts.x.split('-').map((part) => parseInt(part))

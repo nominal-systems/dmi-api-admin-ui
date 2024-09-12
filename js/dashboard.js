@@ -25,7 +25,7 @@ export const dashboard = () => {
       events: {
         series: null,
         options: {
-          colors: ['#0E9F6E'],
+          colors: ['#69656a'],
           dataLabels: {
             enabled: true
           }
@@ -47,7 +47,7 @@ export const dashboard = () => {
 
       // Last 7 days
       const last7DaysOrderCreatedEvents = await getEventsStats(['order:created'], sevenDaysAgo, today, ['createdAt'])
-      const last7DaysExternalRequestsStats = await getExternalRequestsStats(sevenDaysAgo, today)
+      const last7DaysExternalRequests = await getExternalRequestsStats(sevenDaysAgo, today)
 
       // Cards
       this.stats.integrations_running = runningIntegrations.length
@@ -56,12 +56,16 @@ export const dashboard = () => {
       this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)
 
       // Charts
-      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, sevenDaysAgo, today, {
-        series: PROVIDERS_CONFIG.map((p) => p.id),
+      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequests, sevenDaysAgo, today, {
+        series: PROVIDERS_CONFIG,
         grouping: 'provider'
       })
       this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, sevenDaysAgo, today, {
-        series: ['Orders created']
+        series: [
+          {
+            label: 'Orders Created'
+          }
+        ]
       })
     }
   }

@@ -2,26 +2,26 @@ export const PROVIDERS_CONFIG = [
   {
     id: 'antech',
     label: 'Antech V3',
-    color: '#ea5545',
+    color: '#8a3ffc',
   },
   {
     id: 'antech-v6',
-    label: 'Antech v6',
-    color: '#ef9b20',
+    label: 'Antech V6',
+    color: '#d12771',
   },
   {
     id: 'idexx',
-    label: 'idEXX',
-    color: '#87bc45',
+    label: 'IDEXX',
+    color: '#007d79',
   },
   {
     id: 'zoetis',
     label: 'Zoetis',
-    color: '#27aeef',
+    color: '#ba4e00',
   },
   {
     id: 'wisdom-panel',
     label: 'Wisdom Panel',
-    color: '#b33dc6',
+    color: '#d2a106',
   }
 ]
