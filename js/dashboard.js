@@ -2,6 +2,7 @@ import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api
 import moment from 'moment'
 import { QUERY_DATE_FORMAT } from './constants/query-date-format'
 import { createTimeSeries } from './common/chart-utils'
+import { PROVIDERS_CONFIG } from './constants/providers-config'
 
 export const dashboard = () => {
   return {
@@ -15,7 +16,10 @@ export const dashboard = () => {
       provider_api_errors: {
         series: null,
         options: {
-          chart: { stacked: true }
+          chart: { stacked: true },
+          colors: [function ({ value, seriesIndex, w }) {
+            return PROVIDERS_CONFIG[seriesIndex].color
+          }]
         }
       },
       events: {
@@ -52,8 +56,13 @@ export const dashboard = () => {
       this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)
 
       // Charts
-      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, sevenDaysAgo, today, { grouping: 'provider' })
-      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, sevenDaysAgo, today, { seriesName: 'Orders created' })
+      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, sevenDaysAgo, today, {
+        series: PROVIDERS_CONFIG.map((p) => p.id),
+        grouping: 'provider'
+      })
+      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, sevenDaysAgo, today, {
+        series: ['Orders created']
+      })
     }
   }
 }

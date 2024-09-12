@@ -1,15 +1,14 @@
 export function createTimeSeries(data, startDate, endDate, options = {}) {
   const defaultOptions = {
     granularity: 'day',
-    seriesName: 'Series',
+    series: ['Series'],
   }
   const opts = Object.assign({}, defaultOptions, options)
-  const series = []
-  const groups = [...new Set(data.map((d) => {
-    return opts.grouping !== undefined ? d[opts.grouping] : opts.seriesName
-  }))]
 
   // Build Time Series
+  const series = opts.series.map((name) => {
+    return { name, data: [] }
+  })
   const start = new Date(startDate)
   const end = new Date(endDate)
   const timeSeries = [];
@@ -31,29 +30,26 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
   }
 
   // Grouping
-  groups.forEach((group) => {
-    const providerData = data.filter((d) => {
-      return opts.grouping !== undefined ? d[opts.grouping] === group : true
+  series.forEach((s) => {
+    const seriesData = data.filter((d) => {
+      return opts.grouping !== undefined ? d[opts.grouping] === s.name : true
     })
-    series.push({
-      name: group,
-      data: [...timeSeries].map((ts) => {
-        const intervalParts = ts.x.split('-').map((part) => parseInt(part))
-        return {
-          x: ts.x,
-          y: providerData.reduce((sum, item) => {
-            if (
-              (opts.granularity === 'year' && item.year === intervalParts[0]) ||
-              (opts.granularity === 'month' && item.year === intervalParts[0] && item.month === intervalParts[1]) ||
-              (opts.granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
-              (opts.granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
-            ) {
-              sum += item.count;
-            }
-            return sum;
-          }, 0)
-        }
-      })
+    s.data = [...timeSeries].map((ts) => {
+      const intervalParts = ts.x.split('-').map((part) => parseInt(part))
+      return {
+        x: ts.x,
+        y: seriesData.reduce((sum, item) => {
+          if (
+            (opts.granularity === 'year' && item.year === intervalParts[0]) ||
+            (opts.granularity === 'month' && item.year === intervalParts[0] && item.month === intervalParts[1]) ||
+            (opts.granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
+            (opts.granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
+          ) {
+            sum += item.count;
+          }
+          return sum;
+        }, 0)
+      }
     })
   })
 
