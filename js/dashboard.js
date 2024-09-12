@@ -1,6 +1,7 @@
 import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api-client'
 import moment from 'moment'
 import { QUERY_DATE_FORMAT } from './constants/query-date-format'
+import { createTimeSeries } from './common/chart-utils'
 
 export const dashboard = () => {
   return {
@@ -20,7 +21,10 @@ export const dashboard = () => {
       events: {
         series: null,
         options: {
-          colors: ['#0E9F6E']
+          colors: ['#0E9F6E'],
+          dataLabels: {
+            enabled: true
+          }
         }
       }
     },
@@ -28,75 +32,28 @@ export const dashboard = () => {
     async init() {
       const runningIntegrations = (await getIntegrations()).filter((i) => i.status === 'RUNNING')
 
+      // Dates
+      const today = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
+      const sevenDaysAgo = moment().utc().subtract(6, 'days').startOf('day').format(QUERY_DATE_FORMAT)
+
       // Today
-      const startOfToday = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
-      const endOfToday = moment().utc().endOf('day').format(QUERY_DATE_FORMAT)
-      const eventStats = await getEventsStats(undefined, startOfToday, endOfToday, ['type'])
-      const todayExternalRequestsStats = await getExternalRequestsStats(startOfToday, endOfToday)
+      // TODO(gb): make only one request and filter for today?
+      const todayEvents = await getEventsStats(undefined, today, today, ['type'])
+      const todayExternalRequests = await getExternalRequestsStats(today, today)
 
       // Last 7 days
-      const startOfLast7Days = moment().utc().subtract(6, 'days').startOf('day').utc().format(QUERY_DATE_FORMAT)
-      const last7DaysExternalRequestsStats = await getExternalRequestsStats(startOfLast7Days, endOfToday)
-      const last7DaysEventsStats = await getEventsStats(['order:created'], startOfLast7Days, endOfToday, ['createdAt'])
+      const last7DaysOrderCreatedEvents = await getEventsStats(['order:created'], sevenDaysAgo, today, ['createdAt'])
+      const last7DaysExternalRequestsStats = await getExternalRequestsStats(sevenDaysAgo, today)
 
+      // Cards
       this.stats.integrations_running = runningIntegrations.length
-      this.stats.orders_created_today = eventStats.find((s) => s.type === 'order:created')?.count || 0
-      this.stats.reports_updated_today = eventStats.find((s) => s.type === 'report:updated')?.count || 0
-      this.stats.provider_errors_today = todayExternalRequestsStats.reduce((acc, s) => acc + s.count, 0)
-      this.charts.provider_api_errors.series = createExternalRequestsSeries(last7DaysExternalRequestsStats, 'provider', startOfLast7Days, endOfToday)
-      this.charts.events.series = createExternalRequestsSeries(last7DaysEventsStats, 'type', startOfLast7Days, endOfToday)
+      this.stats.orders_created_today = todayEvents.find((s) => s.type === 'order:created')?.count || 0
+      this.stats.reports_updated_today = todayEvents.find((s) => s.type === 'report:updated')?.count || 0
+      this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)
+
+      // Charts
+      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequestsStats, 'provider', sevenDaysAgo, today)
+      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, 'type', sevenDaysAgo, today)
     }
   }
-}
-
-function createExternalRequestsSeries(data, grouping, startDate, endDate, granularity = 'day') {
-  const series = []
-  const groups = [...new Set(data.map((d) => d[grouping]))]
-
-  // Build Time Series
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-  const timeSeries = [];
-  while (start <= end) {
-    let x;
-    if (granularity === 'month') {
-      x = start.toISOString().slice(0, 7); // YYYY-MM
-      start.setMonth(start.getMonth() + 1);
-    } else if (granularity === 'day') {
-      x = start.toISOString().slice(0, 10); // YYYY-MM-DD
-      start.setDate(start.getDate() + 1);
-    } else if (granularity === 'hours') {
-      x = start.toISOString().slice(0, 13); // YYYY-MM-DDTHH
-      start.setHours(start.getHours() + 1);
-    } else {
-      throw new Error('Invalid granularity. Use \'month\', \'day\', or \'hours\'.');
-    }
-    timeSeries.push({ x, y: 0 });
-  }
-
-  groups.forEach((provider) => {
-    const providerData = data.filter((d) => d[grouping] === provider)
-    series.push({
-      name: provider,
-      data: [...timeSeries].map((ts) => {
-        const intervalParts = ts.x.split('-').map((part) => parseInt(part))
-        return {
-          x: ts.x,
-          y: providerData.reduce((sum, item) => {
-            if (
-              (granularity === 'year' && item.year === intervalParts[0]) ||
-              (granularity === 'month' && item.year === intervalParts[0] && item.month === intervalParts[1]) ||
-              (granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
-              (granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
-            ) {
-              sum += item.count;
-            }
-            return sum;
-          }, 0)
-        }
-      })
-    })
-  })
-
-  return series
 }
