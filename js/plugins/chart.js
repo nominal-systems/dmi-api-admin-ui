@@ -5,7 +5,7 @@ export default function (Alpine) {
   const defaultOptions = {
     chart: {
       type: 'bar',
-      height: '300px',
+      height: '100%',
       fontFamily: 'Inter, sans-serif',
       toolbar: {
         show: false,
