@@ -2,7 +2,7 @@ import { getEvent, getEvents, getIntegrations } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
 import config from './config'
-import { getQueryParams } from './utils'
+import { getQueryParams } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 

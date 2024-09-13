@@ -1,5 +1,5 @@
 import ApexCharts from 'apexcharts'
-import { deepMerge } from '../utils'
+import { deepMerge } from '../common/utils'
 
 export default function (Alpine) {
   const defaultOptions = {

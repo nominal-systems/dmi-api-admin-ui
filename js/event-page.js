@@ -1,4 +1,4 @@
-import { getIdFromPath } from './utils'
+import { getIdFromPath } from './common/utils'
 import { getEvent } from './api-client'
 
 export const eventPage = {

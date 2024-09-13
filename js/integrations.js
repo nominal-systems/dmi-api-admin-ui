@@ -1,7 +1,7 @@
 import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
-import { getProviderConfig, getQueryParams } from './utils'
+import { getProviderConfig, getQueryParams } from './common/utils'
 
 export const integrations = {
   integrations: [],

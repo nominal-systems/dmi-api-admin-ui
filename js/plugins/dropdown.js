@@ -1,5 +1,5 @@
 import { Dropdown } from 'flowbite'
-import { getQueryParams, removeQueryParam, setQueryParam } from '../utils'
+import { getQueryParams, removeQueryParam, setQueryParam } from '../common/utils'
 
 export default function (Alpine) {
   const defaultConfig = {

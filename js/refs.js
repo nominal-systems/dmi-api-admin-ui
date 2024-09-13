@@ -2,7 +2,7 @@ import Alpine from 'alpinejs'
 import { Modal, Tabs } from 'flowbite'
 import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, setQueryParam } from './utils'
+import { getProviderConfig, getQueryParams, setQueryParam } from './common/utils'
 
 const PAGE_SIZE = 20
 

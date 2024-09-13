@@ -7,7 +7,7 @@ import {
   setDefaultBreed,
   syncProviderRefs
 } from './api-client'
-import { getIdFromPath, getProviderConfig, getQueryParams, setQueryParam } from './utils'
+import { getIdFromPath, getProviderConfig, getQueryParams, setQueryParam } from './common/utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
 import { PROVIDERS } from './constants/provider-list'

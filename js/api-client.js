@@ -1,6 +1,6 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 import config from './config'
-import { isNullOrUndefinedOrEmpty } from './utils'
+import { isNullOrUndefinedOrEmpty } from './common/utils'
 
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')

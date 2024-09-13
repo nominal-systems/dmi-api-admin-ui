@@ -1,4 +1,4 @@
-import { PROVIDERS_CONFIG } from './constants/providers-config'
+import { PROVIDERS_CONFIG } from '../constants/providers-config'
 
 export function isProviderPage() {
   return window.location.pathname.includes('/providers/')

@@ -1,4 +1,4 @@
-import { isNullOrUndefinedOrEmpty } from '../utils'
+import { isNullOrUndefinedOrEmpty } from '../common/utils'
 
 const defaultOptions = {
   placeholder: 'Search...',

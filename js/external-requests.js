@@ -1,7 +1,7 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './utils'
+import { getProviderConfig, getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 

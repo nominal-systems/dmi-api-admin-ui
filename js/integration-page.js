@@ -1,4 +1,4 @@
-import { getIdFromPath } from './utils'
+import { getIdFromPath } from './common/utils'
 import { getIntegration } from './api-client'
 
 export const integrationPage = {
