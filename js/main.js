@@ -3,7 +3,7 @@ import Alpine from 'alpinejs'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
-import { getIdFromPath, isProviderPage, navigateToProviderPage } from './utils'
+import { getIdFromPath, getProviderConfig, isProviderPage, navigateToProviderPage } from './utils'
 import { dashboard } from './dashboard'
 import { events } from './events'
 import { eventPage } from './event-page'
@@ -46,6 +46,7 @@ window.data = {
     this.isProfileMenuOpen = false
   },
   isPagesMenuOpen: false,
+  config,
 
   // Auth
   user: {
@@ -114,7 +115,7 @@ window.data = {
     providersPage.subPages = providers.map(provider => {
       return {
         id: provider.id,
-        name: provider.id,
+        name: getProviderConfig(provider.id).label,
         url: `${config.get('UI_BASE')}/providers/${provider.id}`,
         active: provider.id === getIdFromPath(),
         go: navigateToProviderPage

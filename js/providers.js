@@ -7,7 +7,7 @@ import {
   setDefaultBreed,
   syncProviderRefs
 } from './api-client'
-import { getIdFromPath, getQueryParams, setQueryParam } from './utils'
+import { getIdFromPath, getProviderConfig, getQueryParams, setQueryParam } from './utils'
 import { Modal, Tabs } from 'flowbite'
 import table from './plugins/table'
 import { PROVIDERS } from './constants/provider-list'
@@ -207,7 +207,9 @@ export const providers = () => {
     },
 
     async init() {
-      this.provider = PROVIDERS[getIdFromPath()]   //TODO(gb): get provider from API
+      const provider = PROVIDERS[getIdFromPath()]   //TODO(gb): get provider from API
+      provider.label = getProviderConfig(provider.id).label
+      this.provider = provider
       this.initTables()
       this.initTabs()
       this.initModal()

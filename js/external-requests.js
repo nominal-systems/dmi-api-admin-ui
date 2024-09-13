@@ -1,7 +1,7 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
-import { getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './utils'
+import { getProviderConfig, getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 
@@ -11,10 +11,12 @@ export const externalRequests = () => {
     modal: null,
     externalRequest: null,
     async openModal(externalRequest) {
-      this.externalRequest = await getExternalRequest(externalRequest._id)
-      this.externalRequest.methodColor = mapHttpMethodColor(this.externalRequest.method)
-      this.externalRequest.statusText = mapHttpStatusText(this.externalRequest.status)
-      this.externalRequest.color = mapHttpStatusColor(this.externalRequest.status)
+      const req = await getExternalRequest(externalRequest._id)
+      req.methodColor = mapHttpMethodColor(req.method)
+      req.statusText = mapHttpStatusText(req.status)
+      req.color = mapHttpStatusColor(req.status)
+      req.providerLabel = getProviderConfig(req.provider).label
+      this.externalRequest = req
       this.modal.show()
     },
     closeModal() {
@@ -55,7 +57,7 @@ export const externalRequests = () => {
         async items() {
           return (await getProviders()).map((provider) => {
             return {
-              label: provider.description,
+              label: getProviderConfig(provider.id).label,
               value: provider.id,
             }
           })
@@ -121,6 +123,9 @@ export const externalRequests = () => {
           const date = query.date ? query.date.split(',') : undefined
 
           const externalRequests = await getExternalRequests(providers, status, method, date, page, pageSize)
+          externalRequests.data.forEach((req) => {
+            req.providerLabel = getProviderConfig(req.provider).label
+          })
           this.fetching = false
           return externalRequests
         })

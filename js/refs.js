@@ -2,7 +2,7 @@ import Alpine from 'alpinejs'
 import { Modal, Tabs } from 'flowbite'
 import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
-import { getQueryParams, setQueryParam } from './utils'
+import { getProviderConfig, getQueryParams, setQueryParam } from './utils'
 
 const PAGE_SIZE = 20
 
@@ -117,7 +117,7 @@ export const refs = () => {
       this.editingRefMappings = []
       this.providers.forEach((provider) => {
         this.editingRefMappings.push({
-          provider: provider.id,
+          provider: getProviderConfig(provider.id).label,
           ref: ref.providerRef[provider.id]
         })
       })
@@ -206,7 +206,11 @@ export const refs = () => {
       this.initTables()
       this.initTabs()
       this.initModal()
-      this.providers = await getProviders()
+      const providers = await getProviders()
+      providers.forEach((provider) => {
+        provider.label = getProviderConfig(provider.id).label
+      })
+      this.providers = providers
     }
   }
 }

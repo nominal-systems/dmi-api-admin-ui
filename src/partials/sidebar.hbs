@@ -1,7 +1,7 @@
 <!-- Desktop sidebar -->
 <aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0" x-init="initMenu">
   <div class="py-4 text-gray-500 dark:text-gray-400">
-    <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="/">
+    <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" :href="config.get('UI_BASE')">
       DMI Admin
     </a>
 
@@ -62,7 +62,7 @@
             <ul class="items-start p-2 mt-2 space-y-2 overflow-hidden text-sm font-medium text-gray-500 rounded-md shadow-inner bg-gray-50 dark:text-gray-400 dark:bg-gray-900" aria-label="submenu">
               <template x-for="subItem in item.subPages">
                 <li class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                  <button class="uppercase" x-text="subItem.name" x-bind:href="subItem.url"
+                  <button x-text="subItem.name" x-bind:href="subItem.url"
                           :class="{'dark:text-gray-100': subItem.active, 'text-gray-800': subItem.active}"
                           @click="subItem.go(subItem.url)">
                   </button>

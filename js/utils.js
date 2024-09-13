@@ -1,5 +1,11 @@
+import { PROVIDERS_CONFIG } from './constants/providers-config'
+
 export function isProviderPage() {
   return window.location.pathname.includes('/providers/')
+}
+
+export function getProviderConfig(providerId) {
+  return PROVIDERS_CONFIG.find((provider) => provider.id === providerId)
 }
 
 export function navigateToProviderPage(url) {

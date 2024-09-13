@@ -1,7 +1,7 @@
 import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
-import { getQueryParams } from './utils'
+import { getProviderConfig, getQueryParams } from './utils'
 
 export const integrations = {
   integrations: [],
@@ -95,14 +95,15 @@ export const integrations = {
   async fetchIntegrations() {
     // TODO(gb): eventually do filtering in backend
     this.fetching = true
-    this.integrations = (await getIntegrations()).map(integration => {
-      return {
-        ...integration,
-        isRunning: integration.status === 'RUNNING',
-        color: integration.status === 'RUNNING' ? 'green' : 'red',
-        show: this.showIntegration(integration)
-      }
+    const integrations = await getIntegrations()
+    integrations.forEach(integration => {
+      const providerConfig = getProviderConfig(integration.providerConfiguration.providerId)
+      integration.providerLabel = providerConfig !== undefined ? providerConfig.label : integration.providerConfiguration.providerId
+      integration.isRunning = integration.status === 'RUNNING'
+      integration.color = integration.status === 'RUNNING' ? 'green' : 'red'
+      integration.show = this.showIntegration(integration)
     })
+    this.integrations = integrations
     this.fetching = false
   },
   async updateIntegrationStatus() {
