@@ -11,28 +11,28 @@
       {{#> table}}
         {{#*inline "tableHeader"}}
           <tr>
-            <th class="px-4 py-3">#</th>
-            <th class="px-4 py-3">Date</th>
+            <th class="px-4 py-3 w-32">#</th>
+            <th class="px-4 py-3 w-64">Date</th>
             <th class="px-4 py-3">Integration</th>
-            <th class="px-4 py-3">Namespace</th>
-            <th class="px-4 py-3">Type</th>
-            <th class="px-4 py-3">Data</th>
+            <th class="px-4 py-3 w-32">Namespace</th>
+            <th class="px-4 py-3 w-32">Type</th>
+            <th class="px-4 py-3 w-24 text-center">Data</th>
           </tr>
         {{/inline}}
         {{#*inline "tableRows"}}
           <template x-for="ev in items">
             <tr class="text-gray-700 dark:text-gray-400">
-              <td class="px-4 py-3 text-xs">
+              <td class="px-4 py-3">
                 <a x-bind:href="ev.url" class="font-medium text-purple-600 dark:text-blue-500 hover:underline" x-text="ev.seq"></a>
               </td>
-              <td class="px-4 py-3 text-xs" x-date="ev.createdAt"></td>
-              <td class="px-4 py-3 text-xs" x-text="ev.integrationId"></td>
-              <td class="px-4 py-3 text-xs" x-text="ev.namespace"></td>
-              <td class="px-4 py-3 text-xs" x-text="ev.type"></td>
-              <td class="px-4 py-3 text-xs">
+              <td class="px-4 py-3" x-date="ev.createdAt"></td>
+              <td class="px-4 py-3" x-text="ev.integrationId"></td>
+              <td class="px-4 py-3" x-text="ev.namespace"></td>
+              <td class="px-4 py-3" x-text="ev.type"></td>
+              <td class="px-4 py-3 text-center">
                 <div class="flex items-center space-x-4 text-sm">
                   <button
-                    class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                    class="flex items-center mx-auto px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                     @click="openModal(ev)"
                     aria-label="Debug">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
