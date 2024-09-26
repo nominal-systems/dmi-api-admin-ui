@@ -2,9 +2,7 @@ import Alpine from 'alpinejs'
 import { Modal, Tabs } from 'flowbite'
 import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, setQueryParam } from './common/utils'
-
-const PAGE_SIZE = 20
+import { getProviderConfig, getQueryParams, removeQueryParam, setQueryParam } from './common/utils'
 
 export const refs = () => {
   return {
@@ -13,16 +11,38 @@ export const refs = () => {
 
     // Reference Data
     type: null,
-    query: null,
     refs: {
-      sexes: null,
-      species: null,
-      breeds: null
+      sexes: table(
+        {
+          pageSize: 20,
+          getPage: async (page, pageSize) => {
+            const query = getQueryParams()
+            return await getRefs('sex', query.search, page, pageSize)
+          }
+        }
+      ),
+      species: table(
+        {
+          pageSize: 20,
+          getPage: async (page, pageSize) => {
+            const query = getQueryParams()
+            return await getRefs('species', query.search, page, pageSize)
+          }
+        }
+      ),
+      breeds: table(
+        {
+          pageSize: 20,
+          getPage: async (page, pageSize) => {
+            const query = getQueryParams()
+            return await getRefs('breed', query.search, page, pageSize)
+          }
+        }
+      )
     },
     syncing: false,
     updates: {},
     updatingRefs: false,
-    fetching: true,
     search: {
       sexes: {
         placeholder: 'Search by name...'
@@ -45,19 +65,14 @@ export const refs = () => {
       Alpine.store('alert')
         .set('info', `Mappings for ${this.editingRef.code} (${this.editingRef.name}) updated successfully!`)
       this.closeModal()
-      await this.refs[type].getPage(0)
+      await this.refs[type].fetchData()
 
       this.updates = {}
       this.updatingRefs = false
     },
     async fetch($event) {
-      this.query = $event.detail.query
-      await this.doFetch()
-    },
-    async doFetch() {
-      this.fetching = true
-      await this.refs[this.type].getPage(1)
-      this.fetching = false
+      setQueryParam('search', $event.detail.query)
+      await this.refs[this.type].fetchData()
     },
 
     // Modal
@@ -117,7 +132,8 @@ export const refs = () => {
       this.editingRefMappings = []
       this.providers.forEach((provider) => {
         this.editingRefMappings.push({
-          provider: getProviderConfig(provider.id).label,
+          provider: provider.id,
+          label: getProviderConfig(provider.id).label,
           ref: ref.providerRef[provider.id]
         })
       })
@@ -149,12 +165,10 @@ export const refs = () => {
         activeClasses: 'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-400 border-purple-600 dark:border-purple-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: async (tab) => {
-          this.query = null
           this.activeTab = tab.getActiveTab()
-          setQueryParam('ref', this.activeTab.id)
           this.type = this.activeTab.id
-          this.table = this.refs[this.type]
-          await this.doFetch()
+          setQueryParam('ref', this.activeTab.id)
+          removeQueryParam('search')
         }
       }
       const tabsElement = document.querySelector('#tabExample')
@@ -178,32 +192,7 @@ export const refs = () => {
       this.tabs = new Tabs(tabsElement, tabElements, tabOptions)
     },
 
-    // Tables
-    initTables() {
-      this.refs.sexes = table(
-        {
-          pageSize: PAGE_SIZE
-        }, async (page, pageSize) => {
-          return await getRefs('sex', this.query, page, pageSize)
-        }
-      )
-      this.refs.species = table(
-        {
-          pageSize: PAGE_SIZE
-        }, async (page, pageSize) => {
-          return await getRefs('species', this.query, page, pageSize)
-        }
-      )
-      this.refs.breeds = table(
-        {
-          pageSize: PAGE_SIZE
-        }, async (page, pageSize) => {
-          return await getRefs('breed', this.query, page, pageSize)
-        }
-      )
-    },
     async init() {
-      this.initTables()
       this.initTabs()
       this.initModal()
       const providers = await getProviders()

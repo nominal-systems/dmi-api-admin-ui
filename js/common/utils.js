@@ -21,7 +21,12 @@ export function getIdFromPath() {
 
 export function setQueryParam(param, value) {
   let url = new URL(window.location)
-  url.searchParams.set(param, value)
+  if (isNullOrUndefinedOrEmpty(value)) {
+    url.searchParams.delete(param)
+  } else {
+    url.searchParams.set(param, value)
+  }
+
   window.history.pushState({}, '', url)
 }
 

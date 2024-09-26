@@ -1,39 +1,54 @@
-const PAGE_SIZE = 10
-const MAX_PAGES = 10
-
-export default (opts, getPageFn) => ({
-  items: null,
-  page: null,
-  pageSize: opts.pageSize || PAGE_SIZE,
-  pagesMax: opts.pagesMax || MAX_PAGES,
-  total: null,
+export default (opts) => ({
+  currentPage: opts.initialPage || 1,
+  pageSize: opts.pageSize || 10,
+  pagesMax: opts.pagesMax || 10,
+  totalPages: null,
+  items: [],
+  loading: false,
+  error: null,
+  totalItems: null,
   resultsStart: null,
   resultsEnd: null,
-  pagesTotal: null,
-  nav: null,
-  getPageFn: getPageFn,
-  async getPage(page) {
-    const response = await this.getPageFn(page || this.page, this.pageSize)
-    this.items = response.data
-    this.total = response.total
-    this.page = parseInt(response.page)
-    this.resultsStart = this.page * this.pageSize - this.pageSize + 1
-    this.resultsEnd = Math.min(this.page * this.pageSize, this.total)
-    this.pagesTotal = Math.ceil(this.total / this.pageSize)
-    this.nav = navPages(this.page, this.pagesTotal, this.pagesMax)
+  pagesNav: null,
+  async init() {
+    await this.fetchData()
+  },
+  async fetchData() {
+    this.loading = true
+    this.error = null
+    try {
+      const response = await opts.getPage(this.currentPage, this.pageSize)
+      if (opts.processResults) {
+        await opts.processResults(response.data)
+      }
+      this.items = response.data
+      this.totalItems = response.total
+      this.resultsStart = this.currentPage * this.pageSize - this.pageSize + 1
+      this.resultsEnd = Math.min(this.currentPage * this.pageSize, this.totalItems)
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize)
+      this.pagesNav = navPages(this.currentPage, this.totalPages, this.pagesMax)
+    } catch (error) {
+      console.error(error)
+      this.error = error
+    } finally {
+      this.loading = false
+    }
+  },
+  async goToPage(pageNumber) {
+    this.currentPage = pageNumber
+    await this.fetchData()
   },
   async nextPage() {
-    if (this.page < this.pagesTotal) {
-      await this.getPage(this.page + 1)
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++
+      await this.fetchData()
     }
   },
   async prevPage() {
-    if (this.page > 1) {
-      await this.getPage(this.page - 1)
+    if (this.currentPage > 1) {
+      this.currentPage--
+      await this.fetchData()
     }
-  },
-  async init() {
-    await this.getPage(1)
   }
 })
 

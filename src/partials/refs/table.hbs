@@ -18,7 +18,7 @@
     </tr>
     </thead>
     <tbody>
-    <template x-if="!fetching">
+    <template x-if="!loading">
       <template x-for="item in refs[type].items">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
           <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white" x-text="item.name"></th>
@@ -43,7 +43,7 @@
         </tr>
       </template>
     </template>
-    <template x-if="fetching">
+    <template x-if="loading">
       <tr class="border-b border-b-gray-700">
         <td class="px-6 py-4 text-center" :colspan="3 + providers.length">
           <div class="text-center">
@@ -57,7 +57,7 @@
         </td>
       </tr>
     </template>
-    <template x-if="refs[type].total === 0">
+    <template x-if="!loading && items?.length === 0">
       <tr class="border-b border-b-gray-700">
         <td class="px-6 py-4 text-center" :colspan="3 + providers.length">
           No results match your search query

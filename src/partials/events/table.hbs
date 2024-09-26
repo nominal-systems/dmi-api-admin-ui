@@ -2,7 +2,7 @@
   <div class="w-full overflow-x-auto">
     {{> events/filter }}
 
-    <table class="w-full whitespace-no-wrap" @filter.window="fetch">
+    <table class="w-full whitespace-no-wrap" @filter.window="fetchData">
       <thead>
       <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
         <th class="px-4 py-3">#</th>
@@ -14,7 +14,7 @@
       </tr>
       </thead>
       <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-      <template x-if="!fetching">
+      <template x-if="!loading">
         <template x-for="ev in table.items">
           <tr class="text-gray-700 dark:text-gray-400">
             <td class="px-4 py-3 text-xs">
@@ -42,7 +42,7 @@
           </tr>
         </template>
       </template>
-      <template x-if="fetching">
+      <template x-if="loading">
         <tr class="border-b border-b-gray-700">
           <td class="px-6 py-4 text-center" colspan="6">
             <div class="text-center">
@@ -56,7 +56,7 @@
           </td>
         </tr>
       </template>
-      <template x-if="!fetching && table.items?.length === 0">
+      <template x-if="!loading && table.items?.length === 0">
         <tr class="border-b border-b-gray-700 text-sm text-left text-gray-500 dark:text-gray-400">
           <td class="px-6 py-4 text-center" colspan="6">
             No events match your filter criteria
@@ -69,4 +69,5 @@
     {{> common/pagination }}
   </div>
 </div>
+
 {{> events/modal }}

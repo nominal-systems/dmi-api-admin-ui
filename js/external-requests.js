@@ -1,7 +1,13 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import { Modal } from 'flowbite'
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, mapHttpMethodColor, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
+import {
+  getProviderConfig,
+  getQueryParams,
+  mapHttpMethodColor,
+  mapHttpStatusColor,
+  mapHttpStatusText
+} from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 
@@ -32,6 +38,28 @@ export const externalRequests = () => {
       }
       this.modal = new Modal(this.$refs['externalRequestModal'], modalOptions)
     },
+
+    // Table
+    table: table(
+      {
+        pageSize: 20,
+        pagesMax: 10,
+        getPage: async (page, pageSize) => {
+          const query = getQueryParams()
+          const providers = query.provider ? query.provider.split(',') : undefined
+          const method = query.method ? query.method.split(',') : undefined
+          const status = query.status ? query.status.split(',') : undefined
+          const date = query.date ? query.date.split(',') : undefined
+
+          return await getExternalRequests(providers, status, method, date, page, pageSize)
+        },
+        processResults: (externalRequests) => {
+          externalRequests.forEach((req) => {
+            req.providerLabel = getProviderConfig(req.provider).label
+          })
+        }
+      }
+    ),
 
     // Filter
     filter: {
@@ -100,39 +128,8 @@ export const externalRequests = () => {
         }
       }
     },
-    fetching: true,
-    async search() {
-      this.fetching = true
-      await this.table.getPage(1)
-      this.fetching = false
-    },
-
-    // Table
-    table: null,
-    initTable() {
-      this.table = table(
-        {
-          pageSize: 20,
-          pagesMax: 10,
-        }, async (page, pageSize) => {
-          this.fetching = true
-          const query = getQueryParams()
-          const providers = query.provider ? query.provider.split(',') : undefined
-          const method = query.method ? query.method.split(',') : undefined
-          const status = query.status ? query.status.split(',') : undefined
-          const date = query.date ? query.date.split(',') : undefined
-
-          const externalRequests = await getExternalRequests(providers, status, method, date, page, pageSize)
-          externalRequests.data.forEach((req) => {
-            req.providerLabel = getProviderConfig(req.provider).label
-          })
-          this.fetching = false
-          return externalRequests
-        })
-    },
 
     async init() {
-      this.initTable()
       this.initModal()
     }
   }

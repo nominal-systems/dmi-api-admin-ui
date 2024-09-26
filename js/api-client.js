@@ -140,11 +140,12 @@ export const getProviders = async () => {
   return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
 
-export const getRefs = async (type, query, page, limit) => {
+export const getRefs = async (type, search, page, limit) => {
   let queryString = `page=${page}&limit=${limit}`
-  if (!isNullOrUndefinedOrEmpty(query)) {
-    queryString += `&search=${query}`
+  if (!isNullOrUndefinedOrEmpty(search)) {
+    queryString += `&search=${search}`
   }
+
   const refs = await apiGet2(`/refs/${type}?${queryString}`)
   refs.data.map((ref) => {
     ref.providerRef = ref.providerRef.reduce((acc, item) => {
