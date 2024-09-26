@@ -6,6 +6,57 @@
       External Requests
     </h2>
 
-    {{> external-requests/table }}
+    <!-- Table -->
+    <div x-data="table">
+      {{#> table}}
+        {{#*inline "tableHeader"}}
+          <tr>
+            <th scope="col" class="px-6 py-3 w-56">
+              Date
+            </th>
+            <th scope="col" class="px-6 py-3 w-36">
+              Provider
+            </th>
+            <th scope="col" class="px-6 py-3 w-24">
+              Method
+            </th>
+            <th scope="col" class="px-6 py-3">
+              URL
+            </th>
+            <th scope="col" class="px-6 py-3 w-24">
+              Status
+            </th>
+            <th scope="col" class="px-6 py-3 w-24">
+              Actions
+            </th>
+          </tr>
+        {{/inline}}
+        {{#*inline "tableRows"}}
+          <template x-for="req in items">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <td class="px-6 py-4" x-date="req.createdAt">
+              </td>
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  x-text="req.providerLabel">
+              </th>
+              <td class="px-6 py-4" x-text="req.method">
+              </td>
+              <td class="px-6 py-4 truncate" x-text="req.url">
+              </td>
+              <td class="px-6 py-4" x-text="req.status">
+              </td>
+              <td class="px-6 py-4">
+                <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        @click="openModal(req)">
+                  Show
+                </button>
+              </td>
+            </tr>
+          </template>
+        {{/inline}}
+      {{/table}}
+    </div>
   </div>
+
+  {{> external-requests/modal }}
 </main>

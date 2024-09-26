@@ -10,6 +10,7 @@ export default (opts) => ({
   resultsStart: null,
   resultsEnd: null,
   pagesNav: null,
+  filter: opts.filter,
   async init() {
     await this.fetchData()
   },
