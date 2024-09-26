@@ -1,5 +1,4 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
-import { Modal } from 'flowbite'
 import table from './plugins/table'
 import {
   getProviderConfig,
@@ -10,12 +9,17 @@ import {
 } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
+import modal from './plugins/modal'
 
 export const externalRequests = () => {
   return {
     // Modal
-    modal: null,
-    externalRequest: null,
+    modal: modal({
+      ref: 'externalRequestModal',
+      onHide: (component) => {
+        component.externalRequest = null
+      }
+    }),
     async openModal(externalRequest) {
       const req = await getExternalRequest(externalRequest._id)
       req.methodColor = mapHttpMethodColor(req.method)
@@ -23,21 +27,9 @@ export const externalRequests = () => {
       req.color = mapHttpStatusColor(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
       this.externalRequest = req
-      this.modal.show()
+      this.modal.open()
     },
-    closeModal() {
-      this.externalRequest = null
-      this.modal.hide()
-    },
-    initModal() {
-      const modalOptions = {
-        placement: 'bottom-right',
-        backdrop: 'dynamic',
-        backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-        closable: true
-      }
-      this.modal = new Modal(this.$refs['externalRequestModal'], modalOptions)
-    },
+    externalRequest: null,
 
     // Table
     table: table(
@@ -125,10 +117,6 @@ export const externalRequests = () => {
           }
         }
       }
-    ),
-
-    async init() {
-      this.initModal()
-    }
+    )
   }
 }

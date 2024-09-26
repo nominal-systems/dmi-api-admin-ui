@@ -1,10 +1,10 @@
 import { getEvent, getEvents, getIntegrations } from './api-client'
-import { Modal } from 'flowbite'
 import table from './plugins/table'
 import config from './config'
 import { getQueryParams } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
+import modal from './plugins/modal'
 
 export const events = {
   // Table
@@ -80,27 +80,17 @@ export const events = {
   ),
 
   // Modal
-  modal: null,
-  modalEvent: null,
-  async openModal(ev) {
-    this.modalEvent = await getEvent(ev._id)
-    this.modal.show()
-  },
-  closeModal() {
-    this.modalEvent = null
-    this.modal.hide()
-  },
-  initModal() {
-    const modalOptions = {
-      placement: 'bottom-right',
-      backdrop: 'dynamic',
-      backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-      closable: true
+  modal: modal(
+    {
+      ref: 'eventModal',
+      onHide: (component) => {
+        component.modalEvent = null
+      }
     }
-    this.modal = new Modal(this.$refs['eventModal'], modalOptions)
+  ),
+  async openModal(ev) {
+    this.event = await getEvent(ev._id)
+    this.modal.open()
   },
-
-  async init() {
-    this.initModal()
-  }
+  event: null
 }
