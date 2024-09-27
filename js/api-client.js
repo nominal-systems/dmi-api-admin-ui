@@ -139,7 +139,7 @@ export const getIntegration = async (id) => {
 }
 
 export const getIntegrationsForProvider = async (providerId) => {
-  return await apiGet2(`/integrations?providerId=${providerId}`)
+  return await apiGet2(` / integrations ? providerId = ${providerId}`)
 }
 
 export const updateIntegrationStatus = async (integrationId, operation) => {
