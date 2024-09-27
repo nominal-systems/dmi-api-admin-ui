@@ -1,8 +1,8 @@
 import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
-import { Modal } from 'flowbite'
 import { getProviderConfig, getQueryParams } from './common/utils'
 import table from './plugins/table'
+import modal from './plugins/modal'
 
 export const integrations = {
   // Table
@@ -74,34 +74,25 @@ export const integrations = {
       }
     }
   }),
-  // integrations: [],
-  operation: null,
-  selectedIntegration: null,
-  inProgress: false,
-  error: null,
 
   // Modal
-  modal: null,
-  initModal() {
-    const modalOptions = {
-      placement: 'bottom-right',
-      backdrop: 'dynamic',
-      backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-      closable: true
+  modal: modal({
+    ref: 'integrationModal',
+    onHide: (_this) => {
+      _this.operation = null
     }
-    this.modal = new Modal(this.$refs['integrationModal'], modalOptions)
-  },
-  openModal(integration, operation) {
+  }),
+  async openModal(integration, operation) {
     this.error = null
     this.inProgress = false
     this.operation = operation
     this.selectedIntegration = integration
-    this.modal.show()
+    await this.modal.open()
   },
-  closeModal() {
-    this.operation = null
-    this.modal.hide()
-  },
+  operation: null,
+  selectedIntegration: null,
+  inProgress: false,
+  error: null,
 
   async updateIntegrationStatus() {
     this.error = null
@@ -120,9 +111,5 @@ export const integrations = {
           message: err.body.error
         }
       })
-  },
-
-  async init() {
-    this.initModal()
   }
 }
