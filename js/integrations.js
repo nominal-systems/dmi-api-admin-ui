@@ -2,13 +2,82 @@ import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatu
 import Alpine from 'alpinejs'
 import { Modal } from 'flowbite'
 import { getProviderConfig, getQueryParams } from './common/utils'
+import table from './plugins/table'
 
 export const integrations = {
-  integrations: [],
+  // Table
+  table: table({
+    pageSize: 10,
+    getPage: async (page, pageSize) => {
+      const query = getQueryParams()
+      const providers = query.provider ? query.provider.split(',') : undefined
+      const organizations = query.organization ? query.organization.split(',') : undefined
+      const statuses = query.status ? query.status.split(',') : undefined
+      return await getIntegrations(providers, organizations, statuses, page, pageSize)
+    },
+    processResults: (integrations) => {
+      integrations.forEach(integration => {
+        integration.providerLabel = getProviderConfig(integration.providerConfiguration.providerId).label
+        integration.isRunning = integration.status === 'RUNNING'
+        integration.color = integration.status === 'RUNNING' ? 'green' : 'red'
+      })
+    },
+    filter: {
+      organization: {
+        id: 'organization',
+        type: 'checkbox',
+        label: 'Organization',
+        updateQuery: true,
+        items: async () => {
+          return (await getOrganizations()).map((org) => {
+            return {
+              label: org.name,
+              value: org.id
+            }
+          })
+        }
+      },
+      provider: {
+        id: 'provider',
+        type: 'checkbox',
+        label: 'Provider',
+        updateQuery: true,
+        items: async () => {
+          return (await getProviders()).map((provider) => {
+            return {
+              label: getProviderConfig(provider.id).label,
+              value: provider.id
+            }
+          })
+        },
+        dropdownOptions: {
+          width: '52'
+        }
+      },
+      status: {
+        id: 'status',
+        type: 'checkbox',
+        label: 'Status',
+        updateQuery: true,
+        items: () => {
+          return [
+            {
+              value: 'RUNNING',
+              label: 'Running'
+            },
+            {
+              value: 'STOPPED',
+              label: 'Stopped'
+            }
+          ]
+        }
+      }
+    }
+  }),
+  // integrations: [],
   operation: null,
   selectedIntegration: null,
   inProgress: false,
-  fetching: true,
   error: null,
 
   // Modal
@@ -34,85 +103,13 @@ export const integrations = {
     this.modal.hide()
   },
 
-  // Filter
-  filter: {
-    organization: {
-      id: 'organization',
-      type: 'checkbox',
-      label: 'Organization',
-      updateQuery: true,
-      items: async () => {
-        return (await getOrganizations()).map((org) => {
-          return {
-            label: org.name,
-            value: org.id
-          }
-        })
-      }
-    },
-    provider: {
-      id: 'provider',
-      type: 'checkbox',
-      label: 'Provider',
-      updateQuery: true,
-      items: async () => {
-        return (await getProviders()).map((provider) => {
-          return {
-            label: provider.description,
-            value: provider.id
-          }
-        })
-      },
-      dropdownOptions: {
-        width: '52'
-      }
-    },
-    status: {
-      id: 'status',
-      type: 'checkbox',
-      label: 'Status',
-      updateQuery: true,
-      items: () => {
-        return [
-          {
-            value: 'RUNNING',
-            label: 'Running'
-          },
-          {
-            value: 'STOPPED',
-            label: 'Stopped'
-          }
-        ]
-      }
-    }
-  },
-  filterIntegrations() {
-    this.integrations.map((integration) => {
-      integration.show = this.showIntegration(integration)
-    })
-  },
-
-  async fetchIntegrations() {
-    // TODO(gb): eventually do filtering in backend
-    this.fetching = true
-    const integrations = await getIntegrations()
-    integrations.forEach(integration => {
-      const providerConfig = getProviderConfig(integration.providerConfiguration.providerId)
-      integration.providerLabel = providerConfig !== undefined ? providerConfig.label : integration.providerConfiguration.providerId
-      integration.isRunning = integration.status === 'RUNNING'
-      integration.color = integration.status === 'RUNNING' ? 'green' : 'red'
-      integration.show = this.showIntegration(integration)
-    })
-    this.integrations = integrations
-    this.fetching = false
-  },
   async updateIntegrationStatus() {
     this.error = null
     this.inProgress = true
     await updateIntegrationStatus(this.selectedIntegration.id, this.operation)
       .then(res => {
         this.inProgress = false
-        this.fetchIntegrations()
+        this.table.fetchData()
         this.modal.hide()
         Alpine.store('alert')
           .set('info', `Integration ${this.selectedIntegration.id} ${this.operation}${this.operation === 'stop' ? 'p' : ''}ed.`)
@@ -124,16 +121,8 @@ export const integrations = {
         }
       })
   },
-  showIntegration(integration) {
-    const query = getQueryParams()
-    const isFromOrganization = query.organization === undefined ? true : query.organization.split(',').includes(integration.practice.organization.id)
-    const isFromProvider = query.provider === undefined ? true : query.provider.split(',').includes(integration.providerConfiguration.providerId)
-    const isInStatus = query.status === undefined ? true : query.status.split(',').includes(integration.status)
-    return isFromOrganization && isFromProvider && isInStatus
-  },
 
   async init() {
     this.initModal()
-    await this.fetchIntegrations()
   }
 }

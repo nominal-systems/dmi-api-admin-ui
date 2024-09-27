@@ -13,24 +13,6 @@ import modal from './plugins/modal'
 
 export const externalRequests = () => {
   return {
-    // Modal
-    modal: modal({
-      ref: 'externalRequestModal',
-      onHide: (component) => {
-        component.externalRequest = null
-      }
-    }),
-    async openModal(externalRequest) {
-      const req = await getExternalRequest(externalRequest._id)
-      req.methodColor = mapHttpMethodColor(req.method)
-      req.statusText = mapHttpStatusText(req.status)
-      req.color = mapHttpStatusColor(req.status)
-      req.providerLabel = getProviderConfig(req.provider).label
-      this.externalRequest = req
-      this.modal.open()
-    },
-    externalRequest: null,
-
     // Table
     table: table(
       {
@@ -117,6 +99,24 @@ export const externalRequests = () => {
           }
         }
       }
-    )
+    ),
+
+    // Modal
+    modal: modal({
+      ref: 'externalRequestModal',
+      onHide: (component) => {
+        component.externalRequest = null
+      }
+    }),
+    async openModal(externalRequest) {
+      const req = await getExternalRequest(externalRequest._id)
+      req.methodColor = mapHttpMethodColor(req.method)
+      req.statusText = mapHttpStatusText(req.status)
+      req.color = mapHttpStatusColor(req.status)
+      req.providerLabel = getProviderConfig(req.provider).label
+      this.externalRequest = req
+      this.modal.open()
+    },
+    externalRequest: null,
   }
 }

@@ -34,7 +34,7 @@ export const dashboard = () => {
     },
 
     async init() {
-      const runningIntegrations = (await getIntegrations()).filter((i) => i.status === 'RUNNING')
+      const runningIntegrations = await getIntegrations(null, null, ['RUNNING'], 1, 1)
 
       // Dates
       const today = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
@@ -50,7 +50,7 @@ export const dashboard = () => {
       const last7DaysExternalRequests = await getExternalRequestsStats(sevenDaysAgo, today)
 
       // Cards
-      this.stats.integrations_running = runningIntegrations.length
+      this.stats.integrations_running = runningIntegrations.total
       this.stats.orders_created_today = todayEvents.find((s) => s.type === 'order:created')?.count || 0
       this.stats.reports_updated_today = todayEvents.find((s) => s.type === 'report:updated')?.count || 0
       this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)

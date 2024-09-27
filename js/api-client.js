@@ -1,6 +1,6 @@
 import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
 import config from './config'
-import { isNullOrUndefinedOrEmpty } from './common/utils'
+import { isNullOrUndefined, isNullOrUndefinedOrEmpty } from './common/utils'
 
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
@@ -120,8 +120,18 @@ export const getEvent = async (id) => {
   return await apiGet2(`/events/${id}`)
 }
 
-export const getIntegrations = async () => {
-  return await apiGet2(`/integrations`)
+export const getIntegrations = async (providers, organizations, statuses, page, limit) => {
+  let qs = `page=${page}&limit=${limit}`
+  if (!isNullOrUndefined(providers)) {
+    qs += `&providers=${providers.join(',')}`
+  }
+  if (!isNullOrUndefined(organizations)) {
+    qs += `&organizations=${organizations.join(',')}`
+  }
+  if (!isNullOrUndefined(statuses)) {
+    qs += `&statuses=${statuses.join(',')}`
+  }
+  return await apiGet2(`/integrations?${qs}`)
 }
 
 export const getIntegration = async (id) => {

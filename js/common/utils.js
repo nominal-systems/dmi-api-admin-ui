@@ -55,6 +55,10 @@ export function isNullOrUndefinedOrEmpty(value) {
   return value === null || value === undefined || value === ''
 }
 
+export function isNullOrUndefined(value) {
+  return value === null || value === undefined
+}
+
 export function mapHttpStatusText(status) {
   switch (status) {
     case 200:
