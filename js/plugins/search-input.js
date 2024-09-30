@@ -1,4 +1,4 @@
-import { isNullOrUndefinedOrEmpty } from '../common/utils'
+import { isNullOrUndefinedOrEmpty, removeQueryParam, setQueryParam } from '../common/utils'
 
 const defaultOptions = {
   placeholder: 'Search...',
@@ -29,10 +29,12 @@ function handleRoot(el, Alpine, options) {
         clear() {
           this.query = null
           this.dirty = false
+          removeQueryParam('search')
           this.$dispatch('filter', { query: this.query })
         },
         search() {
           this.dirty = !isNullOrUndefinedOrEmpty(this.query)
+          setQueryParam('search', this.query)
           this.$dispatch('filter', { query: this.query })
         }
       }

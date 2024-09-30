@@ -4,49 +4,49 @@
   </h6>
   <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
     <!-- Filter by organization -->
-    <template x-if="filter.organization">
+    <template x-if="filter?.organization">
       <div x-dropdown="filter.organization">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by provider -->
-    <template x-if="filter.provider">
+    <template x-if="filter?.provider">
       <div x-dropdown="provider">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by request method -->
-    <template x-if="filter.method">
+    <template x-if="filter?.method">
       <div x-dropdown="method">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by response status -->
-    <template x-if="filter.status">
+    <template x-if="filter?.status">
       <div x-dropdown="status">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by date -->
-    <template x-if="filter.date">
+    <template x-if="filter?.date">
       <div x-dropdown="date">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by integration -->
-    <template x-if="filter.integration">
+    <template x-if="filter?.integration">
       <div x-dropdown="integration">
         {{> common/dropdown }}
       </div>
     </template>
 
     <!-- Filter by type -->
-    <template x-if="filter.type">
+    <template x-if="filter?.type">
       <div x-dropdown="type">
         {{> common/dropdown }}
       </div>

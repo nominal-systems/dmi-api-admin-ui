@@ -71,10 +71,6 @@ export const refs = () => {
       this.updates = {}
       this.updatingRefs = false
     },
-    async fetch($event) {
-      setQueryParam('search', $event.detail.query)
-      await this.refs[this.type].fetchData()
-    },
 
     // Modal
     modal: modal({

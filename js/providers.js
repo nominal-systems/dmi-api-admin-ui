@@ -77,10 +77,6 @@ export const providers = () => {
         placeholder: 'Search by name...'
       }
     },
-    async fetch($event) {
-      setQueryParam('search', $event.detail.query)
-      await this.refs[this.type].fetchData()
-    },
     async syncRefs() {
       this.syncing = true
       const integrations = await getIntegrationsForProvider(this.provider.id)
