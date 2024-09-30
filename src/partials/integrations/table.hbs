@@ -3,9 +3,9 @@
     {{#> table}}
       {{#*inline "tableHeader"}}
         <tr>
-          <th class="px-4 py-3 w-96">ID</th>
+          <th class="px-4 py-3 w-[18rem]">ID</th>
           <th class="px-4 py-3">Practice</th>
-          <th class="px-4 py-3 w-44">Provider</th>
+          <th class="px-4 py-3 w-[8rem]">Provider</th>
           <th class="px-4 py-3 text-center w-32">Status</th>
           <th class="px-4 py-3 text-center w-44">Actions</th>
         </tr>
@@ -13,8 +13,8 @@
       {{#*inline "tableRows"}}
         <template x-for="integration in items">
           <tr class="text-gray-700 dark:text-gray-400">
-            <td class="px-4 py-3" x-text="integration.id"></td>
-            <td class="px-4 py-3">
+            <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
+            <td class="px-4 py-3 truncate">
               <div class="flex items-center">
                 <div>
                   <p class="font-semibold" x-text="integration.practice.name"></p>
