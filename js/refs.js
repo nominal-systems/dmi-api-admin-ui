@@ -111,6 +111,7 @@ export const refs = () => {
       return {
         query: '',
         results: [],
+        placeholder: 'Search by name...',
         select(ref) {
           const mapping = this.editingRefMappings.find((mapping) => mapping.provider === ref.provider.id)
           this.updates[ref.provider.id] = mapping

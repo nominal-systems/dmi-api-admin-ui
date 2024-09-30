@@ -184,6 +184,7 @@ export const providers = () => {
       return {
         query: '',
         results: [],
+        placeholder: 'Search by breed name...',
         mapping: {
           provider: this.provider.id
         },
