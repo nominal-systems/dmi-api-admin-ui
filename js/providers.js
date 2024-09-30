@@ -9,8 +9,9 @@ import {
   syncProviderRefs
 } from './api-client'
 import { getIdFromPath, getProviderConfig, getQueryParams, setQueryParam } from './common/utils'
-import { Modal, Tabs } from 'flowbite'
+import { Tabs } from 'flowbite'
 import table from './plugins/table'
+import modal from './plugins/modal'
 
 const PAGE_SIZE = 20
 
@@ -127,7 +128,14 @@ export const providers = () => {
     },
 
     // Modal
-    modal: null,
+    modal: modal({
+      ref: 'providerRefModal',
+      onHide: (_this) => {
+        _this.editingRef = null
+        _this.editingDefaultBreed = null
+        _this.isEditingDefaultBreed = false
+      }
+    }),
     editingRef: null,
     editingDefaultBreed: null,
     isEditingDefaultBreed: false,
@@ -137,7 +145,7 @@ export const providers = () => {
       const providerId = this.editingRef.provider.id
       await setDefaultBreed(providerId, speciesCode, defaultBreedCode)
       await this.refs[this.type].fetchData()
-      this.closeModal()
+      this.modal.hide()
     },
     editDefaultBreed() {
       this.isEditingDefaultBreed = true
@@ -147,21 +155,7 @@ export const providers = () => {
     },
     openModal(ref) {
       this.editingRef = ref
-      this.modal.show()
-    },
-    closeModal() {
-      this.editingRef = null
-      this.modal.hide()
-    },
-    initModal() {
-      const targetE = this.$refs['providerRefModal']
-      const modalOptions = {
-        placement: 'bottom-right',
-        backdrop: 'dynamic',
-        backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-        closable: true
-      }
-      this.modal = new Modal(targetE, modalOptions)
+      this.modal.open()
     },
     providerRefTypeahead() {
       const $targetEl = this.$el.getElementsByTagName('div')[0]
@@ -206,7 +200,6 @@ export const providers = () => {
       provider.label = getProviderConfig(provider.id).label
       this.provider = provider
       this.initTabs()
-      this.initModal()
     }
   }
 }

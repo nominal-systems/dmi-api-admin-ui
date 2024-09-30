@@ -1,8 +1,9 @@
 import Alpine from 'alpinejs'
-import { Modal, Tabs } from 'flowbite'
+import { Tabs } from 'flowbite'
 import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, removeQueryParam, setQueryParam } from './common/utils'
+import modal from './plugins/modal'
 
 export const refs = () => {
   return {
@@ -64,7 +65,7 @@ export const refs = () => {
       const type = this.editingRef.type
       Alpine.store('alert')
         .set('info', `Mappings for ${this.editingRef.code} (${this.editingRef.name}) updated successfully!`)
-      this.closeModal()
+      this.modal.hide()
       await this.refs[type].fetchData()
 
       this.updates = {}
@@ -76,6 +77,15 @@ export const refs = () => {
     },
 
     // Modal
+    modal: modal({
+      ref: 'refsModal',
+      onHide: (_this) => {
+        _this.editingRef = {}
+        _this.editingRefMappings = []
+        _this.editingMapping = null
+        _this.isEditingMapping = false
+      }
+    }),
     editingRef: {},
     editingMapping: null,
     editingRefMappings: [],
@@ -127,7 +137,6 @@ export const refs = () => {
         }
       }
     },
-
     openModal(ref) {
       this.editingRef = ref
       this.editingRefMappings = []
@@ -138,22 +147,7 @@ export const refs = () => {
           ref: ref.providerRef[provider.id]
         })
       })
-      this.modal.show()
-    },
-    closeModal() {
-      this.editingRef = {}
-      this.editingRefMappings = []
-      this.modal.hide()
-    },
-    initModal() {
-      const $modalTarget = document.getElementById('refsModal')
-      const modalOptions = {
-        placement: 'bottom-right',
-        backdrop: 'dynamic',
-        backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-        closable: true
-      }
-      this.modal = new Modal($modalTarget, modalOptions)
+      this.modal.open()
     },
 
     // Tabs
@@ -195,7 +189,6 @@ export const refs = () => {
 
     async init() {
       this.initTabs()
-      this.initModal()
       const providers = await getProviders()
       providers.forEach((provider) => {
         provider.label = getProviderConfig(provider.id).label
