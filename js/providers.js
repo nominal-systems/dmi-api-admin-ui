@@ -64,6 +64,7 @@ export const providers = () => {
         }
       )
     },
+    allowSync: true,
     syncing: false,
     search: {
       sexes: {

@@ -41,7 +41,7 @@ export const refs = () => {
         }
       )
     },
-    syncing: false,
+    allowSync: false,
     updates: {},
     updatingRefs: false,
     search: {
