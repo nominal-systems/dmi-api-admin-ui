@@ -6,7 +6,7 @@
       <!-- Modal header -->
       <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Event #<span x-text="modalEvent?.seq"></span> -> <span x-text="modalEvent?.type"></span>
+          Event #<span x-text="event?.seq"></span> -> <span x-text="event?.type"></span>
         </h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -19,8 +19,8 @@
       </div>
       <!-- Modal body -->
       <div class="mt-4 mb-6">
-        <template x-if="modalEvent?.data">
-          <div x-data="{ code: modalEvent?.data, copied: false }">
+        <template x-if="event?.data">
+          <div x-data="{ code: event?.data, copied: false }">
             {{> common/code }}
           </div>
         </template>

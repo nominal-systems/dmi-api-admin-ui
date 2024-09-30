@@ -31,7 +31,8 @@ export const events = {
           label: 'Integration',
           updateQuery: true,
           items: async () => {
-            return (await getIntegrations()).map((integration) => {
+            const integrations = (await getIntegrations(null, null, null, 1, 1000)).data
+            return integrations.map((integration) => {
               return {
                 label: integration.id,
                 value: integration.id
@@ -84,7 +85,7 @@ export const events = {
     {
       ref: 'eventModal',
       onHide: (component) => {
-        component.modalEvent = null
+        component.event = null
       }
     }
   ),
