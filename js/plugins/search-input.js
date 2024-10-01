@@ -30,12 +30,17 @@ function handleRoot(el, Alpine, options) {
           this.query = null
           this.dirty = false
           removeQueryParam('search')
-          this.$dispatch('filter', { query: this.query })
+          this.$dispatch('filter', {
+            page: 1
+          })
         },
         search() {
           this.dirty = !isNullOrUndefinedOrEmpty(this.query)
           setQueryParam('search', this.query)
-          this.$dispatch('filter', { query: this.query })
+          this.$dispatch('filter', {
+            query: this.query,
+            page: 1
+          })
         }
       }
     }

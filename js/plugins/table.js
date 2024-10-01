@@ -14,9 +14,12 @@ export default (opts) => ({
   async init() {
     await this.fetchData()
   },
-  async fetchData() {
+  async fetchData($event) {
     this.loading = true
     this.error = null
+    if ($event && $event.detail.page) {
+      this.currentPage = $event.detail.page
+    }
     try {
       const response = await opts.getPage(this.currentPage, this.pageSize)
       if (opts.processResults) {

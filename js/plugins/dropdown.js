@@ -91,7 +91,7 @@ function handleRoot(el, Alpine, config) {
       this.dirty = isDirty($itemEl)
       if (config.updateQuery) {
         this.$dispatch('updateQueryParams')
-        this.$dispatch('filter')
+        this.$dispatch('filter', { page: 1 })
       }
     },
     '@itemClicked'() {
