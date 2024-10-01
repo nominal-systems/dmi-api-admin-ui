@@ -1,3 +1,5 @@
+import { getQueryParams, setQueryParam } from '../common/utils'
+
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
   pageSize: opts.pageSize || 10,
@@ -12,6 +14,7 @@ export default (opts) => ({
   pagesNav: null,
   filter: opts.filter,
   async init() {
+    initFilter(this.filter)
     await this.fetchData()
   },
   async fetchData($event) {
@@ -55,6 +58,23 @@ export default (opts) => ({
     }
   }
 })
+
+function initFilter(filter) {
+  Object.keys(filter).forEach((key) => {
+    if (filter[key].updateQuery) {
+      // Set query params
+      if (typeof filter[key].items !== 'function') {
+        const queryParams = getQueryParams()
+        const checked = filter[key].items.filter((i) => {
+          return i.checked || queryParams[key]?.split(',').includes(i.value)
+        }).map((i) => i.value)
+        if (checked.length > 0) {
+          setQueryParam(key, checked.join(','))
+        }
+      }
+    }
+  })
+}
 
 function navPages(page, pagesTotal, pagesMax) {
   const half = Math.floor(pagesMax / 2)

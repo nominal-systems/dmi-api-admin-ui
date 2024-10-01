@@ -37,14 +37,12 @@ export const externalRequests = () => {
           type: 'checkbox',
           label: 'Response Status',
           updateQuery: true,
-          items() {
-            return [
-              { label: '2xx', value: '2xx', checked: false },
-              { label: '3xx', value: '3xx', checked: false },
-              { label: '4xx', value: '4xx', checked: true },
-              { label: '5xx', value: '5xx', checked: true },
-            ]
-          }
+          items: [
+            { label: '2xx', value: '2xx', checked: false },
+            { label: '3xx', value: '3xx', checked: false },
+            { label: '4xx', value: '4xx', checked: true },
+            { label: '5xx', value: '5xx', checked: true },
+          ]
         },
         provider: {
           id: 'provider',

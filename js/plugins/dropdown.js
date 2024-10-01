@@ -51,7 +51,7 @@ function handleRoot(el, Alpine, config) {
         dropdownOptions: {},
         dropdown: null,
         async init() {
-          const items = [...await config.items()]
+          const items = typeof config.items === 'function' ? await config.items() : config.items
           if (config.updateQuery) {
             const query = getQueryParams()
             if (query[this._id] !== undefined) {
@@ -61,18 +61,9 @@ function handleRoot(el, Alpine, config) {
               })
             }
 
-            // Set query params
-            const checked = []
-            items.forEach(item => {
-              if (item.checked) {
-                checked.push(item.value)
-              }
-            })
+            const checked = items.filter((i) => i.checked)
             if (checked.length > 0) {
-              setQueryParam(this._id, checked.join(','))
               this.dirty = true
-            } else {
-              removeQueryParam(this._id)
             }
           }
           this.items = items
