@@ -4,10 +4,10 @@
       <th scope="col" class="px-6 py-3 w-1/2">
         Name
       </th>
-      <th scope="col" class="px-6 py3">
+      <th scope="col" class="px-6 py3 hidden xl:table-cell">
         Code
       </th>
-      <th scope="col" class="px-6 py-3 w-56" x-show="type === 'species'">
+      <th scope="col" class="px-6 py-3 w-56 hidden xl:table-cell" x-show="type === 'species'">
         Default breed
       </th>
       <th scope="col" class="px-6 py-3 w-24" x-show="type === 'species'">
@@ -21,12 +21,12 @@
           <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               x-text="item.name">
           </th>
-          <td class="px-6 py-4">
+          <td class="px-6 py-4 hidden xl:table-cell">
             <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500"
                   x-text="item.code">
             </span>
           </td>
-          <td class="px-6 py-4" x-show="type === 'species'">
+          <td class="px-6 py-4 hidden xl:table-cell" x-show="type === 'species'">
             <template x-if="item.defaultBreed">
               <div>
                 <span x-text="item.defaultBreed.name"></span> (<span x-text="item.defaultBreed.code"></span>)

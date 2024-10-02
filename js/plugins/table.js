@@ -1,4 +1,4 @@
-import { getQueryParams, setQueryParam } from '../common/utils'
+import { getQueryParams, isNullOrUndefined, setQueryParam } from '../common/utils'
 
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
@@ -14,7 +14,9 @@ export default (opts) => ({
   pagesNav: null,
   filter: opts.filter,
   async init() {
-    initFilter(this.filter)
+    if (!isNullOrUndefined(this.filter)) {
+      initFilter(this.filter)
+    }
     await this.fetchData()
   },
   async fetchData($event) {

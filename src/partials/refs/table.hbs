@@ -10,7 +10,7 @@
         </th>
       </template>
       <template x-for="provider in providers">
-        <th scope="col" class="text-xs px-2 py-3 w-[10rem] text-center" x-text="provider.label">
+        <th scope="col" class="text-xs px-2 py-3 w-[10rem] text-center hidden xl:table-cell" x-text="provider.label">
         </th>
       </template>
       <th scope="col" class="px-6 py-3 w-[5rem]">
@@ -35,7 +35,7 @@
             </td>
         </template>
         <template x-for="provider in providers">
-          <td class="px-6 py-4 text-xs text-center text-gray-600 truncate">
+          <td class="px-6 py-4 text-xs text-center text-gray-600 truncate hidden xl:table-cell">
             <template x-if="item.providerRef && item.providerRef[provider.id]">
               <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
                     x-text="item.providerRef[provider.id].code">
