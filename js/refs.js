@@ -80,6 +80,8 @@ export const refs = () => {
         _this.editingRefMappings = []
         _this.editingMapping = null
         _this.isEditingMapping = false
+        _this.updates = {}
+        _this.editingRef = false
       }
     }),
     editingRef: {},
