@@ -75,15 +75,30 @@ export const integrations = {
     },
     actions: [
       {
-        label: 'Stop',
-        onClick: async (integration) => {
-          // TODO(gb): open modal
+        label: 'Start',
+        async onClick() {
+          await this.batchActionsModal.open({
+            integrations: this.table.getSelection(),
+            operation: 'start'
+          })
         }
       },
       {
-        label: 'Start',
-        onClick: async (integration) => {
-          // TODO(gb): open modal
+        label: 'Stop',
+        async onClick() {
+          await this.batchActionsModal.open({
+            integrations: this.table.getSelection(),
+            operation: 'stop'
+          })
+        }
+      },
+      {
+        label: 'Restart',
+        async onClick() {
+          await this.batchActionsModal.open({
+            integrations: this.table.getSelection(),
+            operation: 'restart'
+          })
         }
       }
     ]
@@ -109,7 +124,7 @@ export const integrations = {
   error: null,
 
   // Actions
-  actionsModal: modal({
+  batchActionsModal: modal({
     ref: 'actionsModal'
   }),
 

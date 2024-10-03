@@ -1,5 +1,4 @@
 import { getQueryParams, isNullOrUndefined, setQueryParam } from '../common/utils'
-import { Dropdown } from 'flowbite'
 
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
@@ -15,6 +14,7 @@ export default (opts) => ({
   pagesNav: null,
   filter: opts.filter,
   actions: opts.actions,
+  selectedItems: 0,
   async init() {
     if (!isNullOrUndefined(this.filter)) {
       initFilter(this.filter)
@@ -39,15 +39,6 @@ export default (opts) => ({
       if (this.actions) {
         this.items.forEach((item) => {
           item._checked = false
-        })
-        const $buttonEl = this.$refs['actions-button']
-        const $menuEl = this.$refs['actions-menu']
-        new Dropdown($menuEl, $buttonEl, {
-          placement: 'bottom',
-          triggerType: 'click',
-          offsetSkidding: 0,
-          offsetDistance: 10,
-          delay: 300
         })
       }
 
@@ -79,6 +70,12 @@ export default (opts) => ({
       this.currentPage--
       await this.fetchData()
     }
+  },
+  getSelection() {
+    return this.items.filter((item) => item._checked)
+  },
+  selectionUpdated() {
+    this.selectedItems = this.getSelection().length
   }
 })
 

@@ -20,6 +20,7 @@ import searchInput from './plugins/search-input'
 import Clipboard from "@ryangjchandler/alpine-clipboard"
 import datepicker from './plugins/datepicker'
 import chart from './plugins/chart'
+import dropdown from './directives/dropdown'
 
 if (process.env.NODE_ENV === 'development') {
   config.log()
@@ -138,9 +139,10 @@ Alpine.store('alert', {
   }
 })
 
-// Custom Directives
+// Directives
 dateDirective()
 codeDirective()
+Alpine.plugin(dropdown)
 
 // Plugins
 Alpine.plugin(chart)

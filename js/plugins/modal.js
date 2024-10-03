@@ -1,10 +1,11 @@
 import { Modal } from 'flowbite'
 
 export default (opts) => ({
+  modal: null,
   ref: opts.ref,
   onShow: opts.onShow,
   onHide: opts.onHide,
-  modal: null,
+  data: null,
   async init() {
     const modalOptions = {
       placement: 'bottom-right',
@@ -25,7 +26,10 @@ export default (opts) => ({
 
     this.modal = new Modal(this.$refs[this.ref], modalOptions)
   },
-  async open() {
+  async open(data) {
+    if (data) {
+      this.data = data
+    }
     this.modal.show()
   },
   async close() {
