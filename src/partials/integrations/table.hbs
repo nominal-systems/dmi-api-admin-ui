@@ -3,6 +3,9 @@
     {{#> table}}
       {{#*inline "tableHeader"}}
         <tr>
+          <th class="px-4 py-3 w-12">
+            <input type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          </th>
           <th class="px-4 py-3 w-[18rem]">ID</th>
           <th class="px-4 py-3">Practice</th>
           <th class="px-4 py-3 w-[8rem]">Provider</th>
@@ -12,7 +15,11 @@
       {{/inline}}
       {{#*inline "tableRows"}}
         <template x-for="integration in items">
-          <tr class="text-gray-700 dark:text-gray-400">
+          <tr class="text-gray-700 dark:text-gray-400"
+              :class="{ 'bg-gray-50 dark:bg-gray-600': integration._checked }">
+            <th class="px-4 py-3 w-12">
+              <input type="checkbox" x-model="integration._checked" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            </th>
             <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
             <td class="px-4 py-3 truncate">
               <div class="flex items-center">
@@ -73,6 +80,9 @@
   </div>
   <div x-data="modal">
     {{> integrations/modal }}
+  </div>
+  <div x-data="actionsModal">
+    {{> integrations/actions-modal }}
   </div>
 </div>
 <div class="w-0 h-0 dark:bg-green-700"></div>

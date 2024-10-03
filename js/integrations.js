@@ -72,7 +72,21 @@ export const integrations = {
           ]
         }
       }
-    }
+    },
+    actions: [
+      {
+        label: 'Stop',
+        onClick: async (integration) => {
+          // TODO(gb): open modal
+        }
+      },
+      {
+        label: 'Start',
+        onClick: async (integration) => {
+          // TODO(gb): open modal
+        }
+      }
+    ]
   }),
 
   // Modal
@@ -93,6 +107,11 @@ export const integrations = {
   selectedIntegration: null,
   inProgress: false,
   error: null,
+
+  // Actions
+  actionsModal: modal({
+    ref: 'actionsModal'
+  }),
 
   async updateIntegrationStatus() {
     this.error = null

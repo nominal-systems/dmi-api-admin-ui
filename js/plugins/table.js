@@ -1,4 +1,5 @@
 import { getQueryParams, isNullOrUndefined, setQueryParam } from '../common/utils'
+import { Dropdown } from 'flowbite'
 
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
@@ -13,6 +14,7 @@ export default (opts) => ({
   resultsEnd: null,
   pagesNav: null,
   filter: opts.filter,
+  actions: opts.actions,
   async init() {
     if (!isNullOrUndefined(this.filter)) {
       initFilter(this.filter)
@@ -26,11 +28,30 @@ export default (opts) => ({
       this.currentPage = $event.detail.page
     }
     try {
+      // Table rows
       const response = await opts.getPage(this.currentPage, this.pageSize)
       if (opts.processResults) {
         await opts.processResults(response.data)
       }
       this.items = response.data
+
+      // Bulk actions
+      if (this.actions) {
+        this.items.forEach((item) => {
+          item._checked = false
+        })
+        const $buttonEl = this.$refs['actions-button']
+        const $menuEl = this.$refs['actions-menu']
+        new Dropdown($menuEl, $buttonEl, {
+          placement: 'bottom',
+          triggerType: 'click',
+          offsetSkidding: 0,
+          offsetDistance: 10,
+          delay: 300
+        })
+      }
+
+      // Pagination
       this.totalItems = response.total
       this.resultsStart = this.currentPage * this.pageSize - this.pageSize + 1
       this.resultsEnd = Math.min(this.currentPage * this.pageSize, this.totalItems)
