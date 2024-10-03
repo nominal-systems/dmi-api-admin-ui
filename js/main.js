@@ -15,7 +15,7 @@ import { externalRequests } from './external-requests'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 import config from './config'
-import dropdown from './plugins/dropdown'
+import filterDropdown from './plugins/filter-dropdown'
 import searchInput from './plugins/search-input'
 import Clipboard from "@ryangjchandler/alpine-clipboard"
 import datepicker from './plugins/datepicker'
@@ -144,7 +144,7 @@ codeDirective()
 
 // Plugins
 Alpine.plugin(chart)
-Alpine.plugin(dropdown)
+Alpine.plugin(filterDropdown)
 Alpine.plugin(datepicker)
 Alpine.plugin(searchInput)
 Alpine.plugin(Clipboard)

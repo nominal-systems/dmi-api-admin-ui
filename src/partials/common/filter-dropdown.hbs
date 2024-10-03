@@ -1,5 +1,5 @@
 <!-- Dropdown button -->
-<button x-dropdown:button type="button"
+<button x-filter-dropdown:button type="button"
         class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
         :class="{ 'dark:text-white': dirty }">
   <span x-text="label"></span>
@@ -9,11 +9,11 @@
 </button>
 
 <!-- Dropdown menu -->
-<div x-dropdown:menu x-id="['dropdown']" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+<div x-filter-dropdown:menu x-id="['dropdown']" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
     :class="`w-${dropdownOptions.width}`">
   <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
     <template x-for="(item, index) in items" :key="index">
-      <li x-dropdown:item :id="`${_id}-dropdown-item-${index}`">
+      <li x-filter-dropdown:item :id="`${_id}-dropdown-item-${index}`">
         <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
           <input :id="`${_id}-dropdown-item-${index}-input`"
                  :checked="item.checked" :type="inputType" :value="item.value" :name="`${_id}-dropdown-item`"
@@ -28,7 +28,7 @@
 
   <!-- Toggle -->
   <template x-if="toggleEnabled">
-    <div x-dropdown:toggle class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+    <div x-filter-dropdown:toggle class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
       <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
         <input :id="`${_id}-${$id('dropdown')}-select-all`" :checked="toggle" type="checkbox" value=""
                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
@@ -42,7 +42,7 @@
 
   <!-- Datepicker -->
   <template x-if="type === 'date'">
-    <div x-dropdown:datepicker class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+    <div x-filter-dropdown:datepicker class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
       <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
         <input :id="`${_id}-dropdown-item-datepicker-input`"
                :type="inputType" value="" :name="`${_id}-dropdown-item`"

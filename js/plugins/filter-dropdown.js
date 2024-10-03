@@ -17,7 +17,7 @@ export default function (Alpine) {
     }
   }
 
-  Alpine.directive('dropdown', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
+  Alpine.directive('filter-dropdown', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
     if (!value) {
       const config = Object.assign({}, defaultConfig, evaluate(expression))
       handleRoot(el, Alpine, config)
@@ -67,8 +67,8 @@ function handleRoot(el, Alpine, config) {
             }
           }
           this.items = items
-          const $buttonEl = el.querySelector('[x-dropdown\\:button]')
-          const $menuEl = el.querySelector('[x-dropdown\\:menu]')
+          const $buttonEl = el.querySelector('[x-filter-dropdown\\:button]')
+          const $menuEl = el.querySelector('[x-filter-dropdown\\:menu]')
           this.dropdownOptions = config.dropdownOptions
           if (config.type === 'date') {
             this.dropdownOptions.ignoreClickOutsideClass = 'datepicker'
@@ -78,7 +78,7 @@ function handleRoot(el, Alpine, config) {
       }
     },
     '@selectionChanged'() {
-      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      const $itemEl = el.querySelectorAll('[x-filter-dropdown\\:item] input')
       this.dirty = isDirty($itemEl)
       if (config.updateQuery) {
         this.$dispatch('updateQueryParams')
@@ -86,12 +86,12 @@ function handleRoot(el, Alpine, config) {
       }
     },
     '@itemClicked'() {
-      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      const $itemEl = el.querySelectorAll('[x-filter-dropdown\\:item] input')
       this.toggle = countChecked($itemEl) === $itemEl.length
       this.$dispatch('selectionChanged', { el: this.$el })
     },
     '@selectAllToggled'() {
-      const $itemEl = el.querySelectorAll('[x-dropdown\\:item] input')
+      const $itemEl = el.querySelectorAll('[x-filter-dropdown\\:item] input')
       $itemEl.forEach(item => {
         item.checked = this.toggle
       })
@@ -99,7 +99,7 @@ function handleRoot(el, Alpine, config) {
     },
     '@updateQueryParams'() {
       const checked = []
-      el.querySelectorAll('[x-dropdown\\:item] input').forEach(item => {
+      el.querySelectorAll('[x-filter-dropdown\\:item] input').forEach(item => {
         if (item.checked) {
           checked.push(item.value)
         }
