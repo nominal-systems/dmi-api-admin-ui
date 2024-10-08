@@ -14,12 +14,12 @@ export default (opts) => ({
       closable: true,
       onShow: () => {
         if (this.onShow) {
-          this.onShow(this)
+          this.onShow(this, this.data)
         }
       },
       onHide: () => {
         if (this.onHide) {
-          this.onHide(this)
+          this.onHide(this, this.data)
         }
       }
     }

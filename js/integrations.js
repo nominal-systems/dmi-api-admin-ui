@@ -79,10 +79,7 @@ export const integrations = {
         async onClick() {
           await this.batchActionsModal.open({
             operation: 'start',
-            integrations: this.table.getSelection(),
-            inProgress: false,
-            error: null,
-            done: 0
+            integrations: this.table.getSelection()
           })
         }
       },
@@ -90,11 +87,8 @@ export const integrations = {
         label: 'Stop',
         async onClick() {
           await this.batchActionsModal.open({
-            integrations: this.table.getSelection(),
             operation: 'stop',
-            inProgress: false,
-            error: null,
-            done: 0
+            integrations: this.table.getSelection()
           })
         }
       },
@@ -102,11 +96,8 @@ export const integrations = {
         label: 'Restart',
         async onClick() {
           await this.batchActionsModal.open({
-            integrations: this.table.getSelection(),
             operation: 'restart',
-            inProgress: false,
-            error: null,
-            done: 0
+            integrations: this.table.getSelection()
           })
         }
       }
@@ -138,6 +129,11 @@ export const integrations = {
     data: {
       currentIntegration: {},
       done: 0
+    },
+    onShow: (self, data) => {
+      data.inProgress = false
+      data.error = null
+      data.done = 0
     }
   }),
 

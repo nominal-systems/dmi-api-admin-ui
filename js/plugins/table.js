@@ -15,6 +15,7 @@ export default (opts) => ({
   filter: opts.filter,
   actions: opts.actions,
   selectedItems: 0,
+  selectAllCheckbox: false,
   async init() {
     if (!isNullOrUndefined(this.filter)) {
       initFilter(this.filter)
@@ -76,12 +77,20 @@ export default (opts) => ({
   },
   selectionUpdated() {
     this.selectedItems = this.getSelection().length
+    this.selectAllCheckbox = this.items.every((item) => item._checked)
   },
   clearSelection() {
     this.items.forEach((item) => {
       item._checked = false
     })
-    this.selectedItems = 0
+    this.selectionUpdated()
+  },
+  toggleSelectAll() {
+    const allChecked = this.items.every((item) => item._checked)
+    this.items.forEach((item) => {
+      item._checked = !allChecked
+    })
+    this.selectionUpdated()
   }
 })
 
