@@ -5,7 +5,7 @@ export default (opts) => ({
   ref: opts.ref,
   onShow: opts.onShow,
   onHide: opts.onHide,
-  data: null,
+  data: opts.data,
   async init() {
     const modalOptions = {
       placement: 'bottom-right',
@@ -28,7 +28,7 @@ export default (opts) => ({
   },
   async open(data) {
     if (data) {
-      this.data = data
+      Object.assign(this.data, data)
     }
     this.modal.show()
   },

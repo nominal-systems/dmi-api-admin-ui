@@ -76,6 +76,12 @@ export default (opts) => ({
   },
   selectionUpdated() {
     this.selectedItems = this.getSelection().length
+  },
+  clearSelection() {
+    this.items.forEach((item) => {
+      item._checked = false
+    })
+    this.selectedItems = 0
   }
 })
 

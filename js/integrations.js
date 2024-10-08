@@ -78,8 +78,11 @@ export const integrations = {
         label: 'Start',
         async onClick() {
           await this.batchActionsModal.open({
+            operation: 'start',
             integrations: this.table.getSelection(),
-            operation: 'start'
+            inProgress: false,
+            error: null,
+            done: 0
           })
         }
       },
@@ -88,7 +91,10 @@ export const integrations = {
         async onClick() {
           await this.batchActionsModal.open({
             integrations: this.table.getSelection(),
-            operation: 'stop'
+            operation: 'stop',
+            inProgress: false,
+            error: null,
+            done: 0
           })
         }
       },
@@ -97,7 +103,10 @@ export const integrations = {
         async onClick() {
           await this.batchActionsModal.open({
             integrations: this.table.getSelection(),
-            operation: 'restart'
+            operation: 'restart',
+            inProgress: false,
+            error: null,
+            done: 0
           })
         }
       }
@@ -125,7 +134,11 @@ export const integrations = {
 
   // Actions
   batchActionsModal: modal({
-    ref: 'actionsModal'
+    ref: 'actionsModal',
+    data: {
+      currentIntegration: {},
+      done: 0
+    }
   }),
 
   async updateIntegrationStatus() {
@@ -145,5 +158,28 @@ export const integrations = {
           message: err.body.error
         }
       })
+  },
+
+  async batchUpdateIntegrations(data) {
+    data.error = null
+    data.inProgress = true
+
+    try {
+      for (const integration of data.integrations) {
+        data.currentIntegration = integration
+        await updateIntegrationStatus(data.currentIntegration.id, data.operation)
+        data.done += 1
+      }
+    } catch (err) {
+      data.inProgress = false
+      data.error = {
+        message: err.body.error
+      }
+    } finally {
+      setTimeout(async () => {
+        this.table.clearSelection()
+        await this.batchActionsModal.close()
+      }, 1000)
+    }
   }
 }
