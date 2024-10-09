@@ -1,6 +1,6 @@
 import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
-import { delay, getProviderConfig, getQueryParams } from './common/utils'
+import { delay, getIntegrationConfig, getProviderConfig, getQueryParams } from './common/utils'
 import table from './plugins/table'
 import modal from './plugins/modal'
 
@@ -17,9 +17,10 @@ export const integrations = {
     },
     processResults: (integrations) => {
       integrations.forEach(integration => {
+        const integrationConfig = getIntegrationConfig(integration.status)
         integration.providerLabel = getProviderConfig(integration.providerConfiguration.providerId).label
-        integration.isRunning = integration.status === 'RUNNING'
-        integration.color = integration.status === 'RUNNING' ? 'green' : 'red'
+        integration.operations = integrationConfig.operations
+        integration.color = integrationConfig.color
       })
     },
     filter: {
@@ -61,6 +62,10 @@ export const integrations = {
         updateQuery: true,
         items: () => {
           return [
+            {
+              value: 'NEW',
+              label: 'New'
+            },
             {
               value: 'RUNNING',
               label: 'Running'
@@ -195,3 +200,4 @@ export const integrations = {
     }
   }
 }
+

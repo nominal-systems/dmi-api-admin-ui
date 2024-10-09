@@ -1,4 +1,5 @@
 import { PROVIDERS_CONFIG } from '../constants/providers-config'
+import { INTEGRATIONS_CONFIG } from '../constants/integrations-config'
 
 export function isProviderPage() {
   return window.location.pathname.includes('/providers/')
@@ -6,6 +7,10 @@ export function isProviderPage() {
 
 export function getProviderConfig(providerId) {
   return PROVIDERS_CONFIG.find((provider) => provider.id === providerId)
+}
+
+export function getIntegrationConfig(status) {
+  return INTEGRATIONS_CONFIG.find((integration) => integration.status === status)
 }
 
 export function navigateToProviderPage(url) {
