@@ -1,6 +1,6 @@
 import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
-import { getProviderConfig, getQueryParams } from './common/utils'
+import { delay, getProviderConfig, getQueryParams } from './common/utils'
 import table from './plugins/table'
 import modal from './plugins/modal'
 
@@ -128,12 +128,20 @@ export const integrations = {
     ref: 'actionsModal',
     data: {
       currentIntegration: {},
-      done: 0
+      done: 0,
+      step: 0,
+      logs: [],
     },
     onShow: (self, data) => {
       data.inProgress = false
       data.error = null
+      data.step = 0
       data.done = 0
+      data.logs = []
+    },
+    onHide: async (self) => {
+      self.table.clearSelection()
+      await self.table.fetchData()
     }
   }),
 
@@ -161,21 +169,29 @@ export const integrations = {
     data.inProgress = true
 
     try {
+      data.step += 1
       for (const integration of data.integrations) {
         data.currentIntegration = integration
-        await updateIntegrationStatus(data.currentIntegration.id, data.operation)
+        const response = await updateIntegrationStatus(data.currentIntegration.id, data.operation)
+        data.logs.push({
+          status: 'ok',
+          message: `Integration/${data.currentIntegration.id}: ${response.ok}`
+        })
         data.done += 1
+        data.step = Math.min(data.step + 1, data.integrations.length)
+        await delay(500)
       }
     } catch (err) {
       data.inProgress = false
       data.error = {
         message: err.body.error
       }
+      data.logs.push({
+        status: 'error',
+        message: err.body.error
+      })
     } finally {
-      setTimeout(async () => {
-        this.table.clearSelection()
-        await this.batchActionsModal.close()
-      }, 1000)
+
     }
   }
 }

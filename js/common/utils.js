@@ -136,3 +136,7 @@ export function deepMerge(target, source) {
   }
   return target
 }
+
+export function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
