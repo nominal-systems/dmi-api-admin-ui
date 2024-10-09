@@ -109,29 +109,27 @@ export const integrations = {
     ]
   }),
 
-  // Modal
-  modal: modal({
+  // Modals
+  actionModal: modal({
     ref: 'integrationModal',
-    onHide: (_this) => {
-      _this.operation = null
+    data: {
+      inProgress: false,
+      operation: null,
+      integration: null
+    },
+    onShow: (self, data) => {
+      data.error = null
+      data.inProgress = false
+    },
+    onHide: (self) => {
+      self.operation = null
     }
   }),
-  async openModal(integration, operation) {
-    this.error = null
-    this.inProgress = false
-    this.operation = operation
-    this.selectedIntegration = integration
-    await this.modal.open()
-  },
-  operation: null,
-  selectedIntegration: null,
-  inProgress: false,
-  error: null,
-
-  // Actions
   batchActionsModal: modal({
     ref: 'actionsModal',
     data: {
+      inProgress: false,
+      operation: null,
       currentIntegration: {},
       done: 0,
       step: 0,
@@ -150,20 +148,20 @@ export const integrations = {
     }
   }),
 
-  async updateIntegrationStatus() {
-    this.error = null
-    this.inProgress = true
-    await updateIntegrationStatus(this.selectedIntegration.id, this.operation)
+  async updateIntegrationStatus(data) {
+    data.error = null
+    data.inProgress = true
+    await updateIntegrationStatus(data.integration.id, data.operation)
       .then(res => {
-        this.inProgress = false
+        data.inProgress = false
         this.table.fetchData()
-        this.modal.hide()
+        this.actionModal.close()
         Alpine.store('alert')
-          .set('info', `Integration ${this.selectedIntegration.id} ${this.operation}${this.operation === 'stop' ? 'p' : ''}ed.`)
+          .set('info', `Integration ${data.integration.id} ${data.operation}${data.operation === 'stop' ? 'p' : ''}ed.`)
       })
       .catch(err => {
-        this.inProgress = false
-        this.error = {
+        data.inProgress = false
+        data.error = {
           message: err.body.error
         }
       })

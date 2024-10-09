@@ -46,7 +46,7 @@
                     <template x-for="operation in integration.operations">
                       <li>
                         <a href="#" class="me-4 hover:underline capitalize"
-                           @click="openModal(integration, operation)" x-text="operation">
+                           @click="await actionModal.open({integration, operation})" x-text="operation">
                         </a>
                       </li>
                     </template>
@@ -58,7 +58,7 @@
       {{/inline}}
     {{/table}}
   </div>
-  <div x-data="modal">
+  <div x-data="actionModal">
     {{> integrations/modal }}
   </div>
   <div x-data="batchActionsModal">
