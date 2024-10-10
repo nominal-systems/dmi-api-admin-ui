@@ -7,7 +7,7 @@ import modal from './plugins/modal'
 export const integrations = {
   // Table
   table: table({
-    pageSize: 5,
+    pageSize: 10,
     getPage: async (page, pageSize) => {
       const query = getQueryParams()
       const providers = query.provider ? query.provider.split(',') : undefined
