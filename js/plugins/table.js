@@ -14,7 +14,7 @@ export default (opts) => ({
   pagesNav: null,
   filter: opts.filter,
   actions: opts.actions,
-  selectedItems: 0,
+  selectedItems: [],
   selectAllCheckbox: false,
   async init() {
     if (!isNullOrUndefined(this.filter)) {
@@ -39,7 +39,8 @@ export default (opts) => ({
       // Bulk actions
       if (this.actions) {
         this.items.forEach((item) => {
-          item._checked = false
+          item._checked = isInSelection(this.selectedItems, item)
+          this.selectionUpdated(item)
         })
       }
 
@@ -73,24 +74,25 @@ export default (opts) => ({
     }
   },
   getSelection() {
-    return this.items.filter((item) => item._checked)
+    return this.selectedItems
   },
-  selectionUpdated() {
-    this.selectedItems = this.getSelection().length
+  selectionUpdated(item) {
+    updateSelection(this.selectedItems, item, item._checked)
     this.selectAllCheckbox = this.items.every((item) => item._checked)
   },
   clearSelection() {
+    this.selectedItems = []
     this.items.forEach((item) => {
       item._checked = false
     })
-    this.selectionUpdated()
+    this.selectAllCheckbox = this.items.every((item) => item._checked)
   },
   toggleSelectAll() {
     const allChecked = this.items.every((item) => item._checked)
     this.items.forEach((item) => {
       item._checked = !allChecked
+      this.selectionUpdated(item)
     })
-    this.selectionUpdated()
   }
 })
 
@@ -131,4 +133,25 @@ function navPages(page, pagesTotal, pagesMax) {
   }
 
   return pages
+}
+
+function updateSelection(selection, item, checked) {
+  if (checked) {
+    if (!isInSelection(selection, item)) {
+      selection.push(item)
+    }
+  } else {
+    const index = indexInSelection(selection, item)
+    if (index >= 0) {
+      selection.splice(index, 1)
+    }
+  }
+}
+
+function isInSelection(selection, item) {
+  return selection.some((el) => el.id === item.id)
+}
+
+function indexInSelection(selection, item) {
+  return selection.findIndex((el) => el.id === item.id)
 }

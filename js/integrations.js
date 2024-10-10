@@ -7,7 +7,7 @@ import modal from './plugins/modal'
 export const integrations = {
   // Table
   table: table({
-    pageSize: 10,
+    pageSize: 5,
     getPage: async (page, pageSize) => {
       const query = getQueryParams()
       const providers = query.provider ? query.provider.split(',') : undefined
@@ -144,7 +144,7 @@ export const integrations = {
     },
     onHide: async (self) => {
       self.table.clearSelection()
-      await self.table.fetchData()
+      await self.table.goToPage(1)
     }
   }),
 
