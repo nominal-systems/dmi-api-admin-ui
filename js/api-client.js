@@ -235,3 +235,7 @@ export const getExternalRequest = async (id) => {
   })
   return result
 }
+
+export const getPractices = async (page, limit) => {
+  return await apiGet2(`/practices?page=${page}&limit=${limit}`)
+}
