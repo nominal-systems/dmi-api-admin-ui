@@ -2,6 +2,7 @@ import { getQueryParams, isNullOrUndefined, setQueryParam } from '../common/util
 
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
+  pageTarget: null,
   pageSize: opts.pageSize || 10,
   pagesMax: opts.pagesMax || 10,
   totalPages: null,
@@ -62,7 +63,15 @@ export default (opts) => ({
     await this.fetchData()
   },
   async goToPage(pageNumber) {
-    this.currentPage = pageNumber
+    if (isNaN(pageNumber)) {
+      this.pageTarget = null
+      return
+    }
+    if (parseInt(pageNumber) > this.totalPages) {
+      pageNumber = this.totalPages
+    }
+    this.currentPage = parseInt(pageNumber)
+    this.pageTarget = null
     await this.fetchData()
   },
   async nextPage() {
