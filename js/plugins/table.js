@@ -57,6 +57,10 @@ export default (opts) => ({
       this.loading = false
     }
   },
+  async setPageSize(pageSize) {
+    this.currentPage = 1
+    await this.fetchData()
+  },
   async goToPage(pageNumber) {
     this.currentPage = pageNumber
     await this.fetchData()

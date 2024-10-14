@@ -1,7 +1,19 @@
-<nav class="flex items-center justify-between p-4" aria-label="Table navigation" x-show="totalPages > 0 && !loading">
+<nav class="flex items-center justify-between px-6 py-4" aria-label="Table navigation" x-show="totalPages > 0 && !loading">
+  <div class="grid gap-4 grid-cols-2 items-center">
+    <div class="inline-flex items-center">
+      <label for="pageSize" class="block text-right pr-2 text-sm text-gray-500 dark:text-gray-400">Rows per page</label>
+      <select id="pageSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-18 py-1 px-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              x-model="pageSize" @change="setPageSize">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
       Showing <span class="font-semibold text-gray-900 dark:text-white"><span x-text="resultsStart"></span>-<span x-text="resultsEnd"></span></span> of <span class="font-semibold text-gray-900 dark:text-white" x-text="totalItems"></span>
     </span>
+  </div>
   <template x-if="totalItems > items.length">
     <ul class="inline-flex -space-x-px text-sm h-8">
       <li>
