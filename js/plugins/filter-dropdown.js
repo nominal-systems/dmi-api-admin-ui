@@ -56,7 +56,7 @@ function handleRoot(el, Alpine, config) {
             const query = getQueryParams()
             if (query[this._id] !== undefined) {
               items.forEach(item => {
-                item.checked = query[this._id].includes(item.value)
+                item.checked = query[this._id].split(',').includes(item.value)
                 this.dirty = true
               })
             }
