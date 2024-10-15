@@ -84,8 +84,7 @@ export default function (Alpine) {
   Alpine.directive('chart', (el, { value, modifiers, expression }, { effect, evaluate, evaluateLater, cleanup }) => {
     if (!value) {
       const { series, options } = evaluate(expression)
-      // const chartOptions = Object.assign({ series }, defaultOptions, options)
-      const chartOptions = deepMerge(defaultOptions, options)
+      const chartOptions = deepMerge(options, defaultOptions)
       handleRoot(el, Alpine, series, chartOptions)
     }
   })

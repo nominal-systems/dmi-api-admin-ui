@@ -3,6 +3,7 @@ import moment from 'moment'
 import { QUERY_DATE_FORMAT } from './constants/query-date-format'
 import { createTimeSeries } from './common/chart-utils'
 import { PROVIDERS_CONFIG } from './constants/providers-config'
+import { navigateTo } from './common/utils'
 
 export const dashboard = () => {
   return {
@@ -16,7 +17,19 @@ export const dashboard = () => {
       provider_api_errors: {
         series: null,
         options: {
-          chart: { stacked: true },
+          chart: {
+            stacked: true,
+            events: {
+              dataPointSelection: function (event, chartContext, opts) {
+                const provider = opts.w.config.series[opts.seriesIndex].id
+                const date = moment(opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].x)
+                navigateTo(`/external-requests?provider=${provider}&date=${date.format('MM/DD/YYYY')}&status=4xx,5xx`)
+              },
+              dataPointMouseEnter: function (event) {
+                event.target.style.cursor = 'pointer'
+              }
+            }
+          },
           colors: [function ({ value, seriesIndex, w }) {
             return PROVIDERS_CONFIG[seriesIndex].color
           }]

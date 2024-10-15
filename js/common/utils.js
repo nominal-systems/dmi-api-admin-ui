@@ -1,5 +1,6 @@
 import { PROVIDERS_CONFIG } from '../constants/providers-config'
 import { INTEGRATIONS_CONFIG } from '../constants/integrations-config'
+import config from '../config'
 
 export function isProviderPage() {
   return window.location.pathname.includes('/providers/')
@@ -18,6 +19,10 @@ export function navigateToProviderPage(url) {
   setTimeout(() => {
     window.location.reload(true)
   }, 0)
+}
+
+export function navigateTo(path) {
+  window.location.href = `${config.get('UI_BASE')}${path}`
 }
 
 export function getIdFromPath() {

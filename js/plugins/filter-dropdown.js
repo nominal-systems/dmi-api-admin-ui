@@ -126,6 +126,26 @@ function handleToggle(el, Alpine) {
 function handleDatepicker(el, Alpine) {
   const $datePickerRadioInput = el.querySelector('input')
   const $datePickerInput = el.querySelector('label input')
+  Alpine.bind(el, {
+    'x-data'() {
+      return {
+        init() {
+          const date = getQueryParams().date
+          if (date) {
+            if (!date.includes('-')) {
+              this.datePickerValue = date
+              $datePickerInput.value = date
+              $datePickerRadioInput.checked = true
+            }
+          }
+        }
+      }
+    },
+    '@selectionChanged.window'() {
+      $datePickerInput.value = null
+      $datePickerRadioInput.checked = false
+    }
+  })
   Alpine.bind($datePickerRadioInput, {
     '@input'() {
       setQueryParam(this._id, this.datePickerValue)
