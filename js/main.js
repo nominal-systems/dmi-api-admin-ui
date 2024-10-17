@@ -22,6 +22,7 @@ import Clipboard from "@ryangjchandler/alpine-clipboard"
 import datepicker from './plugins/datepicker'
 import chart from './plugins/chart'
 import dropdown from './directives/dropdown'
+import transactionLogs from './transaction-logs'
 
 if (process.env.NODE_ENV === 'development') {
   config.log()
@@ -168,4 +169,5 @@ window.integrations = integrations
 window.integrationPage = integrationPage
 window.external_requests = externalRequests
 window.practices = practices
+window.transaction_logs = transactionLogs
 Alpine.start()

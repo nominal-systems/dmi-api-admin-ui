@@ -239,3 +239,7 @@ export const getExternalRequest = async (id) => {
 export const getPractices = async (page, limit) => {
   return await apiGet2(`/practices?page=${page}&limit=${limit}`)
 }
+
+export const getTransactionLogs = async (accessionId) => {
+  return await apiGet2(`/transaction-logs?accessionId=${accessionId}`)
+}

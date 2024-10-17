@@ -1,0 +1,67 @@
+<code x-data="{
+  mapHttpMethodColor(method) {
+    switch (method) {
+      case 'GET':
+        return 'green'
+      case 'POST':
+        return 'yellow'
+      case 'PUT':
+        return 'blue'
+      case 'DELETE':
+        return 'red'
+      default:
+        return 'gray'
+    }
+  },
+  mapHttpStatusColor(status) {
+    switch (status) {
+      case 200:
+      case 201:
+      case 204:
+        return 'green'
+      case 400:
+      case 401:
+      case 403:
+      case 404:
+      case 405:
+      case 500:
+        return 'red'
+      default:
+        return 'gray'
+    }
+  },
+  mapHttpStatusText(status) {
+    switch (status) {
+      case 200:
+        return 'OK'
+      case 201:
+        return 'Created'
+      case 204:
+        return 'No Content'
+      case 400:
+        return 'Bad Request'
+      case 401:
+        return 'Unauthorized'
+      case 403:
+        return 'Forbidden'
+      case 404:
+        return 'Not Found'
+      case 405:
+        return 'Method Not Allowed'
+      case 500:
+        return 'Internal Server Error'
+      default:
+        return undefined
+    }
+  }
+}">
+  <span class="font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 border"
+        :class="`bg-${mapHttpMethodColor(method)}-100 text-${mapHttpMethodColor(method)}-800 dark:text-${mapHttpMethodColor(method)}-300 border-${mapHttpMethodColor(method)}-300`"
+        x-text="method"></span>
+  <span x-text="url"></span>
+  ->
+  <span class="font-medium me-2 px-2.5 py-0.5 rounded border"
+        :class="`bg-${mapHttpStatusColor(status)}-100 text-${mapHttpStatusColor(status)}-800 dark:bg-${mapHttpStatusColor(status)}-900 dark:text-${mapHttpStatusColor(status)}-300`">
+            <span x-text="status"></span> <span x-text="mapHttpStatusText(status)"></span>
+  </span>
+</code>
