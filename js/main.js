@@ -23,6 +23,7 @@ import datepicker from './plugins/datepicker'
 import chart from './plugins/chart'
 import dropdown from './directives/dropdown'
 import transactionLogs from './transaction-logs'
+import accordion from './directives/accordion'
 
 if (process.env.NODE_ENV === 'development') {
   config.log()
@@ -151,6 +152,7 @@ Alpine.store('alert', {
 dateDirective()
 codeDirective()
 Alpine.plugin(dropdown)
+Alpine.plugin(accordion)
 
 // Plugins
 Alpine.plugin(chart)
