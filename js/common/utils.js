@@ -87,6 +87,8 @@ export function mapHttpStatusText(status) {
       return 'Not Found'
     case 405:
       return 'Method Not Allowed'
+    case 422:
+      return 'Unprocessable Entity'
     case 500:
       return 'Internal Server Error'
     default:
@@ -95,35 +97,12 @@ export function mapHttpStatusText(status) {
 }
 
 export function mapHttpStatusColor(status) {
-  switch (status) {
-    case 200:
-    case 201:
-    case 204:
-      return 'green'
-    case 400:
-    case 401:
-    case 403:
-    case 404:
-    case 405:
-    case 500:
-      return 'red'
-    default:
-      return 'gray'
-  }
-}
-
-export function mapHttpMethodColor(method) {
-  switch (method) {
-    case 'GET':
-      return 'green'
-    case 'POST':
-      return 'yellow'
-    case 'PUT':
-      return 'blue'
-    case 'DELETE':
-      return 'red'
-    default:
-      return 'gray'
+  if (status >= 200 && status < 400) {
+    return 'green'
+  } else if (status < 600) {
+    return 'red'
+  } else {
+    return 'gray'
   }
 }
 

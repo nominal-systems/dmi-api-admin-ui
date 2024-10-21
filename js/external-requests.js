@@ -1,12 +1,6 @@
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import table from './plugins/table'
-import {
-  getProviderConfig,
-  getQueryParams,
-  mapHttpMethodColor,
-  mapHttpStatusColor,
-  mapHttpStatusText
-} from './common/utils'
+import { getProviderConfig, getQueryParams, mapHttpStatusText } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
@@ -106,13 +100,11 @@ export const externalRequests = () => {
     }),
     async openModal(externalRequest) {
       const req = await getExternalRequest(externalRequest._id)
-      req.methodColor = mapHttpMethodColor(req.method)
       req.statusText = mapHttpStatusText(req.status)
-      req.color = mapHttpStatusColor(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
       this.externalRequest = req
       this.modal.open()
     },
-    externalRequest: null,
+    externalRequest: {},
   }
 }

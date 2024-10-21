@@ -1,0 +1,33 @@
+<div class="mb-4">
+  <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
+    Request
+  </h4>
+  <p class="text-sm text-left text-gray-500 dark:text-gray-400">
+    <code>
+        <span class="font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 border http-method"
+              :class="`http-method-${externalRequest?.method?.toLowerCase()}`"
+              x-text="externalRequest?.method">
+        </span>
+      <span x-text="externalRequest?.url"></span>
+    </code>
+  </p>
+  <template x-if="externalRequest?.payload">
+    <div x-data="{ code: externalRequest.payload, copied: false }">
+      {{> common/code }}
+    </div>
+  </template>
+</div>
+<div class="mb-4" x-show="externalRequest?.body">
+  <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
+    Response
+  </h4>
+  <span class="font-medium me-2 px-2.5 py-0.5 rounded http-status"
+        :class="`http-status-${externalRequest?.status}`">
+    <span x-text="externalRequest?.status"></span> <span x-text="externalRequest?.statusText"></span>
+  </span>
+  <template x-if="externalRequest?.body">
+    <div x-data="{ code: externalRequest.body, copied: false }">
+      {{> common/code }}
+    </div>
+  </template>
+</div>
