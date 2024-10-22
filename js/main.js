@@ -3,7 +3,7 @@ import Alpine from 'alpinejs'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
 import { setTokenToLocalStorage } from './auth'
 import { getProviders, login } from './api-client'
-import { getIdFromPath, getProviderConfig, isProviderPage, navigateToProviderPage } from './common/utils'
+import { getIdFromPath, getProviderConfig, isProviderPage, navigateTo, navigateToProviderPage } from './common/utils'
 import { dashboard } from './dashboard'
 import { events } from './events'
 import { eventPage } from './event-page'
@@ -132,6 +132,12 @@ window.data = {
       }
     })
   },
+
+  // Search
+  accessionId: null,
+  searchByAccessionId() {
+    navigateTo(`/transaction-logs?accessionId=${this.accessionId}`)
+  }
 }
 
 // Alert

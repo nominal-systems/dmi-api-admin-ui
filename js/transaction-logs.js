@@ -3,18 +3,24 @@ import { getTransactionLogs } from './api-client'
 
 export default () => {
   return {
-    accessionId: null,
     logs: [],
+    accessionId: null,
+    error: null,
     async init() {
       const queryParams = getQueryParams()
       this.accessionId = queryParams.accessionId
       const transactionLogs = await getTransactionLogs(this.accessionId)
-      transactionLogs.forEach(log => {
-        log.timestamp = new Date(log.timestamp).toLocaleString()
-        log.message = buildMessage(log)
-        log.tag = buildTag(log)
-      })
-      this.logs = transactionLogs
+      if (transactionLogs.errors === undefined) {
+        transactionLogs.forEach(log => {
+          log.timestamp = new Date(log.timestamp).toLocaleString()
+          log.message = buildMessage(log)
+          log.tag = buildTag(log)
+        })
+        this.logs = transactionLogs
+      } else {
+        this.error = transactionLogs.message
+      }
+
     }
   }
 }
@@ -23,23 +29,9 @@ function buildMessage(log) {
   let message = ''
   const data = log.data
   if (log.type === 'event') {
-    let operation = ''
-    if (data.type.includes('created')) {
-      operation = 'created'
-    } else if (data.type.includes('updated')) {
-      operation = 'updated'
-
-    }
-    let entity = ''
-    switch (data.namespace) {
-      case 'orders':
-        entity = `Order/${data.data.orderId}`
-        break
-      case 'reports':
-        entity = `Report/${data.data.reportId}`
-        break
-    }
-    message = `${operation} ${entity}`
+    message = 'Event sent'
+  } else if (log.type === 'order') {
+    message = `Order/${log.data.id} (${log.data.requisitionId || log.data.requisitionId}) created`
   }
   return message
 }
