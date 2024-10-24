@@ -87,6 +87,8 @@ export function mapHttpStatusText(status) {
       return 'Not Found'
     case 405:
       return 'Method Not Allowed'
+    case 409:
+      return 'Conflict'
     case 422:
       return 'Unprocessable Entity'
     case 500:

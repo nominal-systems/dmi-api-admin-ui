@@ -46,8 +46,16 @@ function buildTag(log) {
       tag.label = log.data.namespace === 'orders' ?
         log.data.data.order.status :
         log.data.data.report.status
-      if (['COMPLETED', 'FINAL'].includes(log.data.status)) {
-        tag.color = 'green'
+      switch (tag.label) {
+        case 'COMPLETED':
+        case 'FINAL':
+          tag.color = 'green'
+          break
+        case 'ERROR':
+          tag.color = 'red'
+          break
+        default:
+          tag.color = 'blue'
       }
       break
     case 'external-request':
