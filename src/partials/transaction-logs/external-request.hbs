@@ -8,10 +8,10 @@
           'bg-red-100 text-red-800 dark:text-red-300 border-red-300': data.method === 'DELETE',
           }"
           x-text="data.method"></span>
-    <span x-text="data.url.split('?')[0]"></span>
+    <span class="min-w-0 truncate" x-text="data.url.split('?')[0]"></span>
   </code>
 
-  <span class="flex items-center text-sm font-medium text-gray-900 dark:text-white me-3 ml-4">
+  <span class="flex flex-none items-center text-xs font-medium text-gray-900 dark:text-white me-3 ml-4">
     <span class="flex w-2.5 h-2.5 rounded-full me-1.5 flex-shrink-0" :class="`bg-${tag.color}-500`"></span><span x-text="tag.label"></span>
   </span>
 </div>

@@ -20,18 +20,16 @@ export default () => {
           text = JSON.stringify(JSON.parse(code), null, 2)
         } else if (code.startsWith('<') && code.endsWith('>')) {
           // Format as XML (basic formatting, might need a more robust solution)
-          let formatted = ''
           const parser = new DOMParser()
           const xmlDoc = parser.parseFromString(code, 'application/xml')
           const serializer = new XMLSerializer()
-          formatted = serializer.serializeToString(xmlDoc)
-          return formatted
+          text = serializer.serializeToString(xmlDoc)
         } else {
           // Return the original code if the type is unrecognized
           text = code
         }
 
-        el.textContent = `\n${text}`
+        el.textContent = text
       })
     })
   })

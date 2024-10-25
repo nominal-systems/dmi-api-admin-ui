@@ -1,13 +1,9 @@
 <div class="w-full mt-3">
-  <div class="relative bg-gray-50 rounded-lg dark:bg-gray-900 p-4 max-h-64">
+  <div class="relative bg-gray-50 rounded-lg dark:bg-gray-950 p-4 max-h-64">
     <div class="overflow-scroll max-h-48">
-      <pre>
-        <code x-code="code"
-              class="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-wrap">
-        </code>
-      </pre>
+      <pre><code class="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-wrap" x-code="code"></code></pre>
     </div>
-    <div class="absolute top-2 end-2 bg-gray-50 dark:bg-gray-900">
+    <div class="absolute top-2 end-2 bg-gray-50 dark:bg-gray-950">
       <button x-clipboard="code" @click="copied = true"
               class="text-gray-900 dark:text-gray-400 m-0.5 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 rounded-lg py-2 px-2.5 inline-flex items-center justify-center bg-white border-gray-200 border">
         <span id="default-message" class="inline-flex items-center">
