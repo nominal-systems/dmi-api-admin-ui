@@ -105,6 +105,15 @@ export const integrations = {
             integrations: this.table.getSelection()
           })
         }
+      },
+      {
+        label: 'Test',
+        async onClick() {
+          await this.batchActionsModal.open({
+            operation: 'test',
+            integrations: this.table.getSelection()
+          })
+        }
       }
     ]
   }),
@@ -143,7 +152,6 @@ export const integrations = {
       data.logs = []
     },
     onHide: async (self) => {
-      self.table.clearSelection()
       await self.table.goToPage(1)
     }
   }),
@@ -167,7 +175,7 @@ export const integrations = {
       })
   },
 
-  async batchUpdateIntegrations(data) {
+  async batchIntegrationOperations(data) {
     data.error = null
     data.inProgress = true
 
@@ -187,11 +195,11 @@ export const integrations = {
     } catch (err) {
       data.inProgress = false
       data.error = {
-        message: err.body.error
+        message: `Integration/${data.currentIntegration.id}: ${err.body.error}`
       }
       data.logs.push({
         status: 'error',
-        message: err.body.error
+        message: `Integration/${data.currentIntegration.id}: ${err.body.error}`
       })
     } finally {
 
