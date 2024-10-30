@@ -3,7 +3,8 @@ const UI_BASE = `${process.env.UI_URL || ''}`
 
 const keys = {
   API_BASE,
-  UI_BASE
+  UI_BASE,
+  TITLE_PREFIX: 'DMI Admin'
 }
 
 function log() {

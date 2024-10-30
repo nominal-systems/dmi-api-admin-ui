@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import { getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
 import { getTransactionLogs } from './api-client'
 
@@ -9,6 +10,7 @@ export default () => {
     async init() {
       const queryParams = getQueryParams()
       this.accessionId = queryParams.accessionId
+      Alpine.store('title').set(`Transaction Logs for ${this.accessionId}`)
       const transactionLogs = await getTransactionLogs(this.accessionId)
       if (transactionLogs.errors === undefined) {
         transactionLogs.forEach(log => {

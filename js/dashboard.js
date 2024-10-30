@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api-client'
 import moment from 'moment'
 import { QUERY_DATE_FORMAT } from './constants/query-date-format'
@@ -47,6 +48,7 @@ export const dashboard = () => {
     },
 
     async init() {
+      Alpine.store('title').set('Dashboard')
       const runningIntegrations = await getIntegrations(null, null, ['RUNNING'], 1, 1)
 
       // Dates

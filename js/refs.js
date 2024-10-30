@@ -186,6 +186,7 @@ export const refs = () => {
     },
 
     async init() {
+      Alpine.store('title').set('Reference Data')
       this.initTabs()
       const providers = await getProviders()
       providers.forEach((provider) => {

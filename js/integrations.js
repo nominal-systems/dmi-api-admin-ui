@@ -204,6 +204,10 @@ export const integrations = {
     } finally {
 
     }
+  },
+
+  init() {
+    Alpine.store('title').set('Integrations')
   }
 }
 

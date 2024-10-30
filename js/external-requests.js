@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, mapHttpStatusText } from './common/utils'
@@ -106,5 +107,9 @@ export const externalRequests = () => {
       this.modal.open()
     },
     externalRequest: {},
+
+    init() {
+      Alpine.store('title').set('External Requests')
+    }
   }
 }

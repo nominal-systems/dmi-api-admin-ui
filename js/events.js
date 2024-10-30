@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import { getEvent, getEvents, getIntegrations } from './api-client'
 import table from './plugins/table'
 import config from './config'
@@ -93,5 +94,9 @@ export const events = {
     this.event = await getEvent(ev._id)
     this.modal.open()
   },
-  event: null
+  event: null,
+
+  init() {
+    Alpine.store('title').set('Events')
+  }
 }

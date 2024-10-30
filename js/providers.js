@@ -195,6 +195,7 @@ export const providers = () => {
       const providers = await getProviders()
       const provider = providers.find((p) => p.id === getIdFromPath())
       provider.label = getProviderConfig(provider.id).label
+      Alpine.store('title').set(provider.label)
       this.provider = provider
       this.initTabs()
     }

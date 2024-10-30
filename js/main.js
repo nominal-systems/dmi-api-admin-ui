@@ -30,6 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 window.data = {
+  title: config.get('TITLE_PREFIX'),
   dark: getThemeFromLocalStorage(),
   toggleTheme() {
     this.dark = !this.dark
@@ -151,6 +152,17 @@ Alpine.store('alert', {
   close() {
     this.level = null
     this.html = null
+  }
+})
+
+// HTML title
+Alpine.store('title', {
+  set(title, prefix = true) {
+    if (!prefix) {
+      document.title = config.get('TITLE_PREFIX')
+    } else {
+      document.title = `${config.get('TITLE_PREFIX')} - ${title}`
+    }
   }
 })
 
