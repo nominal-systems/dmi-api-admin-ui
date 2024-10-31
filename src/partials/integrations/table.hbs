@@ -1,72 +1,70 @@
-<div x-data="integrations">
-  <div x-data="table">
-    {{#> table}}
-      {{#*inline "tableHeader"}}
-        <tr>
+<div x-data="table">
+  {{#> table}}
+    {{#*inline "tableHeader"}}
+      <tr>
+        <th class="px-4 py-3 w-12">
+          <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                 type="checkbox" value="" x-model="selectAllCheckbox"
+                 @click="toggleSelectAll">
+        </th>
+        <th class="px-4 py-3 w-[20rem]">ID</th>
+        <th class="px-4 py-3">Practice</th>
+        <th class="px-4 py-3 w-[8rem]">Provider</th>
+        <th class="px-4 py-3 text-center w-32">Status</th>
+        <th class="px-4 py-3 text-center w-44">Actions</th>
+      </tr>
+    {{/inline}}
+    {{#*inline "tableRows"}}
+      <template x-for="integration in items">
+        <tr class="text-gray-700 dark:text-gray-400"
+            :class="{ 'bg-gray-500 dark:bg-gray-600': integration._checked }">
           <th class="px-4 py-3 w-12">
             <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                   type="checkbox" value="" x-model="selectAllCheckbox"
-                   @click="toggleSelectAll">
+                   type="checkbox" value="" x-model="integration._checked"
+                   @change="selectionUpdated(integration)">
           </th>
-          <th class="px-4 py-3 w-[20rem]">ID</th>
-          <th class="px-4 py-3">Practice</th>
-          <th class="px-4 py-3 w-[8rem]">Provider</th>
-          <th class="px-4 py-3 text-center w-32">Status</th>
-          <th class="px-4 py-3 text-center w-44">Actions</th>
-        </tr>
-      {{/inline}}
-      {{#*inline "tableRows"}}
-        <template x-for="integration in items">
-          <tr class="text-gray-700 dark:text-gray-400"
-              :class="{ 'bg-gray-500 dark:bg-gray-600': integration._checked }">
-            <th class="px-4 py-3 w-12">
-              <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                     type="checkbox" value="" x-model="integration._checked"
-                     @change="selectionUpdated(integration)">
-            </th>
-            <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
-            <td class="px-4 py-3 truncate">
-              <div class="flex items-center">
-                <div>
-                  <p class="font-semibold" x-text="integration.practice.name"></p>
-                  <p class="text-xs text-gray-600 dark:text-gray-400" x-text="integration.practice.organization.name"></p>
-                </div>
+          <td class="px-4 py-3 text-xs" x-text="integration.id"></td>
+          <td class="px-4 py-3 truncate">
+            <div class="flex items-center">
+              <div>
+                <p class="font-semibold" x-text="integration.practice.name"></p>
+                <p class="text-xs text-gray-600 dark:text-gray-400" x-text="integration.practice.organization.name"></p>
               </div>
-            </td>
-            <td class="px-4 py-3">
-              <span x-text="integration.providerLabel"></span>
-            </td>
-            <td class="px-4 py-3 text-xs text-center">
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <span x-text="integration.providerLabel"></span>
+          </td>
+          <td class="px-4 py-3 text-xs text-center">
               <span
                 class="px-2 py-1 font-semibold leading-tight rounded-full"
                 x-bind:class="`text-${integration.color}-700 bg-${integration.color}-100 dark:bg-${integration.color}-700 dark:text-${integration.color}-100`"
                 x-text="integration.status">
               </span>
-            </td>
-            <td class="px-4 py-3 text-xs">
-              <div class="flex items-center space-x-4 text-sm">
-                <ul class="flex flex-wrap items-center justify-center font-xs font-semibold text-purple-600 dark:text-gray-400">
-                  <template x-for="operation in integration.operations">
-                    <li>
-                      <a href="#" class="me-4 hover:underline capitalize"
-                         @click="await actionModal.open({integration, operation})" x-text="operation">
-                      </a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </template>
-      {{/inline}}
-    {{/table}}
-  </div>
-  <div x-data="actionModal">
-    {{> integrations/modal }}
-  </div>
-  <div x-data="batchActionsModal">
-    {{> integrations/bulk-actions-modal }}
-  </div>
+          </td>
+          <td class="px-4 py-3 text-xs">
+            <div class="flex items-center space-x-4 text-sm">
+              <ul class="flex flex-wrap items-center justify-center font-xs font-semibold text-purple-600 dark:text-gray-400">
+                <template x-for="operation in integration.operations">
+                  <li>
+                    <a href="#" class="me-4 hover:underline capitalize"
+                       @click="await actionModal.open({integration, operation})" x-text="operation">
+                    </a>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </template>
+    {{/inline}}
+  {{/table}}
+</div>
+<div x-data="actionModal">
+  {{> integrations/modal }}
+</div>
+<div x-data="batchActionsModal">
+  {{> integrations/bulk-actions-modal }}
 </div>
 <div class="w-0 h-0 dark:bg-green-700"></div>
 <div class="w-0 h-0 dark:bg-blue-700"></div>

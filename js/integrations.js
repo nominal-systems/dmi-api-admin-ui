@@ -5,6 +5,10 @@ import table from './plugins/table'
 import modal from './plugins/modal'
 
 export const integrations = {
+  setTitle: () => {
+    Alpine.store('title').set('Integrations')
+  },
+
   // Table
   table: table({
     pageSize: 10,
@@ -204,10 +208,6 @@ export const integrations = {
     } finally {
 
     }
-  },
-
-  init() {
-    Alpine.store('title').set('Integrations')
   }
 }
 
