@@ -26,7 +26,9 @@ export default function (Alpine) {
     },
     tooltip: {
       shared: true,
+      followCursor: false,
       intersect: false,
+      theme: 'dark',
       style: {
         fontFamily: 'Inter, sans-serif',
       },
@@ -109,8 +111,7 @@ export default function (Alpine) {
             options: [
               { value: 'today', label: 'Today' },
               { value: 'last7days', label: 'Last 7 Days' },
-              { value: 'last30days', label: 'Last 30 Days' },
-              { value: 'last60days', label: 'Last 60 Days' },
+              { value: 'last30days', label: 'Last 30 Days' }
             ],
           },
           async fetch() {
@@ -123,7 +124,15 @@ export default function (Alpine) {
           },
           async refresh() {
             await this.fetch()
-            this.chart.updateSeries(this.series, false)
+            const { formatter } = dateRangePresets(this.dateSelector.current.value)
+            this.chart.updateOptions({
+              series: this.series,
+              tooltip: {
+                x: {
+                  format: formatter
+                }
+              }
+            })
           },
           async init() {
             this.dateSelector.current = this.dateSelector.options[1]
@@ -150,25 +159,29 @@ function dateRangePresets(preset) {
       return {
         startDate: moment().utc().startOf('day').format(QUERY_DATE_FORMAT),
         endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
-        granularity: 'hour'
+        granularity: 'hour',
+        formatter: 'hhtt'
       }
     case 'last7days':
       return {
         startDate: moment().utc().subtract(6, 'days').startOf('day').format(QUERY_DATE_FORMAT),
         endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
-        granularity: 'day'
+        granularity: 'day',
+        formatter: 'dd MMM'
       }
     case 'last30days':
       return {
         startDate: moment().utc().subtract(29, 'days').startOf('day').format(QUERY_DATE_FORMAT),
         endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
-        granularity: 'day'
+        granularity: 'day',
+        formatter: 'dd MMM'
       }
     case 'last60days':
       return {
         startDate: moment().utc().subtract(59, 'days').startOf('day').format(QUERY_DATE_FORMAT),
         endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
-        granularity: 'day'
+        granularity: 'day',
+        formatter: 'dd MMM'
       }
   }
 }
