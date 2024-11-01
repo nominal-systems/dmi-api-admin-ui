@@ -16,7 +16,14 @@ export const dashboard = () => {
     },
     charts: {
       provider_api_errors: {
-        series: null,
+        async series(startDate, endDate, granularity) {
+          const externalRequests = await getExternalRequestsStats(startDate, endDate)
+          return createTimeSeries(externalRequests, startDate, endDate, {
+            series: PROVIDERS_CONFIG,
+            grouping: 'provider',
+            granularity
+          })
+        },
         options: {
           chart: {
             stacked: true,
@@ -33,15 +40,47 @@ export const dashboard = () => {
           },
           colors: [function ({ value, seriesIndex, w }) {
             return PROVIDERS_CONFIG[seriesIndex].color
-          }]
+          }],
+          xaxis: {
+            type: 'datetime',
+            labels: {
+              datetimeFormatter: {
+                year: 'yyyy',
+                month: 'dd MMM',
+                day: 'dd MMM',
+                hour: 'hhtt'
+              }
+            }
+          }
         }
       },
       events: {
-        series: null,
+        async series(startDate, endDate, granularity) {
+          const orderCreatedEvents = await getEventsStats(['order:created'], startDate, endDate, ['createdAt'])
+          return createTimeSeries(orderCreatedEvents, startDate, endDate, {
+            granularity,
+            series: [
+              {
+                label: 'Orders Created'
+              }
+            ]
+          })
+        },
         options: {
           colors: ['#69656a'],
           dataLabels: {
             enabled: true
+          },
+          xaxis: {
+            type: 'datetime',
+            labels: {
+              datetimeFormatter: {
+                year: 'yyyy',
+                month: 'dd MMM',
+                day: 'dd MMM',
+                hour: 'hhtt'
+              }
+            }
           }
         }
       }
@@ -51,37 +90,14 @@ export const dashboard = () => {
       Alpine.store('title').set('Dashboard')
       const runningIntegrations = await getIntegrations(null, null, ['RUNNING'], 1, 1)
 
-      // Dates
+      // Cards
       const today = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
-      const sevenDaysAgo = moment().utc().subtract(6, 'days').startOf('day').format(QUERY_DATE_FORMAT)
-
-      // Today
-      // TODO(gb): make only one request and filter for today?
       const todayEvents = await getEventsStats(undefined, today, today, ['type'])
       const todayExternalRequests = await getExternalRequestsStats(today, today)
-
-      // Last 7 days
-      const last7DaysOrderCreatedEvents = await getEventsStats(['order:created'], sevenDaysAgo, today, ['createdAt'])
-      const last7DaysExternalRequests = await getExternalRequestsStats(sevenDaysAgo, today)
-
-      // Cards
       this.stats.integrations_running = runningIntegrations.total
       this.stats.orders_created_today = todayEvents.find((s) => s.type === 'order:created')?.count || 0
       this.stats.reports_updated_today = todayEvents.find((s) => s.type === 'report:updated')?.count || 0
       this.stats.provider_errors_today = todayExternalRequests.reduce((acc, s) => acc + s.count, 0)
-
-      // Charts
-      this.charts.provider_api_errors.series = createTimeSeries(last7DaysExternalRequests, sevenDaysAgo, today, {
-        series: PROVIDERS_CONFIG,
-        grouping: 'provider'
-      })
-      this.charts.events.series = createTimeSeries(last7DaysOrderCreatedEvents, sevenDaysAgo, today, {
-        series: [
-          {
-            label: 'Orders Created'
-          }
-        ]
-      })
     }
   }
 }

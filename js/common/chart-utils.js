@@ -17,22 +17,22 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
   })
   const start = new Date(startDate)
   const end = moment(new Date(endDate)).endOf('day').toDate()
-  const timeSeries = [];
+  const timeSeries = []
   while (start <= end) {
-    let x;
+    let x
     if (opts.granularity === 'month') {
-      x = start.toISOString().slice(0, 7); // YYYY-MM
-      start.setMonth(start.getMonth() + 1);
+      x = start.toISOString().slice(0, 7) // YYYY-MM
+      start.setMonth(start.getMonth() + 1)
     } else if (opts.granularity === 'day') {
-      x = start.toISOString().slice(0, 10); // YYYY-MM-DD
-      start.setDate(start.getDate() + 1);
-    } else if (opts.granularity === 'hours') {
-      x = start.toISOString().slice(0, 13); // YYYY-MM-DDTHH
-      start.setHours(start.getHours() + 1);
+      x = start.toISOString().slice(0, 10) // YYYY-MM-DD
+      start.setDate(start.getDate() + 1)
+    } else if (opts.granularity === 'hour') {
+      x = start.toISOString()
+      start.setHours(start.getHours() + 1)
     } else {
-      throw new Error('Invalid granularity. Use \'month\', \'day\', or \'hours\'.');
+      throw new Error('Invalid granularity. Use \'month\', \'day\', or \'hour\'.')
     }
-    timeSeries.push({ x, y: 0 });
+    timeSeries.push({ x, y: 0 })
   }
 
   // Grouping
@@ -41,9 +41,9 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
       return opts.grouping !== undefined ? d[opts.grouping] === s.id : true
     })
     s.data = [...timeSeries].map((ts) => {
-      const intervalParts = ts.x.split('-').map((part) => parseInt(part))
+      const intervalParts = ts.x.replace('T', '-').split('-').map((part) => parseInt(part))
       return {
-        x: ts.x,
+        x: new Date(ts.x),
         y: seriesData.reduce((sum, item) => {
           if (
             (opts.granularity === 'year' && item.year === intervalParts[0]) ||
@@ -51,9 +51,9 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
             (opts.granularity === 'day' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2]) ||
             (opts.granularity === 'hour' && item.year === intervalParts[0] && item.month === intervalParts[1] && item.day === intervalParts[2] && item.hour === intervalParts[3])
           ) {
-            sum += item.count;
+            sum += item.count
           }
-          return sum;
+          return sum
         }, 0)
       }
     })

@@ -1,5 +1,7 @@
 import ApexCharts from 'apexcharts'
 import { deepMerge } from '../common/utils'
+import moment from 'moment/moment'
+import { QUERY_DATE_FORMAT } from '../constants/query-date-format'
 
 export default function (Alpine) {
   const defaultOptions = {
@@ -56,6 +58,10 @@ export default function (Alpine) {
     },
     legend: {
       show: true,
+      position: 'bottom',
+      markers: {
+        strokeWidth: 0
+      }
     },
     xaxis: {
       floating: false,
@@ -89,18 +95,80 @@ export default function (Alpine) {
     }
   })
 
-  function handleRoot(el, Alpine, series, options) {
+  function handleRoot(el, Alpine, getSeries, options) {
+    const $canvas = el.querySelector('[x-chart\\:canvas]')
     Alpine.bind(el, {
       'x-data'() {
         return {
           chart: null,
-          total: series.reduce((acc, item) => acc + item.data.reduce((acc, item) => acc + item.y, 0), 0),
-          init() {
-            this.chart = new ApexCharts(el, { series, ...options });
+          series: null,
+          total: 0,
+          loading: true,
+          dateSelector: {
+            current: null,
+            options: [
+              { value: 'today', label: 'Today' },
+              { value: 'last7days', label: 'Last 7 Days' },
+              { value: 'last30days', label: 'Last 30 Days' },
+              { value: 'last60days', label: 'Last 60 Days' },
+            ],
+          },
+          async fetch() {
+            this.loading = true
+            this.total = '-'
+            const { startDate, endDate, granularity } = dateRangePresets(this.dateSelector.current.value)
+            this.series = await getSeries(startDate, endDate, granularity)
+            this.total = this.series.reduce((acc, item) => acc + item.data.reduce((acc, item) => acc + item.y, 0), 0)
+            this.loading = false
+          },
+          async refresh() {
+            await this.fetch()
+            this.chart.updateSeries(this.series, false)
+          },
+          async init() {
+            this.dateSelector.current = this.dateSelector.options[1]
+            this.dateSelector.options.forEach(option => {
+              option.onClick = (dropdown) => {
+                this.dateSelector.current = option
+                this.refresh()
+                dropdown.close()
+              }
+            })
+            await this.fetch()
+            this.chart = new ApexCharts($canvas, { series: this.series, ...options });
             this.chart.render()
           }
         }
       }
     })
+  }
+}
+
+function dateRangePresets(preset) {
+  switch (preset) {
+    case 'today':
+      return {
+        startDate: moment().utc().startOf('day').format(QUERY_DATE_FORMAT),
+        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        granularity: 'hour'
+      }
+    case 'last7days':
+      return {
+        startDate: moment().utc().subtract(6, 'days').startOf('day').format(QUERY_DATE_FORMAT),
+        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        granularity: 'day'
+      }
+    case 'last30days':
+      return {
+        startDate: moment().utc().subtract(29, 'days').startOf('day').format(QUERY_DATE_FORMAT),
+        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        granularity: 'day'
+      }
+    case 'last60days':
+      return {
+        startDate: moment().utc().subtract(59, 'days').startOf('day').format(QUERY_DATE_FORMAT),
+        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        granularity: 'day'
+      }
   }
 }
