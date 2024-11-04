@@ -31,7 +31,7 @@ export default function (Alpine) {
       theme: 'dark',
       style: {
         fontFamily: 'Inter, sans-serif',
-      },
+      }
     },
     states: {
       hover: {
@@ -110,8 +110,10 @@ export default function (Alpine) {
             current: null,
             options: [
               { value: 'today', label: 'Today' },
-              { value: 'last7days', label: 'Last 7 Days' },
-              { value: 'last30days', label: 'Last 30 Days' }
+              { value: 'last24hours', label: 'Last 24 hs' },
+              { value: 'last48hours', label: 'Last 48 hs' },
+              { value: 'last7days', label: 'Last 7 days' },
+              { value: 'last30days', label: 'Last 30 days' }
             ],
           },
           async fetch() {
@@ -135,7 +137,8 @@ export default function (Alpine) {
             })
           },
           async init() {
-            this.dateSelector.current = this.dateSelector.options[1]
+            this.dateSelector.current = this.dateSelector.options[0]
+            const { formatter } = dateRangePresets(this.dateSelector.current.value)
             this.dateSelector.options.forEach(option => {
               option.onClick = (dropdown) => {
                 this.dateSelector.current = option
@@ -144,8 +147,15 @@ export default function (Alpine) {
               }
             })
             await this.fetch()
-            this.chart = new ApexCharts($canvas, { series: this.series, ...options });
+            this.chart = new ApexCharts($canvas, { series: this.series, ...options })
             this.chart.render()
+            this.chart.updateOptions({
+              tooltip: {
+                x: {
+                  format: formatter
+                }
+              }
+            })
           }
         }
       }
@@ -157,29 +167,36 @@ function dateRangePresets(preset) {
   switch (preset) {
     case 'today':
       return {
-        startDate: moment().utc().startOf('day').format(QUERY_DATE_FORMAT),
-        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        startDate: moment().startOf('day'),
+        endDate: moment().endOf('hour'),
         granularity: 'hour',
-        formatter: 'hhtt'
+        formatter: 'htt'
+      }
+    case 'last24hours':
+      return {
+        startDate: moment().utc().subtract(23, 'hours').startOf('hour'),
+        endDate: moment().utc().endOf('hour'),
+        granularity: 'hour',
+        formatter: 'htt'
+      }
+    case 'last48hours':
+      return {
+        startDate: moment().utc().subtract(47, 'hours').startOf('hour'),
+        endDate: moment().utc().endOf('hour'),
+        granularity: 'hour',
+        formatter: 'htt'
       }
     case 'last7days':
       return {
-        startDate: moment().utc().subtract(6, 'days').startOf('day').format(QUERY_DATE_FORMAT),
-        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        startDate: moment().utc().subtract(6, 'days').startOf('day'),
+        endDate: moment().utc().endOf('day'),
         granularity: 'day',
         formatter: 'dd MMM'
       }
     case 'last30days':
       return {
-        startDate: moment().utc().subtract(29, 'days').startOf('day').format(QUERY_DATE_FORMAT),
-        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
-        granularity: 'day',
-        formatter: 'dd MMM'
-      }
-    case 'last60days':
-      return {
-        startDate: moment().utc().subtract(59, 'days').startOf('day').format(QUERY_DATE_FORMAT),
-        endDate: moment().utc().endOf('day').format(QUERY_DATE_FORMAT),
+        startDate: moment().utc().subtract(29, 'days').startOf('day'),
+        endDate: moment().utc().endOf('day'),
         granularity: 'day',
         formatter: 'dd MMM'
       }

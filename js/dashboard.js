@@ -48,7 +48,7 @@ export const dashboard = () => {
                 year: 'yyyy',
                 month: 'dd MMM',
                 day: 'dd MMM',
-                hour: 'hhtt'
+                hour: 'htt'
               }
             }
           }
@@ -78,7 +78,7 @@ export const dashboard = () => {
                 year: 'yyyy',
                 month: 'dd MMM',
                 day: 'dd MMM',
-                hour: 'hhtt'
+                hour: 'htt'
               }
             }
           }

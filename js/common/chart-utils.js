@@ -16,7 +16,7 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
     return { name: s.label, id: s.id, data: [] }
   })
   const start = new Date(startDate)
-  const end = moment(new Date(endDate)).endOf('day').toDate()
+  const end = new Date(endDate)
   const timeSeries = []
   while (start <= end) {
     let x
