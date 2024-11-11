@@ -1,7 +1,6 @@
 import ApexCharts from 'apexcharts'
 import { deepMerge } from '../common/utils'
-import moment from 'moment/moment'
-import { QUERY_DATE_FORMAT } from '../constants/query-date-format'
+import { dateRangePresets } from '../common/date-utils'
 
 export default function (Alpine) {
   const defaultOptions = {
@@ -160,45 +159,5 @@ export default function (Alpine) {
         }
       }
     })
-  }
-}
-
-function dateRangePresets(preset) {
-  switch (preset) {
-    case 'today':
-      return {
-        startDate: moment().startOf('day'),
-        endDate: moment().endOf('hour'),
-        granularity: 'hour',
-        formatter: 'htt'
-      }
-    case 'last24hours':
-      return {
-        startDate: moment().utc().subtract(23, 'hours').startOf('hour'),
-        endDate: moment().utc().endOf('hour'),
-        granularity: 'hour',
-        formatter: 'htt'
-      }
-    case 'last48hours':
-      return {
-        startDate: moment().utc().subtract(47, 'hours').startOf('hour'),
-        endDate: moment().utc().endOf('hour'),
-        granularity: 'hour',
-        formatter: 'htt'
-      }
-    case 'last7days':
-      return {
-        startDate: moment().utc().subtract(6, 'days').startOf('day'),
-        endDate: moment().utc().endOf('day'),
-        granularity: 'day',
-        formatter: 'dd MMM'
-      }
-    case 'last30days':
-      return {
-        startDate: moment().utc().subtract(29, 'days').startOf('day'),
-        endDate: moment().utc().endOf('day'),
-        granularity: 'day',
-        formatter: 'dd MMM'
-      }
   }
 }

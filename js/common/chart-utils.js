@@ -1,6 +1,19 @@
-import moment from 'moment'
+import { formatDateInLocalTimezone } from './date-utils'
 
 export function createTimeSeries(data, startDate, endDate, options = {}) {
+  data.forEach(item => {
+    const dateUTC = new Date(Date.UTC(
+      item.year,
+      item.month - 1,
+      item.day,
+      item.hour
+    ));
+    const dateLocal = new Date(dateUTC.getTime())
+    item.year = dateLocal.getFullYear()
+    item.month = dateLocal.getMonth() + 1
+    item.day = dateLocal.getDate()
+    item.hour = dateLocal.getHours()
+  })
   const defaultOptions = {
     granularity: 'day',
     series: [
@@ -21,13 +34,13 @@ export function createTimeSeries(data, startDate, endDate, options = {}) {
   while (start <= end) {
     let x
     if (opts.granularity === 'month') {
-      x = start.toISOString().slice(0, 7) // YYYY-MM
+      x = formatDateInLocalTimezone(start).slice(0, 7) // YYYY-MM
       start.setMonth(start.getMonth() + 1)
     } else if (opts.granularity === 'day') {
-      x = start.toISOString().slice(0, 10) // YYYY-MM-DD
+      x = formatDateInLocalTimezone(start).slice(0, 10) // YYYY-MM-DD
       start.setDate(start.getDate() + 1)
     } else if (opts.granularity === 'hour') {
-      x = start.toISOString()
+      x = formatDateInLocalTimezone(start)
       start.setHours(start.getHours() + 1)
     } else {
       throw new Error('Invalid granularity. Use \'month\', \'day\', or \'hour\'.')

@@ -171,14 +171,6 @@ export const updateRefMapping = async (refId, providerRefId) => {
   return await apiPost(`/refs/${refId}/mapping`, { providerRefId })
 }
 
-export const getProvider = async (id) => {
-  let provider = {}
-  await apiGet(`/providers/${id}`, (body) => {
-    provider = body
-  })
-  return provider
-}
-
 export const getProviderRefs = async (provider, type, query, page, limit) => {
   let queryString = `page=${page}&limit=${limit}`
   if (!isNullOrUndefinedOrEmpty(query)) {

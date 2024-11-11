@@ -1,7 +1,6 @@
 import Alpine from 'alpinejs'
 import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api-client'
 import moment from 'moment'
-import { QUERY_DATE_FORMAT } from './constants/query-date-format'
 import { createTimeSeries } from './common/chart-utils'
 import { PROVIDERS_CONFIG } from './constants/providers-config'
 import { navigateTo } from './common/utils'
@@ -9,10 +8,10 @@ import { navigateTo } from './common/utils'
 export const dashboard = () => {
   return {
     stats: {
-      integrations_running: 0,
-      orders_created_today: 0,
-      reports_updated_today: 0,
-      provider_errors_today: 0
+      integrations_running: '-',
+      orders_created_today: '-',
+      reports_updated_today: '-',
+      provider_errors_today: '-'
     },
     charts: {
       provider_api_errors: {
@@ -91,9 +90,10 @@ export const dashboard = () => {
       const runningIntegrations = await getIntegrations(null, null, ['RUNNING'], 1, 1)
 
       // Cards
-      const today = moment().utc().startOf('day').format(QUERY_DATE_FORMAT)
-      const todayEvents = await getEventsStats(undefined, today, today, ['type'])
-      const todayExternalRequests = await getExternalRequestsStats(today, today)
+      const startOfToday = moment().startOf('day').toISOString()
+      const endOfToday = moment().endOf('day').toISOString()
+      const todayEvents = await getEventsStats(undefined, startOfToday, endOfToday, ['type'])
+      const todayExternalRequests = await getExternalRequestsStats(startOfToday, endOfToday)
       this.stats.integrations_running = runningIntegrations.total
       this.stats.orders_created_today = todayEvents.find((s) => s.type === 'order:created')?.count || 0
       this.stats.reports_updated_today = todayEvents.find((s) => s.type === 'report:updated')?.count || 0
