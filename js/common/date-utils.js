@@ -43,3 +43,16 @@ export function dateRangePresets(preset) {
 export function formatDateInLocalTimezone(date) {
   return moment(date).local().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 }
+
+export function parseDateRange(dateRange) {
+  const dates = []
+  const [startDate, endDate] = dateRange.split('-')
+  dates.push(moment(startDate).toISOString())
+  if (endDate !== undefined) {
+    dates.push(moment(endDate).toISOString())
+  } else {
+    dates.push(moment(startDate).endOf('day').toISOString())
+  }
+
+  return dates
+}

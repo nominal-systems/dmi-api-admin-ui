@@ -6,6 +6,7 @@ import { getQueryParams } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
+import { parseDateRange } from './common/date-utils'
 
 export const events = {
   // Table
@@ -16,7 +17,7 @@ export const events = {
         const query = getQueryParams()
         const integrations = query.integration ? query.integration.split(',') : undefined
         const types = query.type ? query.type.split(',') : undefined
-        const date = query.date ? query.date.split(',') : undefined
+        const date = query.date ? parseDateRange(query.date) : undefined
 
         return await getEvents(integrations, types, date, page, pageSize)
       },

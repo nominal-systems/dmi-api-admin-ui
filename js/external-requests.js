@@ -5,6 +5,7 @@ import { getProviderConfig, getQueryParams, mapHttpStatusText } from './common/u
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
+import { parseDateRange } from './common/date-utils'
 
 export const externalRequests = () => {
   return {
@@ -17,7 +18,7 @@ export const externalRequests = () => {
         const providers = query.provider ? query.provider.split(',') : undefined
         const method = query.method ? query.method.split(',') : undefined
         const status = query.status ? query.status.split(',') : undefined
-        const date = query.date ? query.date.split(',') : undefined
+        const date = query.date ? parseDateRange(query.date) : undefined
 
         return await getExternalRequests(providers, status, method, date, page, pageSize)
       },
