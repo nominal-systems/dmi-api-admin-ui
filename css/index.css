@@ -1,4 +1,5 @@
 @import "http.css";
+@import "providers.css";
 
 @tailwind base;
 @tailwind components;

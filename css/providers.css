@@ -1,0 +1,24 @@
+.bg-provider-antech,
+.dark\:bg-provider-antech {
+  background-color: #865DBB;
+}
+
+.bg-provider-antech-v6,
+.dark\:bg-provider-antech-v6 {
+  background-color: #BA4A78;
+}
+
+.bg-provider-idexx,
+.dark\:bg-provider-idexx {
+  background-color: #A27763;
+}
+
+.bg-provider-zoetis,
+.dark\:bg-provider-zoetis {
+  background-color: #CB7B37;
+}
+
+.bg-provider-wisdom-panel,
+.dark\:bg-provider-wisdom-panel {
+  background-color: #C19138;
+}

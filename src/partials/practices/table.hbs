@@ -19,7 +19,7 @@
             <td class="px-4 py-3">
               <template x-for="integration in practice.integrations">
                 <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded text-gray-800 dark:text-gray-300"
-                      :class="`bg-[${integration.provider.color}] dark:bg-[${integration.provider.color}]`"
+                      :class="`bg-provider-${integration.provider.id} dark:bg-provider-${integration.provider.id}`"
                       x-text="integration.provider.label">
                   Default
                 </span>
@@ -31,12 +31,5 @@
     {{/table}}
   </div>
 </div>
-
-<div :class="`w-0 h-0 dark:bg-[#8a3ffc]`"></div>
-<div :class="`w-0 h-0 dark:bg-[#d12771]`"></div>
-<div :class="`w-0 h-0 dark:bg-[#007d79]`"></div>
-<div :class="`w-0 h-0 dark:bg-[#ba4e00]`"></div>
-<div :class="`w-0 h-0 dark:bg-[#ba4e00]`"></div>
-<div :class="`w-0 h-0 dark:bg-[#d2a106]`"></div>
 
 
