@@ -242,3 +242,11 @@ export const getPractices = async ({ ids }, page, limit) => {
 export const getTransactionLogs = async (accessionId) => {
   return await apiGet2(`/transaction-logs?accessionId=${accessionId}`)
 }
+
+export const getOrderStats = async (stat, { startDate, endDate }) => {
+  let qs = `startDate=${startDate}&endDate=${endDate}`
+  if (stat !== undefined) {
+    qs += `&stat=${stat}`
+  }
+  return await apiGet2(`/orders/stats?${qs}`)
+}

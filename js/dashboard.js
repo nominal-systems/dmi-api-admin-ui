@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs'
-import { getEventsStats, getExternalRequestsStats, getIntegrations } from './api-client'
+import { getEventsStats, getExternalRequestsStats, getIntegrations, getOrderStats } from './api-client'
 import moment from 'moment'
 import { createTimeSeries } from './common/chart-utils'
 import { PROVIDERS_CONFIG } from './constants/providers-config'
@@ -55,18 +55,20 @@ export const dashboard = () => {
       },
       events: {
         async series(startDate, endDate, granularity) {
-          const orderCreatedEvents = await getEventsStats(['order:created'], startDate, endDate, ['createdAt'])
+          const orderCreatedEvents = await getOrderStats('countByProvider', { startDate, endDate })
           return createTimeSeries(orderCreatedEvents, startDate, endDate, {
-            granularity,
-            series: [
-              {
-                label: 'Orders Created'
-              }
-            ]
+            series: PROVIDERS_CONFIG,
+            grouping: 'provider',
+            granularity
           })
         },
         options: {
-          colors: ['#69656a'],
+          chart: {
+            stacked: true
+          },
+          colors: [function ({ value, seriesIndex, w }) {
+            return PROVIDERS_CONFIG[seriesIndex].color
+          }],
           dataLabels: {
             enabled: true
           },
