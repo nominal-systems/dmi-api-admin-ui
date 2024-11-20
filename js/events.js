@@ -1,8 +1,8 @@
 import Alpine from 'alpinejs'
-import { getEvent, getEvents, getIntegrations } from './api-client'
+import { getEvent, getEvents, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
 import config from './config'
-import { getQueryParams } from './common/utils'
+import { getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
@@ -15,34 +15,40 @@ export const events = {
       pageSize: 20,
       getPage: async (page, pageSize) => {
         const query = getQueryParams()
+        const providers = query.provider ? query.provider.split(',') : undefined
         const integrations = query.integration ? query.integration.split(',') : undefined
         const types = query.type ? query.type.split(',') : undefined
         const date = query.date ? parseDateRange(query.date) : undefined
 
-        return await getEvents(integrations, types, date, page, pageSize)
+        return await getEvents({ providers, integrations, types, date }, page, pageSize)
       },
-      processResults: (events) => {
+      processResults: async (events) => {
+        const practiceIds = [...new Set(
+          events.filter((event) => !isNullOrUndefined(event.practiceId)).map((event) => event.practiceId)
+        )]
+        const practices = (await getPractices(practiceIds, 1, 1000)).data
         events.forEach((event) => {
+          event.provider = getProviderConfig(event.providerId) || {}
+          event.practice = practices.find((practice) => practice.id === event.practiceId) || {}
           event.url = `${config.get('UI_BASE')}/events/${event._id}`
         })
       },
       filter: {
-        integration: {
-          id: 'integration',
+        provider: {
+          id: 'provider',
           type: 'checkbox',
-          label: 'Integration',
+          label: 'Provider',
           updateQuery: true,
-          items: async () => {
-            const integrations = (await getIntegrations(null, null, null, 1, 1000)).data
-            return integrations.map((integration) => {
+          async items() {
+            return (await getProviders()).map((provider) => {
               return {
-                label: integration.id,
-                value: integration.id
+                label: getProviderConfig(provider.id).label,
+                value: provider.id,
               }
             })
           },
           dropdownOptions: {
-            width: '84'
+            width: '52'
           }
         },
         type: {

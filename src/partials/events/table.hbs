@@ -4,8 +4,9 @@
       <tr>
         <th class="px-4 py-3 w-[4rem]">#</th>
         <th class="px-4 py-3 w-[12rem]">Date</th>
-        <th class="px-4 py-3">Integration</th>
-        <th class="px-4 py-3 w-32">Namespace</th>
+        <th class="px-4 py-3 w-[12rem]">Provider</th>
+        <th class="px-4 py-3">Practice</th>
+        <th class="px-4 py-3 w-[20rem]">Integration</th>
         <th class="px-4 py-3 w-32">Type</th>
         <th class="px-4 py-3 w-24 text-center">Data</th>
       </tr>
@@ -17,9 +18,19 @@
             <a x-bind:href="ev.url" class="font-medium text-purple-600 dark:text-blue-500 hover:underline" x-text="ev.seq"></a>
           </td>
           <td class="px-4 py-3" x-date="ev.createdAt"></td>
+          <td class="px-4 py-3">
+            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded text-gray-800 dark:text-gray-300"
+                  :class="`bg-provider-${ev.provider.id} dark:bg-provider-${ev.provider.id}`"
+                  x-text="ev.provider.label">
+                </span>
+          </td>
+          <td class="px-4 py-3 truncate" x-text="ev.practice?.name"></td>
           <td class="px-4 py-3 truncate" x-text="ev.integrationId"></td>
-          <td class="px-4 py-3" x-text="ev.namespace"></td>
-          <td class="px-4 py-3" x-text="ev.type"></td>
+          <td class="px-4 py-3">
+            <span class="px-2.5 py-0.5 rounded bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border">
+              <span x-text="ev.type"></span>
+            </span>
+          </td>
           <td class="px-4 py-3 text-center">
             <div class="flex items-center space-x-4 text-sm">
               <button

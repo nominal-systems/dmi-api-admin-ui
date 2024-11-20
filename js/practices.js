@@ -8,7 +8,7 @@ export const practices = {
   table: table({
     pageSize: 20,
     getPage: async (page, pageSize) => {
-      return await getPractices(page, pageSize)
+      return await getPractices({}, page, pageSize)
     },
     processResults: (practices) => {
       practices.forEach(practice => {

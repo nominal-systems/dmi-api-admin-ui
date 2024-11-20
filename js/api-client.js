@@ -90,8 +90,11 @@ export const getOrganizations = async () => {
   return await apiGet2('/organizations')
 }
 
-export const getEvents = async (integrations, types, date, page, limit) => {
+export const getEvents = async ({ providers, integrations, types, date }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
+  if (providers !== undefined) {
+    qs += `&providers=${providers.join(',')}`
+  }
   if (integrations !== undefined) {
     qs += `&integrations=${integrations.join(',')}`
   }
@@ -228,8 +231,12 @@ export const getExternalRequest = async (id) => {
   return result
 }
 
-export const getPractices = async (page, limit) => {
-  return await apiGet2(`/practices?page=${page}&limit=${limit}`)
+export const getPractices = async ({ ids }, page, limit) => {
+  let qs = `page=${page}&limit=${limit}`
+  if (ids !== undefined) {
+    qs += `&ids=${ids.join(',')}`
+  }
+  return await apiGet2(`/practices?${qs}`)
 }
 
 export const getTransactionLogs = async (accessionId) => {
