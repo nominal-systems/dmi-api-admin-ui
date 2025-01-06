@@ -177,7 +177,7 @@ export const refs = () => {
           targetEl: document.querySelector('#species')
         },
         {
-          id: 'breeds',
+          id: 'breed',
           triggerEl: document.querySelector('#breeds-tab'),
           targetEl: document.querySelector('#breeds')
         }
