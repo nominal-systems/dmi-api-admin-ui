@@ -1,4 +1,4 @@
-import { isNullOrUndefinedOrEmpty, removeQueryParam, setQueryParam } from '../common/utils'
+import { getQueryParams, isNullOrUndefinedOrEmpty, removeQueryParam, setQueryParam } from '../common/utils'
 
 const defaultOptions = {
   placeholder: 'Search...',
@@ -21,11 +21,13 @@ export default function (Alpine) {
 function handleRoot(el, Alpine, options) {
   Alpine.bind(el, {
     'x-data'() {
+      const queryParams = getQueryParams()
+      this.query = queryParams.search || null
       return {
         placeholder: options.placeholder,
         label: options.label,
-        query: null,
-        dirty: false,
+        query: this.query,
+        dirty: this.query || false,
         clear() {
           this.query = null
           this.dirty = false

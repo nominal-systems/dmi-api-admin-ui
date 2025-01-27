@@ -1,14 +1,18 @@
 import Alpine from 'alpinejs'
 import table from './plugins/table'
 import { getPractices } from './api-client'
-import { getProviderConfig } from './common/utils'
+import { getProviderConfig, getQueryParams } from './common/utils'
 
 export const practices = {
   // Table
   table: table({
     pageSize: 20,
+    _search: {
+      placeholder: 'Search by name...'
+    },
     getPage: async (page, pageSize) => {
-      return await getPractices({}, page, pageSize)
+      const query = getQueryParams()
+      return await getPractices({ search: query.search }, page, pageSize)
     },
     processResults: (practices) => {
       practices.forEach(practice => {

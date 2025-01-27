@@ -231,10 +231,13 @@ export const getExternalRequest = async (id) => {
   return result
 }
 
-export const getPractices = async ({ ids }, page, limit) => {
+export const getPractices = async ({ ids, search }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (ids !== undefined) {
     qs += `&ids=${ids.join(',')}`
+  }
+  if (search !== undefined) {
+    qs += `&search=${search}`
   }
   return await apiGet2(`/practices?${qs}`)
 }
