@@ -123,7 +123,7 @@ export const getEvent = async (id) => {
   return await apiGet2(`/events/${id}`)
 }
 
-export const getIntegrations = async (providers, organizations, statuses, page, limit) => {
+export const getIntegrations = async ({ providers, organizations, statuses, practices }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (!isNullOrUndefined(providers)) {
     qs += `&providers=${providers.join(',')}`
@@ -133,6 +133,9 @@ export const getIntegrations = async (providers, organizations, statuses, page, 
   }
   if (!isNullOrUndefined(statuses)) {
     qs += `&statuses=${statuses.join(',')}`
+  }
+  if (!isNullOrUndefined(practices)) {
+    qs += `&practices=${practices.join(',')}`
   }
   return await apiGet2(`/integrations?${qs}`)
 }

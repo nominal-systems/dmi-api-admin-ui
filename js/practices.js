@@ -2,6 +2,7 @@ import Alpine from 'alpinejs'
 import table from './plugins/table'
 import { getPractices } from './api-client'
 import { getProviderConfig, getQueryParams } from './common/utils'
+import config from './config'
 
 export const practices = {
   // Table
@@ -20,6 +21,7 @@ export const practices = {
           integration.provider = getProviderConfig(integration.providerConfiguration.providerId)
         })
         practice.integrations.sort((a, b) => a.provider.label.localeCompare(b.provider.label))
+        practice.integrationsUrl = `${config.get('UI_BASE')}/integrations?practices=${practice.id}&status=RUNNING`
       })
     }
   }),

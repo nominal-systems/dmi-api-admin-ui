@@ -17,7 +17,8 @@ export const integrations = {
       const providers = query.provider ? query.provider.split(',') : undefined
       const organizations = query.organization ? query.organization.split(',') : undefined
       const statuses = query.status ? query.status.split(',') : undefined
-      return await getIntegrations(providers, organizations, statuses, page, pageSize)
+      const practices = query.practices ? query.practices.split(',') : undefined
+      return await getIntegrations({ providers, organizations, statuses, practices }, page, pageSize)
     },
     processResults: (integrations) => {
       integrations.forEach(integration => {

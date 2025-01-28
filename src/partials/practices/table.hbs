@@ -20,9 +20,11 @@
               <template x-for="integration in practice.integrations">
                 <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded text-gray-800 dark:text-gray-300"
                       :class="`bg-provider-${integration.provider.id} dark:bg-provider-${integration.provider.id}`"
-                      x-text="integration.provider.label">
+                      x-text="integration.provider.initials">
                 </span>
               </template>
+              <a class="text-xs text-gray-500 dark:text-gray-500 hover:underline"
+                 :href="practice.integrationsUrl">See All</a>
             </td>
           </tr>
         </template>

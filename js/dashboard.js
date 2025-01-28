@@ -89,7 +89,7 @@ export const dashboard = () => {
 
     async init() {
       Alpine.store('title').set('Dashboard')
-      const runningIntegrations = await getIntegrations(null, null, ['RUNNING'], 1, 1)
+      const runningIntegrations = await getIntegrations({ statuses: ['RUNNING'] }, 1, 1)
 
       // Cards
       const startOfToday = moment().startOf('day').toISOString()
