@@ -185,8 +185,15 @@ export const getProviderRefs = async (provider, type, query, page, limit) => {
   return await apiGet2(`/providers/${provider}/refs/${type}?${queryString}`)
 }
 
-export const searchProviderRefs = async (provider, type, query) => {
-  return await apiGet2(`/providers/${provider}/refs/${type}?page=1&limit=100&search=${query}`)
+export const searchProviderRefs = async ({ provider, type, species, search }) => {
+  let queryString = `page=1&limit=100`
+  if (!isNullOrUndefinedOrEmpty(species)) {
+    queryString += `&species=${species}`
+  }
+  if (!isNullOrUndefinedOrEmpty(search)) {
+    queryString += `&search=${search}`
+  }
+  return await apiGet2(`/providers/${provider}/refs/${type}?${queryString}`)
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {

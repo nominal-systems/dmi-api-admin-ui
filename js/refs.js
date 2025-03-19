@@ -129,7 +129,7 @@ export const refs = () => {
           dropdown.hide()
         },
         async search(provider, query) {
-          const providerRefs = await searchProviderRefs(provider, this.type, query)
+          const providerRefs = await searchProviderRefs({ provider, type: this.type, search: query })
           this.results = providerRefs.data
           dropdown.show()
         }

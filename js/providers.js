@@ -184,7 +184,12 @@ export const providers = () => {
           dropdown.hide()
         },
         async search(provider, query) {
-          const breeds = await searchProviderRefs(provider, 'breed', query)
+          const breeds = await searchProviderRefs({
+            provider,
+            type: 'breed',
+            species: this.editingRef.code,
+            search: query
+          })
           this.results = breeds.data
           dropdown.show()
         }
