@@ -22,7 +22,6 @@ export default () => {
       } else {
         this.error = transactionLogs.message
       }
-
     }
   }
 }
