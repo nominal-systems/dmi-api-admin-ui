@@ -7,6 +7,22 @@ export default () => {
     logs: [],
     accessionId: null,
     error: null,
+    filter: {
+      type: [
+        { label: 'Events', value: 'event', checked: true },
+        { label: 'External Requests', value: 'external-request', checked: true },
+        { label: 'Internal Events', value: 'internal-event', checked: false }
+      ]
+    },
+    doFilter() {
+      this.logs.map((log) => {
+        log.show = log.type === 'order' || this.filter.type
+          .filter((t) => t.checked)
+          .map((t) => t.value)
+          .includes(log.type)
+      })
+    },
+
     async init() {
       const queryParams = getQueryParams()
       this.accessionId = queryParams.accessionId
@@ -22,6 +38,7 @@ export default () => {
       } else {
         this.error = transactionLogs.message
       }
+      this.doFilter();
     }
   }
 }

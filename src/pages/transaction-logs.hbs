@@ -34,10 +34,27 @@
       </div>
     </template>
 
+    <!-- Type filter -->
+    <template x-if="!error && logs.length">
+      <div class="flex mb-8">
+        <div class="flex items-center me-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+          Filter logs by type:
+        </div>
+        <template x-for="type in filter.type">
+          <div class="flex items-center me-4">
+            <input type="checkbox" :id="`${type.value}-checkbox`" :value="type.value" x-model="type.checked" @change="doFilter()"
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label :for="`${type.value}-checkbox`" x-text="type.label"
+                   class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"></label>
+          </div>
+        </template>
+      </div>
+    </template>
+
     <!-- Transaction Logs -->
     <ol class="relative border-s border-gray-200 dark:border-gray-700">
       <template x-for="(log, index) in logs">
-        <li class="mb-10 ms-6">
+        <li class="mb-10 ms-6" x-show="log.show">
           <div x-accordion>
             <div x-accordion:heading :id="`accordion-heading-${index}`">
               <!-- Icon -->
