@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime'
 import Alpine from 'alpinejs'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
-import { setTokenToLocalStorage } from './auth'
+import { setToken } from './auth'
 import { getProviders, login } from './api-client'
 import { getIdFromPath, getProviderConfig, isProviderPage, navigateTo, navigateToProviderPage } from './common/utils'
 import { dashboard } from './dashboard'
@@ -63,7 +63,7 @@ window.data = {
     await login(this.user)
       .then(res => {
         this.error = null
-        setTokenToLocalStorage(res.token)
+        setToken(res.token)
         window.location.href = new URLSearchParams(window.location.search).get('redirect') || `${config.get('UI_BASE')}/`
       })
       .catch(err => {

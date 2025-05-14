@@ -1,19 +1,19 @@
-import { getTokenFromLocalStorage, unsetTokenFromLocalStorage } from "./auth";
+import { getToken, unsetToken } from "./auth";
 import config from './config'
 import { isNullOrUndefined, isNullOrUndefinedOrEmpty } from './common/utils'
 
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
 
-const apiPost = async (url, body) => {
-  return await apiRequest('POST', url, body)
+const apiPost = async (path, body, baseUrl = API_BASE_URL) => {
+  return await apiRequest('POST', path, body, baseUrl)
 }
 
-const apiRequest = async (method, url, body) => {
+const apiRequest = async (method, path, body, baseUrl = API_BASE_URL) => {
   const req = {
     method: method,
     headers: {
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`
+      Authorization: `Bearer ${getToken()}`
     }
   }
 
@@ -24,9 +24,9 @@ const apiRequest = async (method, url, body) => {
 
   try {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`POST ${API_BASE_URL}${url}`)
+      console.log(`POST ${baseUrl}${path}`)
     }
-    const response = await fetch(`${API_BASE_URL}${url}`, req)
+    const response = await fetch(`${baseUrl}${path}`, req)
     const responseBody = await response.json()
 
     if (!response.ok) {
@@ -52,12 +52,12 @@ function apiGet(url, next) {
   }
   return fetch(`${API_BASE_URL}${url}`, {
     headers: new Headers({
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`
+      Authorization: `Bearer ${getToken()}`
     })
   }).then(res => res.json())
     .then(res => {
       if (res.statusCode === 401 || res.statusCode === 403) {
-        unsetTokenFromLocalStorage()
+        unsetToken()
         window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
       }
       next(res)
@@ -70,12 +70,12 @@ function apiGet2(url) {
   }
   return fetch(`${API_BASE_URL}${url}`, {
     headers: new Headers({
-      Authorization: `Bearer ${getTokenFromLocalStorage()}`
+      Authorization: `Bearer ${getToken()}`
     })
   }).then(res => res.json())
     .then(res => {
       if (res.statusCode === 401 || res.statusCode === 403) {
-        unsetTokenFromLocalStorage()
+        unsetToken()
         window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
       }
       return res
@@ -83,7 +83,7 @@ function apiGet2(url) {
 }
 
 export const login = async (user) => {
-  return await apiPost(`/login`, user)
+  return await apiPost(`/login`, user, `${config.get('API_HOST')}/auth/admin`)
 }
 
 export const getOrganizations = async () => {
