@@ -64,11 +64,11 @@ function apiGet(url, next) {
     })
 }
 
-function apiGet2(url) {
+function apiGet2(url, baseUrl = API_BASE_URL) {
   if (process.env.NODE_ENV === 'development') {
     console.log(`GET ${API_BASE_URL}${url}`)
   }
-  return fetch(`${API_BASE_URL}${url}`, {
+  return fetch(`${baseUrl}${url}`, {
     headers: new Headers({
       Authorization: `Bearer ${getToken()}`
     })
@@ -84,6 +84,10 @@ function apiGet2(url) {
 
 export const login = async (user) => {
   return await apiPost(`/login`, user, `${config.get('API_HOST')}/auth/admin`)
+}
+
+export const profile = async () => {
+  return await apiGet2(`/profile`, `${config.get('API_HOST')}/auth`)
 }
 
 export const getOrganizations = async () => {

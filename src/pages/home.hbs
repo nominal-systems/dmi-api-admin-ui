@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html :class="{ 'dark': dark }" x-data="data" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DMI Admin - Login</title>
+  <link rel="stylesheet" href="../../css/index.css"/>
+</head>
+<body>
+<div class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
+  <div class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
+    <div class="flex flex-col items-center justify-center h-full p-12 text-center">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        DMI Admin UI
+      </h1>
+      <p class="mb-6 text-gray-600 dark:text-gray-400">
+        Log in to access the dashboard, manage integrations, and view system metrics.
+      </p>
+      <div class="mt-2 flex justify-center">
+        <a href="/ui" class="px-6 py-3 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+          Access Admin UI
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="../../js/main.js" defer></script>
+</body>
+</html>

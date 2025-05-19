@@ -1,8 +1,8 @@
 import 'regenerator-runtime/runtime'
 import Alpine from 'alpinejs'
 import { getThemeFromLocalStorage, setThemeToLocalStorage } from './theme'
-import { setToken } from './auth'
-import { getProviders, login } from './api-client'
+import { setToken, unsetCookies, unsetToken } from './auth'
+import { getProviders, login, profile } from './api-client'
 import { getIdFromPath, getProviderConfig, isProviderPage, navigateTo, navigateToProviderPage } from './common/utils'
 import { dashboard } from './dashboard'
 import { events } from './events'
@@ -43,13 +43,6 @@ window.data = {
   closeSideMenu() {
     this.isSideMenuOpen = false
   },
-  isProfileMenuOpen: false,
-  toggleProfileMenu() {
-    this.isProfileMenuOpen = !this.isProfileMenuOpen
-  },
-  closeProfileMenu(event) {
-    this.isProfileMenuOpen = false
-  },
   isPagesMenuOpen: false,
   config,
 
@@ -58,6 +51,7 @@ window.data = {
     username: null,
     password: null
   },
+  profile: {},
   error: null,
   async doLogin() {
     await login(this.user)
@@ -69,6 +63,11 @@ window.data = {
       .catch(err => {
         this.error = err
       })
+  },
+  doLogout() {
+    unsetToken()
+    unsetCookies(['JWT_TOKEN', 'sessionId'])
+    window.location.href = `${config.get('UI_BASE')}/login`
   },
 
   // Menu
@@ -132,6 +131,7 @@ window.data = {
         go: navigateToProviderPage
       }
     })
+    this.profile = (await profile()).profile
   },
 
   // Search

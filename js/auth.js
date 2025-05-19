@@ -15,3 +15,9 @@ export function unsetToken() {
   window.localStorage.removeItem('token')
   document.cookie = 'JWT_TOKEN=; path=/; max-age=0;'
 }
+
+export function unsetCookies(cookieNames) {
+  cookieNames.forEach(cookieName => {
+    document.cookie = `${cookieName}=; path=/; max-age=0;`
+  })
+}
