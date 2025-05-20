@@ -44,6 +44,7 @@ window.data = {
     this.isSideMenuOpen = false
   },
   isPagesMenuOpen: false,
+  navigateTo,
   config,
 
   // Auth
