@@ -68,11 +68,13 @@ function apiGet2(url, baseUrl = API_BASE_URL) {
   if (process.env.NODE_ENV === 'development') {
     console.log(`GET ${API_BASE_URL}${url}`)
   }
-  return fetch(`${baseUrl}${url}`, {
-    headers: new Headers({
-      Authorization: `Bearer ${getToken()}`
-    })
-  }).then(res => res.json())
+  const headers = new Headers();
+  const token = getToken();
+  if (token !== undefined) {
+    headers.append('Authorization', `Bearer ${token}`);
+  }
+  return fetch(`${baseUrl}${url}`, { headers })
+    .then(res => res.json())
     .then(res => {
       if (res.statusCode === 401 || res.statusCode === 403) {
         unsetToken()
