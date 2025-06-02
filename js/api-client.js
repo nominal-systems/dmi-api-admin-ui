@@ -46,7 +46,7 @@ const apiRequest = async (method, path, body, baseUrl = API_BASE_URL) => {
   }
 }
 
-function apiGet2(url, baseUrl = API_BASE_URL) {
+function apiGet(url, baseUrl = API_BASE_URL) {
   if (process.env.NODE_ENV === 'development') {
     console.log(`GET ${API_BASE_URL}${url}`)
   }
@@ -71,11 +71,11 @@ export const login = async (user) => {
 }
 
 export const profile = async () => {
-  return await apiGet2(`/profile`, `${config.get('API_HOST')}/auth`)
+  return await apiGet(`/profile`, `${config.get('API_HOST')}/auth`)
 }
 
 export const getOrganizations = async () => {
-  return await apiGet2('/organizations')
+  return await apiGet('/organizations')
 }
 
 export const getEvents = async ({ providers, integrations, types, date }, page, limit) => {
@@ -93,7 +93,7 @@ export const getEvents = async ({ providers, integrations, types, date }, page, 
     qs += `&startDate=${date[0]}&endDate=${date[1]}`
   }
 
-  return await apiGet2(`/events?${qs}`)
+  return await apiGet(`/events?${qs}`)
 }
 
 export const getEventsStats = async (types, startDate, endDate, groupBy) => {
@@ -104,11 +104,11 @@ export const getEventsStats = async (types, startDate, endDate, groupBy) => {
   if (groupBy !== undefined) {
     qs += `&groupBy=${groupBy.join(',')}`
   }
-  return await apiGet2(`/events/stats?${qs}`)
+  return await apiGet(`/events/stats?${qs}`)
 }
 
 export const getEvent = async (id) => {
-  return await apiGet2(`/events/${id}`)
+  return await apiGet(`/events/${id}`)
 }
 
 export const getIntegrations = async ({ providers, organizations, statuses, practices }, page, limit) => {
@@ -125,15 +125,15 @@ export const getIntegrations = async ({ providers, organizations, statuses, prac
   if (!isNullOrUndefined(practices)) {
     qs += `&practices=${practices.join(',')}`
   }
-  return await apiGet2(`/integrations?${qs}`)
+  return await apiGet(`/integrations?${qs}`)
 }
 
 export const getIntegration = async (id) => {
-  return await apiGet2(`/integrations/${id}`)
+  return await apiGet(`/integrations/${id}`)
 }
 
 export const getIntegrationsForProvider = async (providerId) => {
-  return await apiGet2(`/providers/${providerId}/integrations`)
+  return await apiGet(`/providers/${providerId}/integrations`)
 }
 
 export const updateIntegrationStatus = async (integrationId, operation) => {
@@ -141,7 +141,7 @@ export const updateIntegrationStatus = async (integrationId, operation) => {
 }
 
 export const getProviders = async () => {
-  return (await apiGet2(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
+  return (await apiGet(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
 
 export const getRefs = async (type, search, page, limit) => {
@@ -150,7 +150,7 @@ export const getRefs = async (type, search, page, limit) => {
     queryString += `&search=${search}`
   }
 
-  const refs = await apiGet2(`/refs/${type}?${queryString}`)
+  const refs = await apiGet(`/refs/${type}?${queryString}`)
   refs.data.map((ref) => {
     ref.providerRef = ref.providerRef.reduce((acc, item) => {
       acc[item.provider.id] = item;
@@ -170,7 +170,7 @@ export const getProviderRefs = async (provider, type, query, page, limit) => {
   if (!isNullOrUndefinedOrEmpty(query)) {
     queryString += `&search=${query}`
   }
-  return await apiGet2(`/providers/${provider}/refs/${type}?${queryString}`)
+  return await apiGet(`/providers/${provider}/refs/${type}?${queryString}`)
 }
 
 export const searchProviderRefs = async ({ provider, type, species, search }) => {
@@ -181,11 +181,11 @@ export const searchProviderRefs = async ({ provider, type, species, search }) =>
   if (!isNullOrUndefinedOrEmpty(search)) {
     queryString += `&search=${search}`
   }
-  return await apiGet2(`/providers/${provider}/refs/${type}?${queryString}`)
+  return await apiGet(`/providers/${provider}/refs/${type}?${queryString}`)
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {
-  return await apiGet2(`/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`)
+  return await apiGet(`/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`)
 }
 
 export const setDefaultBreed = async (providerId, speciesCode, breedCode) => {
@@ -210,15 +210,15 @@ export const getExternalRequests = async (providers, status, method, date, page,
   if (date !== undefined) {
     qs += `&startDate=${date[0]}&endDate=${date[1]}`
   }
-  return await apiGet2(`/external-requests?${qs}`)
+  return await apiGet(`/external-requests?${qs}`)
 }
 
 export const getExternalRequestsStats = async (startDate, endDate) => {
-  return await apiGet2(`/external-requests/stats?startDate=${startDate}&endDate=${endDate}`)
+  return await apiGet(`/external-requests/stats?startDate=${startDate}&endDate=${endDate}`)
 }
 
 export const getExternalRequest = async (id) => {
-  return await apiGet2(`/external-requests/${id}`)
+  return await apiGet(`/external-requests/${id}`)
 }
 
 export const getPractices = async ({ ids, search }, page, limit) => {
@@ -229,11 +229,11 @@ export const getPractices = async ({ ids, search }, page, limit) => {
   if (search !== undefined) {
     qs += `&search=${search}`
   }
-  return await apiGet2(`/practices?${qs}`)
+  return await apiGet(`/practices?${qs}`)
 }
 
 export const getTransactionLogs = async (accessionId) => {
-  return await apiGet2(`/transaction-logs?accessionId=${accessionId}`)
+  return await apiGet(`/transaction-logs?accessionId=${accessionId}`)
 }
 
 export const getOrderStats = async (stat, { startDate, endDate }) => {
@@ -241,5 +241,5 @@ export const getOrderStats = async (stat, { startDate, endDate }) => {
   if (stat !== undefined) {
     qs += `&stat=${stat}`
   }
-  return await apiGet2(`/orders/stats?${qs}`)
+  return await apiGet(`/orders/stats?${qs}`)
 }
