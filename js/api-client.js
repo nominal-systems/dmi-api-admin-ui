@@ -46,24 +46,6 @@ const apiRequest = async (method, path, body, baseUrl = API_BASE_URL) => {
   }
 }
 
-function apiGet(url, next) {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`GET ${API_BASE_URL}${url}`)
-  }
-  return fetch(`${API_BASE_URL}${url}`, {
-    headers: new Headers({
-      Authorization: `Bearer ${getToken()}`
-    })
-  }).then(res => res.json())
-    .then(res => {
-      if (res.statusCode === 401 || res.statusCode === 403) {
-        unsetToken()
-        window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
-      }
-      next(res)
-    })
-}
-
 function apiGet2(url, baseUrl = API_BASE_URL) {
   if (process.env.NODE_ENV === 'development') {
     console.log(`GET ${API_BASE_URL}${url}`)
@@ -203,11 +185,7 @@ export const searchProviderRefs = async ({ provider, type, species, search }) =>
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {
-  let defaultBreeds = []
-  await apiGet(`/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`, (body) => {
-    defaultBreeds = body
-  })
-  return defaultBreeds
+  return await apiGet2(`/providers/${providerId}/defaultBreed?speciesCodes=${speciesCodes.join(',')}`)
 }
 
 export const setDefaultBreed = async (providerId, speciesCode, breedCode) => {
@@ -240,11 +218,7 @@ export const getExternalRequestsStats = async (startDate, endDate) => {
 }
 
 export const getExternalRequest = async (id) => {
-  let result = {}
-  await apiGet(`/external-requests/${id}`, (body) => {
-    result = body
-  })
-  return result
+  return await apiGet2(`/external-requests/${id}`)
 }
 
 export const getPractices = async ({ ids, search }, page, limit) => {
