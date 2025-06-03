@@ -5,66 +5,75 @@ import { isNullOrUndefined, isNullOrUndefinedOrEmpty } from './common/utils'
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
 
-const apiPost = async (path, body, baseUrl = API_BASE_URL) => {
-  return await apiRequest('POST', path, body, baseUrl)
-}
-
-const apiRequest = async (method, path, body, baseUrl = API_BASE_URL) => {
-  const req = {
-    method: method,
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+/**
+ * Core request function used by both GET and POST/PUT calls.
+ * Omits the Authorization header if getToken() returns null or undefined.
+ */
+const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => {
+  // Build headers, including Authorization only if a token is present
+  const headers = {};
+  const token = getToken();
+  if (token != null) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  if (body !== null) {
+    headers['Content-Type'] = 'application/json';
   }
 
+  const req = { method, headers };
   if (body !== null) {
-    req.headers['Content-Type'] = 'application/json'
-    req.body = JSON.stringify(body)
+    req.body = JSON.stringify(body);
   }
 
   try {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`POST ${baseUrl}${path}`)
+      console.log(`${method} ${baseUrl}${path}`);
     }
-    const response = await fetch(`${baseUrl}${path}`, req)
-    const responseBody = await response.json()
+    const response = await fetch(`${baseUrl}${path}`, req);
+    const responseBody = await response.json();
 
     if (!response.ok) {
       const error = new Error(responseBody.message || 'Server responded with an error');
       error.status = response.status;
       error.statusText = response.statusText;
-      error.body = responseBody; // Including server response data
+      error.body = responseBody;
       throw error;
     }
 
-    return responseBody
+    return responseBody;
   } catch (error) {
     if (error.name === 'TypeError') {
-      error.message = 'Network issue. Please try again later.'
+      error.message = 'Network issue. Please try again later.';
     }
-    throw error
+    throw error;
   }
-}
+};
 
-function apiGet(url, baseUrl = API_BASE_URL) {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`GET ${API_BASE_URL}${url}`)
+/**
+ * Wrapper for GET requests.
+ * After receiving JSON, checks for 401/403 status codes in the response body,
+ * clears token and redirects to login if necessary.
+ */
+const apiGet = async (path, baseUrl = API_BASE_URL) => {
+  try {
+    const res = await apiRequest('GET', path, null, baseUrl);
+    if (res.statusCode === 401 || res.statusCode === 403) {
+      unsetToken();
+      window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`;
+    }
+    return res;
+  } catch (error) {
+    throw error;
   }
-  const headers = new Headers();
-  const token = getToken();
-  if (token !== undefined) {
-    headers.append('Authorization', `Bearer ${token}`);
-  }
-  return fetch(`${baseUrl}${url}`, { headers })
-    .then(res => res.json())
-    .then(res => {
-      if (res.statusCode === 401 || res.statusCode === 403) {
-        unsetToken()
-        window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`
-      }
-      return res
-    })
-}
+};
+
+/**
+ * Wrapper for POST requests. Uses apiRequest under the hood.
+ */
+const apiPost = async (path, body, baseUrl = API_BASE_URL) => {
+  return await apiRequest('POST', path, body, baseUrl);
+};
+
 
 export const login = async (user) => {
   return await apiPost(`/login`, user, `${config.get('API_HOST')}/auth/admin`)
