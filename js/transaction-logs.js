@@ -33,6 +33,9 @@ export default () => {
           log.timestamp = new Date(log.timestamp).toLocaleString()
           log.message = buildMessage(log)
           log.tag = buildTag(log)
+          if (log.type === 'external-request') {
+            prepareExternalRequest(log)
+          }
         })
         this.logs = transactionLogs
       } else {
@@ -82,4 +85,58 @@ function buildTag(log) {
       break
   }
   return tag
+}
+
+function prepareExternalRequest(log) {
+  const data = log.data
+  let body = data.body
+  if (!body) return
+
+  const contentType = data.headers?.['content-type'] ||
+    data.headers?.['Content-Type'] ||
+    'application/pdf'
+
+  if (typeof body === 'object' && body.type === 'Buffer' && Array.isArray(body.data)) {
+    const uint8 = Uint8Array.from(body.data)
+    data.body = `data:${contentType};base64,${bytesToBase64(uint8)}`
+    data.bodyIsBinary = true
+    return
+  }
+
+  if (typeof body === 'string') {
+    try {
+      const parsed = JSON.parse(body)
+      if (parsed.type === 'Buffer' && Array.isArray(parsed.data)) {
+        const uint8 = Uint8Array.from(parsed.data)
+        data.body = `data:${contentType};base64,${bytesToBase64(uint8)}`
+        data.bodyIsBinary = true
+        return
+      }
+    } catch (e) {
+      /* not JSON */
+    }
+    const binaryHint = contentType.includes('pdf') || body.startsWith('%PDF-') ||
+      /[\x00-\x08\x0E-\x1F]/.test(body)
+    if (binaryHint) {
+      data.body = `data:${contentType};base64,${stringToBase64(body)}`
+      data.bodyIsBinary = true
+    }
+  }
+}
+
+function bytesToBase64(bytes) {
+  let binary = ''
+  const len = bytes.length
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+}
+
+function stringToBase64(str) {
+  const bytes = new Uint8Array(str.length)
+  for (let i = 0; i < str.length; i++) {
+    bytes[i] = str.charCodeAt(i) & 0xff
+  }
+  return bytesToBase64(bytes)
 }
