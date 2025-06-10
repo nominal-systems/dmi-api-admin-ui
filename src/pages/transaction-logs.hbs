@@ -56,7 +56,7 @@
       <template x-for="(log, index) in logs">
         <li class="mb-10 ms-6" x-show="log.show">
           <div x-accordion>
-            <div x-accordion:heading :id="`accordion-heading-${index}`">
+            <div x-accordion:heading :id="`accordion-heading-${index}`" class="cursor-pointer">
               <!-- Icon -->
               <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                 <svg x-show="log.type === 'order'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 text-blue-800 dark:text-blue-300">
