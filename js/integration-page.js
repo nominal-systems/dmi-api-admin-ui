@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs'
 import { getIdFromPath, getIntegrationConfig } from './common/utils'
-import { getIntegration, updateIntegrationStatus } from './api-client'
+import { getIntegration, updateIntegrationStatus, updateIntegrationOptions } from './api-client'
 import modal from './plugins/modal'
 
 export const integrationPage = {
@@ -23,8 +23,27 @@ export const integrationPage = {
       }
     }
   }),
+  optionsModal: modal({
+    ref: 'optionsModal',
+    data: {
+      options: '',
+      inProgress: false,
+      error: null
+    },
+    onShow: (self) => {
+      self.data.error = null
+      self.data.inProgress = false
+      self.data.options = JSON.stringify(self.page.integration.integrationOptions, null, 2)
+    },
+    onHide: async (self) => {
+      if (self.page) {
+        await self.page.loadIntegration()
+      }
+    }
+  }),
   async init() {
     this.actionModal.page = this
+    this.optionsModal.page = this
     await this.loadIntegration()
   },
   async loadIntegration() {
@@ -50,6 +69,28 @@ export const integrationPage = {
         data.error = {
           message: err.body.error
         }
+      })
+  },
+  async saveOptions(data) {
+    data.error = null
+    data.inProgress = true
+    let opts
+    try {
+      opts = JSON.parse(data.options)
+    } catch (e) {
+      data.inProgress = false
+      data.error = { message: 'Invalid JSON.' }
+      return
+    }
+    await updateIntegrationOptions(this.integration.id, opts)
+      .then(() => {
+        data.inProgress = false
+        this.optionsModal.close()
+        Alpine.store('alert').set('info', 'Integration options updated.')
+      })
+      .catch(err => {
+        data.inProgress = false
+        data.error = { message: err.body.error }
       })
   }
 }

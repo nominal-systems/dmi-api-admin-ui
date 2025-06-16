@@ -149,6 +149,10 @@ export const updateIntegrationStatus = async (integrationId, operation) => {
   return await apiPost(`/integrations/${integrationId}/${operation}`, null)
 }
 
+export const updateIntegrationOptions = async (integrationId, integrationOptions) => {
+  return await apiRequest('PATCH', `/integrations/${integrationId}`, { integrationOptions })
+}
+
 export const getProviders = async () => {
   return (await apiGet(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
