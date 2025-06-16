@@ -9,6 +9,18 @@
         x-bind:class="`text-${integration.color}-700 bg-${integration.color}-100 dark:bg-${integration.color}-700 dark:text-${integration.color}-100`"
         x-text="integration.status">
       </span>
+      <template x-if="integration.operations?.length">
+        <span class="ml-3 text-sm font-semibold text-purple-600 dark:text-gray-400">
+          <template x-for="(operation, index) in integration.operations" :key="operation">
+            <span>
+              <span x-show="index > 0" class="mx-1 text-gray-500">|</span>
+              <a href="#" class="hover:underline capitalize"
+                 @click="await actionModal.open({ integration, operation })"
+                 x-text="operation"></a>
+            </span>
+          </template>
+        </span>
+      </template>
     </h2>
 
     <dl class="max-w text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
@@ -37,5 +49,8 @@
         </dd>
       </div>
     </dl>
+  </div>
+  <div x-data="actionModal">
+    {{> integrations/modal }}
   </div>
 </main>
