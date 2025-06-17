@@ -153,6 +153,10 @@ export const updateIntegrationOptions = async (integrationId, integrationOptions
   return await apiRequest('PATCH', `/integrations/${integrationId}`, { integrationOptions })
 }
 
+export const updateProviderConfiguration = async (providerConfigurationId, providerConfiguration) => {
+  return await apiRequest('PUT', `/providerConfigurations/${providerConfigurationId}`, providerConfiguration)
+}
+
 export const getProviders = async () => {
   return (await apiGet(`/providers`)).filter(provider => provider.id !== 'heska' && provider.id !== 'demo')
 }
