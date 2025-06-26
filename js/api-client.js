@@ -57,12 +57,11 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
 const apiGet = async (path, baseUrl = API_BASE_URL) => {
   try {
     const res = await apiRequest('GET', path, null, baseUrl);
-    if (res.statusCode === 401 || res.statusCode === 403) {
-      unsetToken();
-      window.location.href = `${UI_BASE_URL}/login?redirect=${window.location.href}`;
-    }
     return res;
   } catch (error) {
+    if (error.status === 401 || error.status === 403) {
+      unsetToken();
+    }
     throw error;
   }
 };

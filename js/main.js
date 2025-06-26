@@ -65,10 +65,10 @@ window.data = {
         this.error = err
       })
   },
-  doLogout() {
+  async doLogout() {
     unsetToken()
     unsetCookies(['JWT_TOKEN', 'sessionId'])
-    window.location.href = `${config.get('UI_BASE')}/login`
+    window.location.href = `${config.get('API_HOST')}/auth/logout`
   },
 
   // Menu
@@ -132,7 +132,7 @@ window.data = {
         go: navigateToProviderPage
       }
     })
-    this.profile = (await profile()).profile
+    this.profile = await profile()
   },
 
   // Search
