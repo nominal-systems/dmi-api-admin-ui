@@ -12,7 +12,7 @@
     </code>
   </p>
   <template x-if="externalRequest?.payload">
-    <div x-data="{ code: externalRequest.payload, copied: false }">
+    <div x-data="{ code: externalRequest.payload, copied: false, open: false }">
       {{> common/code }}
     </div>
   </template>
@@ -29,7 +29,7 @@
     <object class="w-full h-96 mt-3" :data="externalRequest.body" type="application/pdf"></object>
   </template>
   <template x-if="externalRequest?.body && !externalRequest?.bodyIsBinary">
-    <div x-data="{ code: externalRequest.body, copied: false }">
+    <div x-data="{ code: externalRequest.body, copied: false, open: false }">
       {{> common/code }}
     </div>
   </template>
