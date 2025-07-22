@@ -119,10 +119,13 @@ export const getEvent = async (id) => {
   return await apiGet(`/events/${id}`)
 }
 
-export const getIntegrations = async ({ providers, organizations, statuses, practices }, page, limit) => {
+export const getIntegrations = async ({ providers, providerConfigurations, organizations, statuses, practices }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (!isNullOrUndefined(providers)) {
     qs += `&providers=${providers.join(',')}`
+  }
+  if (!isNullOrUndefined(providerConfigurations)) {
+    qs += `&providerConfigurations=${providerConfigurations.join(',')}`
   }
   if (!isNullOrUndefined(organizations)) {
     qs += `&organizations=${organizations.join(',')}`
@@ -154,6 +157,15 @@ export const updateIntegrationOptions = async (integrationId, integrationOptions
 
 export const updateProviderConfiguration = async (providerConfigurationId, providerConfiguration) => {
   return await apiRequest('PUT', `/providerConfigurations/${providerConfigurationId}`, providerConfiguration)
+}
+
+export const getProviderConfigurations = async ({}, page, limit) => {
+  const qs = `page=${page}&limit=${limit}`
+  return await apiGet(`/providerConfigurations?${qs}`)
+}
+
+export const getProviderConfiguration = async (id) => {
+  return await apiGet(`/providerConfigurations/${id}`)
 }
 
 export const getProviders = async () => {

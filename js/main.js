@@ -12,6 +12,8 @@ import { practices } from './practices'
 import { providers } from './providers'
 import { integrations } from './integrations'
 import { integrationPage } from './integration-page'
+import { providerConfigurations } from './provider-configurations'
+import { providerConfigurationPage } from './provider-configuration-page'
 import { externalRequests } from './external-requests'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
@@ -188,6 +190,8 @@ window.refs = refs
 window.providers = providers
 window.integrations = integrations
 window.integrationPage = integrationPage
+window.providerConfigurations = providerConfigurations
+window.providerConfigurationPage = providerConfigurationPage
 window.external_requests = externalRequests
 window.practices = practices
 window.transaction_logs = transactionLogs

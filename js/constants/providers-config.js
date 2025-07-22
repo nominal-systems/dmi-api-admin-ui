@@ -28,5 +28,11 @@ export const PROVIDERS_CONFIG = [
     label: 'Wisdom Panel',
     initials: 'WP',
     color: '#C19138',
+  },
+  {
+    id: 'heska',
+    label: 'Heska',
+    initials: 'HK',
+    color: '#CCCCCC',
   }
 ]

@@ -1,0 +1,28 @@
+<div x-data="table">
+  {{#> table}}
+    {{#*inline "tableHeader"}}
+      <tr>
+        <th class="px-4 py-3 w-[20rem]">ID</th>
+        <th class="px-4 py-3">Provider</th>
+        <th class="px-4 py-3">Organization</th>
+        <th class="px-4 py-3 w-64">Created</th>
+        <th class="px-4 py-3 w-64">Updated</th>
+        <th class="px-4 py-3 w-24 text-center">Actions</th>
+      </tr>
+    {{/inline}}
+    {{#*inline "tableRows"}}
+      <template x-for="cfg in items">
+        <tr class="text-gray-700 dark:text-gray-400">
+          <td class="px-4 py-3 text-xs" x-text="cfg.id"></td>
+          <td class="px-4 py-3" x-text="cfg.providerLabel"></td>
+          <td class="px-4 py-3" x-text="cfg.organization.name"></td>
+          <td class="px-4 py-3" x-date="cfg.createdAt"></td>
+          <td class="px-4 py-3" x-date="cfg.updatedAt"></td>
+          <td class="px-4 py-3 text-center">
+            <a :href="cfg.url" class="font-medium text-purple-600 dark:text-purple-500 hover:underline">View</a>
+          </td>
+        </tr>
+      </template>
+    {{/inline}}
+  {{/table}}
+</div>

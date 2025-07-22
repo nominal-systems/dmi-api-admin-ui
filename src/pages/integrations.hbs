@@ -8,5 +8,12 @@
 
     <!-- Table -->
     {{> integrations/table }}
+
+    <div x-data="actionModal">
+      {{> integrations/modal }}
+    </div>
+    <div x-data="batchActionsModal">
+      {{> integrations/bulk-actions-modal }}
+    </div>
   </div>
 </main>
