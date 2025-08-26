@@ -16,11 +16,13 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
   if (token != null) {
     headers['Authorization'] = `Bearer ${token}`;
   }
+  headers['Accept'] = 'application/json';
+  headers['X-Requested-With'] = 'XMLHttpRequest';
   if (body !== null) {
     headers['Content-Type'] = 'application/json';
   }
 
-  const req = { method, headers };
+  const req = { method, headers, redirect: 'manual' };
   if (body !== null) {
     req.body = JSON.stringify(body);
   }
@@ -30,10 +32,37 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
       console.log(`${method} ${baseUrl}${path}`);
     }
     const response = await fetch(`${baseUrl}${path}`, req);
-    const responseBody = await response.json();
+    const contentType = response.headers ? (response.headers.get('content-type') || '') : '';
+    // Detect redirect and navigate at the window level rather than via fetch
+    if (response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400)) {
+      let location = '';
+      try { location = response.headers?.get('Location') || response.url || ''; } catch (_) {}
+      if (!location) {
+        location = `${config.get('API_HOST')}/auth/login`;
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`[apiRequest] Redirect detected for ${method} ${baseUrl}${path}; navigating to ${location}`);
+      }
+      window.location.href = location;
+      const redirectError = new Error('Redirect required');
+      redirectError.redirected = true;
+      throw redirectError;
+    }
+
+    let responseBody = null;
+    if (response.status !== 204) {
+      if (contentType.includes('application/json')) {
+        responseBody = await response.json();
+      } else {
+        try { responseBody = await response.text(); } catch (_) { responseBody = null; }
+      }
+    }
 
     if (!response.ok) {
-      const error = new Error(responseBody.message || 'Server responded with an error');
+      const msg = (typeof responseBody === 'object' && responseBody && responseBody.message)
+        ? responseBody.message
+        : (typeof responseBody === 'string' && responseBody ? responseBody : 'Server responded with an error');
+      const error = new Error(msg);
       error.status = response.status;
       error.statusText = response.statusText;
       error.body = responseBody;
