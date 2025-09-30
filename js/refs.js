@@ -121,7 +121,7 @@ export const refs = () => {
       return {
         query: '',
         results: [],
-        placeholder: 'Search by name...',
+        placeholder: 'Search by code or name...',
         select(ref) {
           const mapping = this.editingRefMappings.find((mapping) => mapping.provider === ref.provider.id)
           this.updates[ref.provider.id] = mapping
@@ -131,8 +131,20 @@ export const refs = () => {
           dropdown.hide()
         },
         async search(provider, query) {
-          const providerRefs = await searchProviderRefs({ provider, type: this.type, search: query })
-          this.results = providerRefs.data
+          const q = (query || '').toString().toLowerCase()
+          if (q.length === 0) {
+            this.results = []
+            dropdown.hide()
+            return
+          }
+          // Fetch a reasonable page and apply client-side filtering
+          const providerRefs = await searchProviderRefs({ provider, type: this.type, search: null })
+          const data = providerRefs?.data || []
+          this.results = data.filter(r => {
+            const name = (r.name || '').toString().toLowerCase()
+            const code = (r.code || '').toString().toLowerCase()
+            return name.includes(q) || code.includes(q)
+          })
           dropdown.show()
         }
       }
