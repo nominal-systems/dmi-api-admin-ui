@@ -11,6 +11,7 @@ export const refs = () => {
     providers: [],
 
     // Reference Data
+    _initialTabShowHandled: false,
     type: null,
     refs: {
       sexes: table(
@@ -162,7 +163,11 @@ export const refs = () => {
           this.activeTab = tab.getActiveTab()
           this.type = this.activeTab.id
           setQueryParam('ref', this.activeTab.id)
-          removeQueryParam('search')
+          if (this._initialTabShowHandled) {
+            removeQueryParam('search')
+          } else {
+            this._initialTabShowHandled = true
+          }
         }
       }
       const tabsElement = document.querySelector('#tabExample')
