@@ -66,7 +66,8 @@ export const refs = () => {
       Alpine.store('alert')
         .set('info', `Mappings for ${this.editingRef.code} (${this.editingRef.name}) updated successfully!`)
       this.modal.hide()
-      await this.refs[type].fetchData()
+      const searchTerm = type === 'breed' ? 'breeds' : type
+      await this.refs[searchTerm].fetchData()
 
       this.updates = {}
       this.updatingRefs = false
