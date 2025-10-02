@@ -21,30 +21,28 @@
   {{#*inline "tableRows"}}
     <template x-for="item in items">
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white truncate">
-          <span class="truncate" x-text="item.name"></span>
-          <span class="truncate text-xs text-gray-600 dark:text-gray-400 block" x-text="item.code"></span>
+        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+          <span class="block truncate max-w-[24rem]" x-text="item.name"></span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 block" x-text="item.code"></span>
         </td>
         <template x-if="type === 'breeds'">
-            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-              <span x-show="item.speciesEntity" class="truncate" x-text="item.speciesEntity?.name"></span>
-              <span x-show="item.speciesEntity" class="truncate text-xs text-gray-600 dark:text-gray-400 block" x-text="item.speciesEntity?.code"></span>
-              <span x-show="!item.speciesEntity" class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                Unset
-              </span>
-            </td>
+          <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+            <span x-show="item.speciesEntity" class="truncate" x-text="item.speciesEntity?.name"></span>
+            <span x-show="item.speciesEntity" class="truncate text-xs text-gray-600 dark:text-gray-400 block" x-text="item.speciesEntity?.code"></span>
+            <span x-show="!item.speciesEntity">
+              {{> refs/provider-ref-chip unset=true}}
+            </span>
+          </td>
         </template>
         <template x-for="provider in providers">
-          <td class="px-6 py-4 text-xs text-center text-gray-600 truncate hidden xl:table-cell">
+          <td class="px-6 py-4 text-xs text-center text-gray-600 hidden xl:table-cell">
             <template x-if="item.providerRef && item.providerRef[provider.id]">
-              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
-                    x-text="item.providerRef[provider.id].code">
+              <span>
+                {{> refs/provider-ref-chip nameExpr="item.providerRef[provider.id].name" codeExpr="item.providerRef[provider.id].code" max="6rem" hideCode=true}}
               </span>
             </template>
             <template x-if="!item.providerRef || !item.providerRef[provider.id]">
-              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                Unset
-              </span>
+              {{> refs/provider-ref-chip unset=true}}
             </template>
           </td>
         </template>

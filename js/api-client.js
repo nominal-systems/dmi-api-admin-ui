@@ -235,6 +235,11 @@ export const updateRefMapping = async (refId, providerRefId) => {
   return await apiPost(`/refs/${refId}/mapping`, { providerRefId })
 }
 
+// Unset a mapping by provider; API expects providerId in body
+export const unsetRefMapping = async (refId, providerId) => {
+  return await apiPost(`/refs/${refId}/mapping`, { providerId })
+}
+
 export const getProviderRefs = async (provider, type, query, page, limit) => {
   let queryString = `page=${page}&limit=${limit}`
   if (!isNullOrUndefinedOrEmpty(query)) {

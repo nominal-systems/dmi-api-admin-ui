@@ -43,13 +43,12 @@
             <div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
               <div class="w-full">
                 <template x-if="!isEditingDefaultBreed && !editingRef.defaultBreed">
-                  <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Unset</span>
+                  {{> refs/provider-ref-chip unset=true}}
                 </template>
                 <template x-if="!isEditingDefaultBreed && editingRef.defaultBreed">
-                  <div>
-                    <span x-text="editingRef?.defaultBreed?.code"></span>
-                    (<span x-text="editingRef?.defaultBreed?.name"></span>)
-                  </div>
+                  <span>
+                    {{> refs/provider-ref-chip nameExpr="editingRef?.defaultBreed?.name" codeExpr="editingRef?.defaultBreed?.code" max="12rem"}}
+                  </span>
                 </template>
                 <template x-if="isEditingDefaultBreed">
                   <div x-data="providerRefTypeahead">

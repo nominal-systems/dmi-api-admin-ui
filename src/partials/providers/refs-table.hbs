@@ -14,34 +14,30 @@
         <span class="sr-only">Edit</span>
       </th>
     </tr>
-    {{/inline}}
-    {{#*inline "tableRows"}}
-      <template x-for="item in items">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              x-text="item.name">
-          </th>
-          <td class="px-6 py-4 hidden xl:table-cell">
-            <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500"
-                  x-text="item.code">
-            </span>
-          </td>
-          <td class="px-6 py-4 hidden xl:table-cell" x-show="type === 'species'">
-            <template x-if="item.defaultBreed">
-              <div>
-                <span x-text="item.defaultBreed.name"></span> (<span x-text="item.defaultBreed.code"></span>)
-              </div>
-            </template>
-            <template x-if="!item.defaultBreed">
-              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                Unset
+  {{/inline}}
+  {{#*inline "tableRows"}}
+    <template x-for="item in items">
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            x-text="item.name">
+        </th>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{> refs/provider-ref-chip nameExpr="item.name" codeExpr="item.code" max="10rem"}}
+        </td>
+        <td class="px-6 py-4 hidden xl:table-cell" x-show="type === 'species'">
+          <template x-if="item.defaultBreed">
+              <span>
+                {{> refs/provider-ref-chip nameExpr="item.defaultBreed.name" codeExpr="item.defaultBreed.code" max="10rem"}}
               </span>
-            </template>
-          </td>
-          <td class="px-6 py-4 text-right" x-show="type === 'species'">
-            <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
-          </td>
-        </tr>
-      </template>
-    {{/inline}}
+          </template>
+          <template x-if="!item.defaultBreed">
+            {{> refs/provider-ref-chip unset=true}}
+          </template>
+        </td>
+        <td class="px-6 py-4 text-right" x-show="type === 'species'">
+          <a href="#" class="font-medium text-purple-600 dark:text-purple-500 hover:underline" @click="openModal(item)">Edit</a>
+        </td>
+      </tr>
+    </template>
+  {{/inline}}
 {{/table}}

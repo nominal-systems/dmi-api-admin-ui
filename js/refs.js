@@ -6,6 +6,7 @@ import {
   getRefs,
   searchProviderRefs,
   setMappingDefaultBreed,
+  unsetRefMapping,
   updateRefMapping
 } from "./api-client"
 import table from './plugins/table'
@@ -68,9 +69,13 @@ export const refs = () => {
       for (const provider of Object.keys(this.updates)) {
         const update = this.updates[provider]
 
-        // 1) Apply provider ref mapping if present
-        if (update.ref?.id) {
-          await updateRefMapping(this.editingRef.id, update.ref.id)
+        // 1) Apply provider ref mapping if present (including explicit unset)
+        if (Object.prototype.hasOwnProperty.call(update, 'ref')) {
+          if (update.ref && update.ref.id) {
+            await updateRefMapping(this.editingRef.id, update.ref.id)
+          } else {
+            await unsetRefMapping(this.editingRef.id, provider)
+          }
         }
 
         // 2) Apply mapping-level default breed (species only) if queued
@@ -153,6 +158,7 @@ export const refs = () => {
       const providerId = mapping.provider
       this.updates[providerId] = this.updates[providerId] || { provider: providerId, label: mapping.label }
       this.updates[providerId].defaultBreed = breedRef.code
+      this.updates[providerId].defaultBreedName = breedRef.name
       mapping.mappingDefaultBreed = { code: breedRef.code, name: breedRef.name }
       this.editingMappingDefault = null
     },
@@ -162,6 +168,7 @@ export const refs = () => {
       const providerId = mapping.provider
       this.updates[providerId] = this.updates[providerId] || { provider: providerId, label: mapping.label }
       this.updates[providerId].defaultBreed = ''
+      delete this.updates[providerId].defaultBreedName
       mapping.mappingDefaultBreed = null
     },
     providerRefTypeahead(cfg = {}) {
@@ -191,7 +198,48 @@ export const refs = () => {
       return {
         query: '',
         results: [],
+        highlightedIndex: -1,
         placeholder,
+        ensureVisible(direction = 0) {
+          try {
+            const container = $targetEl?.querySelector('ul')
+            if (!container) return
+            const items = container.querySelectorAll('li')
+            const idx = this.highlightedIndex
+            if (idx < 0 || idx >= items.length) return
+            const el = items[idx]
+            const top = el.offsetTop
+            const bottom = top + el.offsetHeight
+            const viewTop = container.scrollTop
+            const viewBottom = viewTop + container.clientHeight
+            const cushion = el.offsetHeight * 3 // start scrolling ~3 rows before overflow
+            const maxScroll = container.scrollHeight - container.clientHeight
+
+            if (direction > 0) {
+              // moving down: start scrolling before it falls out of view
+              const threshold = viewBottom - cushion
+              if (bottom > threshold) {
+                const desired = bottom - container.clientHeight + cushion
+                container.scrollTop = Math.max(0, Math.min(desired, maxScroll))
+              }
+            } else if (direction < 0) {
+              // moving up: start scrolling when near top cushion
+              const threshold = viewTop + cushion
+              if (top < threshold) {
+                container.scrollTop = Math.max(0, top - cushion)
+              }
+            } else {
+              // unknown direction; ensure fully visible
+              if (top < viewTop) {
+                container.scrollTop = top
+              } else if (bottom > viewBottom) {
+                const desired = bottom - container.clientHeight
+                container.scrollTop = Math.max(0, Math.min(desired, maxScroll))
+              }
+            }
+          } catch (_) {
+          }
+        },
         select(ref) {
           if (typeof onSelect === 'function') {
             onSelect(ref)
@@ -215,24 +263,64 @@ export const refs = () => {
           }
           dropdown.hide()
         },
+        move(delta) {
+          if (!this.results || this.results.length === 0) return
+          const len = this.results.length
+          const prev = this.highlightedIndex
+          if (prev === -1) {
+            this.highlightedIndex = 0
+          } else {
+            let next = prev + delta
+            if (next < 0) next = 0
+            if (next > len - 1) next = len - 1
+            this.highlightedIndex = next
+          }
+          dropdown.show()
+          const dir = this.highlightedIndex > prev ? 1 : (this.highlightedIndex < prev ? -1 : 0)
+          this.ensureVisible(dir)
+        },
+        selectHighlighted() {
+          if (this.highlightedIndex < 0) return
+          const r = this.results[this.highlightedIndex]
+          if (r) this.select(r)
+        },
         async search(arg1, arg2) {
           const query = (arg2 === undefined ? arg1 : arg2)
           const q = (query || '').toString().toLowerCase()
-          if (q.length === 0) {
-            this.results = []
-            dropdown.hide()
-            return
-          }
           const effectiveProvider = provider || arg1
           const providerRefs = await searchProviderRefs({ provider: effectiveProvider, type, species, search: null })
           const data = providerRefs?.data || []
+          if (q.length === 0) {
+            this.results = data
+            this.highlightedIndex = data.length > 0 ? 0 : -1
+            dropdown.show()
+            this.ensureVisible(0)
+            return
+          }
           this.results = data.filter(r => {
             const name = (r.name || '').toString().toLowerCase()
             const code = (r.code || '').toString().toLowerCase()
             return name.includes(q) || code.includes(q)
           })
+          this.highlightedIndex = this.results.length > 0 ? 0 : -1
           dropdown.show()
+          this.ensureVisible(0)
         }
+      }
+    },
+    unsetMapping(mapping) {
+      // Clear provider ref mapping for this provider
+      const providerId = mapping.provider
+      this.updates[providerId] = this.updates[providerId] || { provider: providerId, label: mapping.label }
+      this.updates[providerId].ref = null
+      // Clear UI state
+      mapping.ref = null
+      mapping.mappingDefaultBreed = null
+      // Cancel any open editors
+      this.isEditingMapping = false
+      this.editingMapping = null
+      if (this.updates[providerId]) {
+        delete this.updates[providerId].defaultBreed
       }
     },
     openModal(ref) {

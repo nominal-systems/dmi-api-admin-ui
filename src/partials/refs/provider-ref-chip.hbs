@@ -1,0 +1,19 @@
+{{#if unset}}
+  <span class="ref-chip--unset" {{#if max}}style="--ref-chip-max: {{max}}"{{/if}}>
+    {{#if unsetLabel}}{{unsetLabel}}{{else}}Unset{{/if}}
+  </span>
+{{else}}
+  <span class="ref-chip" {{#if max}}style="--ref-chip-max: {{max}}"{{/if}}>
+    <span class="ref-chip__row">
+      {{#unless hideName}}
+        <span class="ref-chip__name" x-text="{{nameExpr}}"></span>
+      {{/unless}}
+      {{#unless hideCode}}
+        <span class="ref-chip__code">[<span x-text="{{codeExpr}}"></span>]</span>
+      {{/unless}}
+    </span>
+    {{#if clearAction}}
+      <button class="ref-chip__clear" {{clearAction}} aria-label="{{#if clearLabel}}{{clearLabel}}{{else}}Clear{{/if}}">×</button>
+    {{/if}}
+  </span>
+{{/if}}

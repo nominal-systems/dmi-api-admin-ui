@@ -4,3 +4,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Mapped chip: subtly emphasized with neutral tones */
+  .ref-chip {
+    @apply inline-flex items-center gap-1 text-[10px] font-medium me-2 px-2 py-0.5 rounded overflow-hidden min-w-0 border bg-white text-gray-800 border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600;
+    max-width: var(--ref-chip-max, 10rem);
+  }
+
+  .ref-chip__row {
+    @apply flex items-center gap-1 min-w-0 flex-1;
+  }
+
+  .ref-chip__name {
+    @apply truncate min-w-0 flex-1;
+  }
+
+  .ref-chip__code {
+    @apply flex-none font-mono;
+  }
+
+  .ref-chip__clear {
+    @apply ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex-none;
+  }
+
+  /* Unset chip: more neutral/subdued */
+  .ref-chip--unset {
+    @apply inline-flex items-center gap-1 bg-gray-50 text-gray-700 text-[10px] font-medium me-2 px-2 py-0.5 rounded dark:bg-gray-800 dark:text-gray-400 border border-gray-300 dark:border-gray-600;
+  }
+}
