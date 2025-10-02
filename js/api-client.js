@@ -36,7 +36,10 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
     // Detect redirect and navigate at the window level rather than via fetch
     if (response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400)) {
       let location = '';
-      try { location = response.headers?.get('Location') || response.url || ''; } catch (_) {}
+      try {
+        location = response.headers?.get('Location') || response.url || '';
+      } catch (_) {
+      }
       if (!location) {
         location = `${config.get('API_HOST')}/auth/login`;
       }
@@ -54,7 +57,11 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
       if (contentType.includes('application/json')) {
         responseBody = await response.json();
       } else {
-        try { responseBody = await response.text(); } catch (_) { responseBody = null; }
+        try {
+          responseBody = await response.text();
+        } catch (_) {
+          responseBody = null;
+        }
       }
     }
 
@@ -148,7 +155,13 @@ export const getEvent = async (id) => {
   return await apiGet(`/events/${id}`)
 }
 
-export const getIntegrations = async ({ providers, providerConfigurations, organizations, statuses, practices }, page, limit) => {
+export const getIntegrations = async ({
+                                        providers,
+                                        providerConfigurations,
+                                        organizations,
+                                        statuses,
+                                        practices
+                                      }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (!isNullOrUndefined(providers)) {
     qs += `&providers=${providers.join(',')}`
@@ -247,6 +260,21 @@ export const getDefaultBreeds = async (providerId, speciesCodes) => {
 
 export const setDefaultBreed = async (providerId, speciesCode, breedCode) => {
   return await apiRequest('PUT', `/providers/${providerId}/defaultBreed?species=${speciesCode}&breed=${breedCode}`, {})
+}
+
+// Mapping-level default breed for a specific refSpecies -> providerSpecies pair
+export const getMappingDefaultBreed = async (providerId, refSpeciesCode, providerSpeciesCode) => {
+  const qs = `refSpecies=${encodeURIComponent(refSpeciesCode)}&providerSpecies=${encodeURIComponent(providerSpeciesCode)}`
+  return await apiGet(`/providers/${providerId}/mappingDefaultBreed?${qs}`)
+}
+
+export const setMappingDefaultBreed = async (providerId, refSpeciesCode, providerSpeciesCode, breedCode) => {
+  let qs = `refSpecies=${encodeURIComponent(refSpeciesCode)}&providerSpecies=${encodeURIComponent(providerSpeciesCode)}`
+  if (breedCode && `${breedCode}`.length > 0) {
+    qs += `&breed=${encodeURIComponent(breedCode)}`
+  }
+
+  return await apiRequest('PUT', `/providers/${providerId}/mappingDefaultBreed?${qs}`, {})
 }
 
 export const syncProviderRefs = async (provider, type, integrationId, next) => {

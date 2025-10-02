@@ -1,6 +1,13 @@
 import Alpine from 'alpinejs'
 import { Tabs } from 'flowbite'
-import { getProviders, getRefs, searchProviderRefs, updateRefMapping } from "./api-client"
+import {
+  getMappingDefaultBreed,
+  getProviders,
+  getRefs,
+  searchProviderRefs,
+  setMappingDefaultBreed,
+  updateRefMapping
+} from "./api-client"
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, removeQueryParam, setQueryParam } from './common/utils'
 import modal from './plugins/modal'
@@ -60,7 +67,27 @@ export const refs = () => {
       this.updatingRefs = true
       for (const provider of Object.keys(this.updates)) {
         const update = this.updates[provider]
-        await updateRefMapping(this.editingRef.id, update.ref.id)
+
+        // 1) Apply provider ref mapping if present
+        if (update.ref?.id) {
+          await updateRefMapping(this.editingRef.id, update.ref.id)
+        }
+
+        // 2) Apply mapping-level default breed (species only) if queued
+        if (this.type === 'species' && (update.hasOwnProperty('defaultBreed'))) {
+          const refSpeciesCode = this.editingRef.code
+          // Prefer the mapping we are setting now; otherwise fallback to existing mapping
+          const providerSpeciesCode = (update.ref?.code) || (this.editingRef?.providerRef?.[provider]?.code)
+          if (providerSpeciesCode) {
+            try {
+              await setMappingDefaultBreed(provider, refSpeciesCode, providerSpeciesCode, update.defaultBreed || '')
+            } catch (e) {
+              // Surface a non-blocking alert; continue other providers
+              Alpine.store('alert').set('error', e?.message || 'Failed to update mapping default breed')
+            }
+          }
+        }
+
         update.done = true
       }
       const type = this.editingRef.type
@@ -90,6 +117,8 @@ export const refs = () => {
     editingMapping: null,
     editingRefMappings: [],
     isEditingMapping: false,
+    editingMappingDefault: null,
+    updatingMappingDefault: false,
     editMapping(mapping) {
       this.isEditingMapping = true
       this.editingMapping = mapping
@@ -98,8 +127,45 @@ export const refs = () => {
       this.isEditingMapping = false
       this.editingMapping = null
     },
-    providerRefTypeahead() {
-      //TODO(gb): make these selections safer
+    async loadMappingDefault(mapping) {
+      // Only for species tab and when mapping is set
+      if (this.type !== 'species' || !mapping?.ref?.code) return
+      try {
+        mapping._loadingDefault = true
+        const res = await getMappingDefaultBreed(mapping.provider, this.editingRef.code, mapping.ref.code)
+        mapping.mappingDefaultBreed = res?.defaultBreed || null
+      } catch (_) {
+        mapping.mappingDefaultBreed = null
+      } finally {
+        mapping._loadingDefault = false
+      }
+    },
+    editMappingDefault(mapping) {
+      this.editingMappingDefault = mapping
+    },
+    cancelMappingDefaultEdit() {
+      this.editingMappingDefault = null
+    },
+
+    async setMappingDefault(mapping, breedRef) {
+      if (!mapping?.ref?.code) return
+      // Queue the default breed update; do not call API here
+      const providerId = mapping.provider
+      this.updates[providerId] = this.updates[providerId] || { provider: providerId, label: mapping.label }
+      this.updates[providerId].defaultBreed = breedRef.code
+      mapping.mappingDefaultBreed = { code: breedRef.code, name: breedRef.name }
+      this.editingMappingDefault = null
+    },
+    async clearMappingDefault(mapping) {
+      if (!mapping?.ref?.code) return
+      // Queue clearing the default breed; do not call API here
+      const providerId = mapping.provider
+      this.updates[providerId] = this.updates[providerId] || { provider: providerId, label: mapping.label }
+      this.updates[providerId].defaultBreed = ''
+      mapping.mappingDefaultBreed = null
+    },
+    providerRefTypeahead(cfg = {}) {
+      // Shared typeahead for selecting provider refs (species/breeds)
       const $targetEl = this.$el.getElementsByTagName('div')[0]
       const $triggerEl = this.$el.getElementsByTagName('input')[0]
 
@@ -111,34 +177,54 @@ export const refs = () => {
         delay: 300,
         ignoreClickOutsideClass: false,
         onHide: () => {
-          this.isEditingMapping = false
-          this.editingMapping = null
         }
       }
 
       const dropdown = new Dropdown($targetEl, $triggerEl, options)
 
+      const provider = cfg.provider
+      const type = cfg.type || this.type
+      const species = cfg.species
+      const onSelect = cfg.onSelect
+      const placeholder = cfg.placeholder || 'Search by code or name...'
+
       return {
         query: '',
         results: [],
-        placeholder: 'Search by code or name...',
+        placeholder,
         select(ref) {
-          const mapping = this.editingRefMappings.find((mapping) => mapping.provider === ref.provider.id)
-          this.updates[ref.provider.id] = mapping
-          mapping.ref = ref
-          this.isEditingMapping = false
-          this.editingMapping = null
+          if (typeof onSelect === 'function') {
+            onSelect(ref)
+          } else {
+            // Default behavior: set provider mapping selection
+            const mapping = this.editingRefMappings.find((m) => m.provider === ref.provider.id)
+            if (mapping) {
+              this.updates[ref.provider.id] = mapping
+              mapping.ref = ref
+              this.isEditingMapping = false
+              this.editingMapping = null
+              // Clear any pending default-breed update; it should be re-selected for the new mapping
+              if (this.updates[ref.provider.id]) {
+                delete this.updates[ref.provider.id].defaultBreed
+              }
+              if (this.type === 'species') {
+                // Load mapping-level default for the selected pair
+                this.loadMappingDefault(mapping)
+              }
+            }
+          }
           dropdown.hide()
         },
-        async search(provider, query) {
+        async search(arg1, arg2) {
+          const query = (arg2 === undefined ? arg1 : arg2)
           const q = (query || '').toString().toLowerCase()
           if (q.length === 0) {
             this.results = []
             dropdown.hide()
             return
           }
-          // Fetch a reasonable page and apply client-side filtering
-          const providerRefs = await searchProviderRefs({ provider, type: this.type, search: null })
+          const effectiveProvider = provider || arg1
+          const providerRefs = await searchProviderRefs({ provider: effectiveProvider, type, species, search: null })
           const data = providerRefs?.data || []
           this.results = data.filter(r => {
             const name = (r.name || '').toString().toLowerCase()
@@ -156,9 +242,15 @@ export const refs = () => {
         this.editingRefMappings.push({
           provider: provider.id,
           label: getProviderConfig(provider.id).label,
-          ref: ref.providerRef[provider.id]
+          ref: ref.providerRef[provider.id],
+          mappingDefaultBreed: null,
+          _loadingDefault: false
         })
       })
+      // For species mappings, load mapping-level defaults
+      if (this.type === 'species') {
+        this.editingRefMappings.forEach((m) => this.loadMappingDefault(m))
+      }
       this.modal.open()
     },
 
