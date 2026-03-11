@@ -249,7 +249,7 @@ export const getProviderRefs = async (provider, type, query, page, limit) => {
 }
 
 export const searchProviderRefs = async ({ provider, type, species, search }) => {
-  let queryString = `page=1&limit=100`
+  let queryString = `page=1&limit=500`
   if (!isNullOrUndefinedOrEmpty(species)) {
     queryString += `&species=${species}`
   }
