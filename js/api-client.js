@@ -5,6 +5,16 @@ import { isNullOrUndefined, isNullOrUndefinedOrEmpty } from './common/utils'
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
 
+function redirectToLogin() {
+  if (window.location.pathname.includes('/login')) {
+    return
+  }
+
+  const currentPath = `${window.location.pathname}${window.location.search}`
+  const loginUrl = `${UI_BASE_URL}/login?redirect=${encodeURIComponent(currentPath)}`
+  window.location.href = loginUrl
+}
+
 /**
  * Core request function used by both GET and POST/PUT calls.
  * Omits the Authorization header if getToken() returns null or undefined.
@@ -97,6 +107,7 @@ const apiGet = async (path, baseUrl = API_BASE_URL) => {
   } catch (error) {
     if (error.status === 401 || error.status === 403) {
       unsetToken();
+      redirectToLogin();
     }
     throw error;
   }
