@@ -1,78 +1,77 @@
 <div class="flex justify-between">
-  <template x-if="filter">
-    <div class="flex flex-col items-center p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4" x-data="filter">
-      <h6 class="text-sm font-medium text-gray-900 dark:text-white">
-        Filter by
-      </h6>
-      <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
-        <!-- Filter by organization -->
-        <template x-if="filter.organization">
-          <div x-filter-dropdown="filter.organization">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+  <div class="flex items-center">
+    <template x-if="filter">
+      <div class="flex flex-col items-center p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4" x-data="filter">
+        <h6 class="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
+          Filter by
+        </h6>
+        <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
+          <!-- Filter by organization -->
+          <template x-if="filter.organization">
+            <div x-filter-dropdown="filter.organization">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by provider -->
-        <template x-if="filter.provider">
-          <div x-filter-dropdown="provider">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by provider -->
+          <template x-if="filter.provider">
+            <div x-filter-dropdown="provider">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by request method -->
-        <template x-if="filter.method">
-          <div x-filter-dropdown="method">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by request method -->
+          <template x-if="filter.method">
+            <div x-filter-dropdown="method">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by response status -->
-        <template x-if="filter.status">
-          <div x-filter-dropdown="status">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by response status -->
+          <template x-if="filter.status">
+            <div x-filter-dropdown="status">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by date -->
-        <template x-if="filter.date">
-          <div x-filter-dropdown="date">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by date -->
+          <template x-if="filter.date">
+            <div x-filter-dropdown="date">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by integration -->
-        <template x-if="filter.integration">
-          <div x-filter-dropdown="integration">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by integration -->
+          <template x-if="filter.integration">
+            <div x-filter-dropdown="integration">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
 
-        <!-- Filter by type -->
-        <template x-if="filter.type">
-          <div x-filter-dropdown="type">
-            {{> common/filter-dropdown }}
-          </div>
-        </template>
+          <!-- Filter by type -->
+          <template x-if="filter.type">
+            <div x-filter-dropdown="type">
+              {{> common/filter-dropdown }}
+            </div>
+          </template>
+        </div>
       </div>
-    </div>
-  </template>
-  <template x-if="_search">
-    <div class="flex flex-col items-center p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4" x-data="_search">
-      <h6 class="text-sm font-medium text-gray-900 dark:text-white">
-        Search
-      </h6>
-      <div x-search="_search">
-        {{> common/search }}
+    </template>
+    <template x-if="_search">
+      <div class="flex flex-col items-center p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4" x-data="_search">
+        <div x-search="_search">
+          {{> common/search }}
+        </div>
       </div>
-    </div>
-  </template>
+    </template>
+  </div>
   <template x-if="actions">
     <div x-dropdown class="flex flex-col items-center p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4">
       <a href="#" class="text-xs text-gray-500 dark:text-gray-500 hover:underline"
          @click="clearSelection" x-show="selectedItems.length > 0">
         Clear selection
       </a>
-      <button x-dropdown:button class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+      <button x-dropdown:button class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto whitespace-nowrap focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               :class="{ 'text-gray-700 dark:text-gray-500 pointer-events-none': selectedItems.length === 0 }"
               type="button">
         Batch Actions (<span x-text="selectedItems.length"></span>)

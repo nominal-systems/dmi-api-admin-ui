@@ -12,13 +12,17 @@ export const integrations = {
   // Table
   table: table({
     pageSize: 10,
+    _search: {
+      placeholder: 'Search by practice...'
+    },
     getPage: async (page, pageSize) => {
       const query = getQueryParams()
       const providers = query.provider ? query.provider.split(',') : undefined
       const organizations = query.organization ? query.organization.split(',') : undefined
       const statuses = query.status ? query.status.split(',') : undefined
       const practices = query.practices ? query.practices.split(',') : undefined
-      return await getIntegrations({ providers, organizations, statuses, practices }, page, pageSize)
+      const search = query.search || undefined
+      return await getIntegrations({ providers, organizations, statuses, practices, search }, page, pageSize)
     },
     processResults: (integrations) => {
       integrations.forEach(integration => {

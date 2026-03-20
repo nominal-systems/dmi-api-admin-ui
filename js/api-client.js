@@ -160,7 +160,8 @@ export const getIntegrations = async ({
                                         providerConfigurations,
                                         organizations,
                                         statuses,
-                                        practices
+                                        practices,
+                                        search
                                       }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (!isNullOrUndefined(providers)) {
@@ -177,6 +178,9 @@ export const getIntegrations = async ({
   }
   if (!isNullOrUndefined(practices)) {
     qs += `&practices=${practices.join(',')}`
+  }
+  if (!isNullOrUndefined(search)) {
+    qs += `&search=${search}`
   }
   return await apiGet(`/integrations?${qs}`)
 }
