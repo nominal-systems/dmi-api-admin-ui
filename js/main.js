@@ -140,7 +140,7 @@ window.data = {
   // Search
   accessionId: null,
   searchByAccessionId() {
-    navigateTo(`/transaction-logs?accessionId=${this.accessionId}`)
+    navigateTo(`/transaction-logs?accessionId=${this.accessionId?.toUpperCase()}`)
   }
 }
 
