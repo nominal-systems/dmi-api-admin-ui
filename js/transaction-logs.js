@@ -25,7 +25,7 @@ export default () => {
 
     async init() {
       const queryParams = getQueryParams()
-      this.accessionId = queryParams.accessionId
+      this.accessionId = queryParams.accessionId?.toUpperCase()
       Alpine.store('title').set(`Transaction Logs for ${this.accessionId}`)
       const transactionLogs = await getTransactionLogs(this.accessionId)
       if (transactionLogs.errors === undefined) {
