@@ -29,7 +29,7 @@ export const dashboard = () => {
             events: {
               dataPointSelection: function (event, chartContext, opts) {
                 const provider = opts.w.config.series[opts.seriesIndex].id
-                const date = moment(opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].x)
+                const date = moment.utc(opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].x)
                 navigateTo(`/external-requests?provider=${provider}&date=${date.format('MM/DD/YYYY')}&status=4xx,5xx`)
               },
               dataPointMouseEnter: function (event) {
