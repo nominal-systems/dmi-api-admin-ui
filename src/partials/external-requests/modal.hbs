@@ -25,8 +25,8 @@
       </div>
 
       <!-- Modal body -->
-      <template x-if="externalRequest !== undefined">
-        <div class="mt-4 mb-6" x-data="externalRequest">
+      <template x-if="externalRequest">
+        <div class="mt-4 mb-6">
           {{> external-requests/detail }}
         </div>
       </template>
