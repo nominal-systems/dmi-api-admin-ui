@@ -24,15 +24,17 @@
             Perform <span class="font-bold dark:text-white" x-text="operation"></span> operation on selected
             integrations.
           </p>
-          <div class="flex justify-between my-4 text-sm font-medium">
-            <span x-show="(!inProgress && !error) || done === integrations.length"></span>
-            <span class="text-purple-700 dark:text-white" x-show="inProgress && done < integrations.length && !awaitingContinue">
-                <span class="capitalize" x-text="operation"></span>ing Integration/<span x-text="currentIntegration?.id"></span>...
+          <div class="flex justify-between items-center my-4 text-sm font-medium gap-4">
+            <div class="flex-1 min-w-0">
+              <span x-show="(!inProgress && !error) || done === integrations.length"></span>
+              <span class="text-purple-700 dark:text-white" x-show="inProgress && done < integrations.length && !awaitingContinue">
+                <span class="capitalize" x-text="operation"></span>ing <span x-text="currentIntegration?.id"></span> (<span x-text="currentIntegration?.practice?.name"></span> - <span class="uppercase" x-text="currentIntegration?.providerConfiguration?.providerId"></span>)...
               </span>
-            <span class="text-red-800 dark:text-red-400" x-show="error">
-              <span x-text="error?.message"></span>
-            </span>
-            <span class="text-purple-700 dark:text-white">
+              <span class="text-red-800 dark:text-red-400" x-show="error">
+                <span x-text="error?.message"></span>
+              </span>
+            </div>
+            <span class="flex-shrink-0 text-purple-700 dark:text-white">
               <span :class="{'text-red-800 dark:text-red-400': error}">
                 <span x-text="step"></span> of <span x-text="integrations.length"></span>
               </span>

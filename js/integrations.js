@@ -206,17 +206,18 @@ export const integrations = {
 
     for (const integration of data.integrations) {
       data.currentIntegration = integration
+      const label = `${data.currentIntegration.id} (${data.currentIntegration.practice.name} - ${data.currentIntegration.providerConfiguration.providerId.toUpperCase()})`
       try {
-        const response = await updateIntegrationStatus(data.currentIntegration.id, data.operation)
+        await updateIntegrationStatus(data.currentIntegration.id, data.operation)
         data.logs.push({
           status: 'ok',
-          message: `Integration/${data.currentIntegration.id}: ${response.ok}`
+          message: `${label}: Authentication successful`
         })
         data.done += 1
         data.step = Math.min(data.step + 1, data.integrations.length)
         await delay(500)
       } catch (err) {
-        const errorMessage = `Integration/${data.currentIntegration.id}: ${err.body?.error || err.message}`
+        const errorMessage = `${label}: ${err.body?.error || err.message}`
         data.logs.push({ status: 'error', message: errorMessage })
 
         if (data.operation === 'test') {

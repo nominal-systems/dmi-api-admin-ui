@@ -22,7 +22,7 @@
           <p class="text-sm text-gray-700 dark:text-gray-400">
             This will test the credentials for Integration
             <strong><span x-text="integration?.id"></span>
-              (<span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>.<br>
+              (<span x-text="integration?.practice?.name"></span> - <span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>.<br>
             Are you sure?
           </p>
         </template>
@@ -30,7 +30,7 @@
           <p class="text-sm text-gray-700 dark:text-gray-400">
             This will <span x-text="operation"></span> Integration
             <strong><span x-text="integration?.id"></span>
-              (<span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>
+              (<span x-text="integration?.practice?.name"></span> - <span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>
             and
             <span x-text="operation"></span> all
             running jobs.<br>
