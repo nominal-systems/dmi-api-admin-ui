@@ -18,15 +18,29 @@
       </div>
       <!-- Modal body -->
       <div class="mt-4 mb-6">
-        <p class="text-sm text-gray-700 dark:text-gray-400">
-          This will <span x-text="operation"></span> Integration
-          <strong><span x-text="integration?.id"></span>
-            (<span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>
-          and
-          <span x-text="operation"></span> all
-          running jobs.<br>
-          Are you sure?
-        </p>
+        <template x-if="operation === 'test'">
+          <p class="text-sm text-gray-700 dark:text-gray-400">
+            This will test the credentials for Integration
+            <strong><span x-text="integration?.id"></span>
+              (<span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>.<br>
+            Are you sure?
+          </p>
+        </template>
+        <template x-if="operation !== 'test'">
+          <p class="text-sm text-gray-700 dark:text-gray-400">
+            This will <span x-text="operation"></span> Integration
+            <strong><span x-text="integration?.id"></span>
+              (<span class="uppercase" x-text="integration?.providerConfiguration.providerId"></span>)</strong>
+            and
+            <span x-text="operation"></span> all
+            running jobs.<br>
+            Are you sure?
+          </p>
+        </template>
+        <div class="flex items-center p-4 mt-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+             role="alert" x-show="result?.ok">
+          Credentials tested successfully.
+        </div>
       </div>
       <!-- Modal footer -->
       <div class="flex items-center p-4 my-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert"

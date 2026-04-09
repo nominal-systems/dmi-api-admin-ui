@@ -133,10 +133,12 @@ export const integrations = {
     data: {
       inProgress: false,
       operation: null,
-      integration: null
+      integration: null,
+      result: null
     },
     onShow: (self, data) => {
       data.error = null
+      data.result = null
       data.inProgress = false
     },
     onHide: (self) => {
@@ -181,14 +183,18 @@ export const integrations = {
       .then(res => {
         data.inProgress = false
         this.table.fetchData()
-        this.actionModal.close()
-        Alpine.store('alert')
-          .set('info', `Integration ${data.integration.id} ${data.operation}${data.operation === 'stop' ? 'p' : ''}ed.`)
+        if (data.operation === 'test') {
+          data.result = { ok: true }
+        } else {
+          this.actionModal.close()
+          Alpine.store('alert')
+            .set('info', `Integration ${data.integration.id} ${data.operation}${data.operation === 'stop' ? 'p' : ''}ed.`)
+        }
       })
       .catch(err => {
         data.inProgress = false
         data.error = {
-          message: err.body.error
+          message: err.body?.error || err.message
         }
       })
   },
