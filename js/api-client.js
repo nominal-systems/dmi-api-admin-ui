@@ -122,7 +122,7 @@ export const getOrganizations = async () => {
   return await apiGet('/organizations')
 }
 
-export const getEvents = async ({ providers, integrations, types, date }, page, limit) => {
+export const getEvents = async ({ providers, integrations, types, date, search }, page, limit) => {
   let qs = `page=${page}&limit=${limit}`
   if (providers !== undefined) {
     qs += `&providers=${providers.join(',')}`
@@ -135,6 +135,9 @@ export const getEvents = async ({ providers, integrations, types, date }, page, 
   }
   if (date !== undefined) {
     qs += `&startDate=${date[0]}&endDate=${date[1]}`
+  }
+  if (search !== undefined) {
+    qs += `&search=${search}`
   }
 
   return await apiGet(`/events?${qs}`)

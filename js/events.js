@@ -13,14 +13,18 @@ export const events = {
   table: table(
     {
       pageSize: 20,
+      _search: {
+        placeholder: 'Search by practice...'
+      },
       getPage: async (page, pageSize) => {
         const query = getQueryParams()
         const providers = query.provider ? query.provider.split(',') : undefined
         const integrations = query.integration ? query.integration.split(',') : undefined
         const types = query.type ? query.type.split(',') : undefined
         const date = query.date ? parseDateRange(query.date) : undefined
+        const search = query.search || undefined
 
-        return await getEvents({ providers, integrations, types, date }, page, pageSize)
+        return await getEvents({ providers, integrations, types, date, search }, page, pageSize)
       },
       processResults: async (events) => {
         const practiceIds = [...new Set(
