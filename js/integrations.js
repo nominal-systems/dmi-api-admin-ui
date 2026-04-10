@@ -133,10 +133,12 @@ export const integrations = {
     data: {
       inProgress: false,
       operation: null,
-      integration: null
+      integration: null,
+      result: null
     },
     onShow: (self, data) => {
       data.error = null
+      data.result = null
       data.inProgress = false
     },
     onHide: (self) => {
@@ -152,6 +154,8 @@ export const integrations = {
       done: 0,
       step: 0,
       logs: [],
+      awaitingContinue: false,
+      _continueResolver: null,
     },
     onShow: (self, data) => {
       data.inProgress = false
@@ -159,8 +163,15 @@ export const integrations = {
       data.step = 0
       data.done = 0
       data.logs = []
+      data.awaitingContinue = false
+      data._continueResolver = null
     },
     onHide: async (self) => {
+      if (self.data._continueResolver) {
+        self.data._continueResolver(false)
+        self.data._continueResolver = null
+        self.data.awaitingContinue = false
+      }
       await self.table.goToPage(1)
     }
   }),
@@ -172,14 +183,18 @@ export const integrations = {
       .then(res => {
         data.inProgress = false
         this.table.fetchData()
-        this.actionModal.close()
-        Alpine.store('alert')
-          .set('info', `Integration ${data.integration.id} ${data.operation}${data.operation === 'stop' ? 'p' : ''}ed.`)
+        if (data.operation === 'test') {
+          data.result = { ok: true }
+        } else {
+          this.actionModal.close()
+          Alpine.store('alert')
+            .set('info', `Integration ${data.integration.id} ${data.operation}${data.operation === 'stop' ? 'p' : ''}ed.`)
+        }
       })
       .catch(err => {
         data.inProgress = false
         data.error = {
-          message: err.body.error
+          message: err.body?.error || err.message
         }
       })
   },
@@ -187,32 +202,50 @@ export const integrations = {
   async batchIntegrationOperations(data) {
     data.error = null
     data.inProgress = true
+    data.step += 1
 
-    try {
-      data.step += 1
-      for (const integration of data.integrations) {
-        data.currentIntegration = integration
-        const response = await updateIntegrationStatus(data.currentIntegration.id, data.operation)
+    for (const integration of data.integrations) {
+      data.currentIntegration = integration
+      const label = `${data.currentIntegration.id} (${data.currentIntegration.practice.name} - ${data.currentIntegration.providerConfiguration.providerId.toUpperCase()})`
+      try {
+        await updateIntegrationStatus(data.currentIntegration.id, data.operation)
         data.logs.push({
           status: 'ok',
-          message: `Integration/${data.currentIntegration.id}: ${response.ok}`
+          message: `${label}: Authentication successful`
         })
         data.done += 1
         data.step = Math.min(data.step + 1, data.integrations.length)
         await delay(500)
-      }
-    } catch (err) {
-      data.inProgress = false
-      data.error = {
-        message: `Integration/${data.currentIntegration.id}: ${err.body.error}`
-      }
-      data.logs.push({
-        status: 'error',
-        message: `Integration/${data.currentIntegration.id}: ${err.body.error}`
-      })
-    } finally {
+      } catch (err) {
+        const errorMessage = `${label}: ${err.body?.error || err.message}`
+        data.logs.push({ status: 'error', message: errorMessage })
 
+        if (data.operation === 'test') {
+          data.error = { message: errorMessage }
+          const isLast = data.integrations.indexOf(integration) === data.integrations.length - 1
+          if (!isLast) {
+            data.awaitingContinue = true
+            const shouldContinue = await new Promise(resolve => {
+              data._continueResolver = resolve
+            })
+            data.awaitingContinue = false
+            data._continueResolver = null
+            if (!shouldContinue) {
+              data.inProgress = false
+              return
+            }
+            data.error = null
+            data.step = Math.min(data.step + 1, data.integrations.length)
+          }
+        } else {
+          data.inProgress = false
+          data.error = { message: errorMessage }
+          return
+        }
+      }
     }
+
+    data.inProgress = false
   }
 }
 

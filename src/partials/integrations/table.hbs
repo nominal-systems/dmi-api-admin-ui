@@ -12,7 +12,7 @@
         <th class="px-4 py-3 w-[8rem]">Provider</th>
         <th class="px-4 py-3 text-center w-32">Status</th>
         <template x-if="actions">
-          <th class="px-4 py-3 text-center w-44">Actions</th>
+          <th class="px-4 py-3 text-center w-56">Actions</th>
         </template>
       </tr>
     {{/inline}}
@@ -47,7 +47,7 @@
           <template x-if="actions">
             <td class="px-4 py-3 text-xs">
               <div class="flex items-center space-x-4 text-sm">
-                <ul class="flex flex-wrap items-center justify-center font-xs font-semibold text-purple-600 dark:text-gray-400">
+                <ul class="flex items-center justify-center font-xs font-semibold text-purple-600 dark:text-gray-400">
                   <template x-for="operation in integration.operations">
                     <li>
                       <a href="#" class="me-4 hover:underline capitalize"

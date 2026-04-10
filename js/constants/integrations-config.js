@@ -2,16 +2,16 @@ export const INTEGRATIONS_CONFIG = [
   {
     status: 'RUNNING',
     color: 'green',
-    operations: ['stop', 'restart']
+    operations: ['test', 'stop', 'restart']
   },
   {
     status: 'STOPPED',
     color: 'red',
-    operations: ['start']
+    operations: ['test', 'start']
   },
   {
     status: 'NEW',
     color: 'blue',
-    operations: ['start']
+    operations: ['test', 'start']
   }
 ]

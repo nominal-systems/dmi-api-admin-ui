@@ -96,18 +96,16 @@ export const externalRequests = () => {
     // Modal
     modal: modal({
       ref: 'externalRequestModal',
-      onHide: (component) => {
-        component.externalRequest = null
-      }
     }),
     async openModal(externalRequest) {
+      this.externalRequest = null
       const req = await getExternalRequest(externalRequest._id)
       req.statusText = mapHttpStatusText(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
       this.externalRequest = req
       this.modal.open()
     },
-    externalRequest: {},
+    externalRequest: null,
 
     init() {
       Alpine.store('title').set('External Requests')
