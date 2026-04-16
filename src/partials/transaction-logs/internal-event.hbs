@@ -7,4 +7,9 @@
   <div class="text-sm font-normal ml-2 text-gray-500 dark:text-gray-300">
     <span>Internal API Event</span>
   </div>
+  <template x-if="data.integrationId">
+    <a :href="'/ui/integrations/' + data.integrationId" class="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-2 py-0.5 rounded hover:bg-purple-200 dark:hover:bg-purple-800">
+      Integration
+    </a>
+  </template>
 </div>

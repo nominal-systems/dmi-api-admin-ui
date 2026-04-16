@@ -1,3 +1,21 @@
+<template x-if="externalRequest?.integrationId">
+  <div class="mb-4">
+    <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
+      Integration
+    </h4>
+    <p class="text-sm text-left">
+      <template x-if="externalRequest.integration?.practice?.name">
+        <span class="text-gray-700 dark:text-gray-200">
+          <span x-text="externalRequest.integration.practice.name"></span> -
+          (<a :href="'/ui/integrations/' + externalRequest.integrationId" class="text-blue-600 dark:text-blue-400 hover:underline" x-text="externalRequest.integrationId"></a>)
+        </span>
+      </template>
+      <template x-if="!externalRequest.integration?.practice?.name">
+        <a :href="'/ui/integrations/' + externalRequest.integrationId" class="text-blue-600 dark:text-blue-400 hover:underline" x-text="externalRequest.integrationId"></a>
+      </template>
+    </p>
+  </div>
+</template>
 <div class="mb-4">
   <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
     Request

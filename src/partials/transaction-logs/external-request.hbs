@@ -14,6 +14,11 @@
   <span class="flex flex-none items-center text-xs font-medium text-gray-900 dark:text-white me-3 ml-4">
     <span class="flex w-2.5 h-2.5 rounded-full me-1.5 flex-shrink-0" :class="`bg-${tag.color}-500`"></span><span x-text="tag.label"></span>
   </span>
+  <template x-if="data.integrationId">
+    <a :href="'/ui/integrations/' + data.integrationId" class="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-2 py-0.5 rounded hover:bg-purple-200 dark:hover:bg-purple-800">
+      Integration
+    </a>
+  </template>
 </div>
 
 <div class="bg-green-500 dark:bg-green-500"></div>

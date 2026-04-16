@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs'
-import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
+import { getExternalRequest, getExternalRequests, getIntegration, getProviders } from './api-client'
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, mapHttpStatusText } from './common/utils'
 import moment from 'moment'
@@ -102,6 +102,13 @@ export const externalRequests = () => {
       const req = await getExternalRequest(externalRequest._id)
       req.statusText = mapHttpStatusText(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
+      if (req.integrationId) {
+        try {
+          req.integration = await getIntegration(req.integrationId)
+        } catch (e) {
+          // Integration might not exist
+        }
+      }
       this.externalRequest = req
       this.modal.open()
     },

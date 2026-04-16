@@ -7,6 +7,14 @@
     <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Pattern</dt>
     <dd class="text-sm font-semibold" x-text="event.pattern"></dd>
   </div>
+  <template x-if="event.integrationId">
+    <div class="flex flex-col py-3">
+      <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Integration</dt>
+      <dd class="text-sm font-semibold">
+        <a :href="'/ui/integrations/' + event.integrationId" class="text-blue-600 dark:text-blue-400 hover:underline" x-text="event.integrationId"></a>
+      </dd>
+    </div>
+  </template>
   <div class="flex flex-col pt-3">
     <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Data</dt>
     <dd class="text-sm font-semibold">
