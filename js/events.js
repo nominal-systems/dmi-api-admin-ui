@@ -93,15 +93,11 @@ export const events = {
   ),
 
   // Modal
-  modal: modal(
-    {
-      ref: 'eventModal',
-      onHide: (component) => {
-        component.event = null
-      }
-    }
-  ),
+  modal: modal({
+    ref: 'eventModal'
+  }),
   async openModal(ev) {
+    this.event = null
     this.event = await getEvent(ev._id)
     this.modal.open()
   },
