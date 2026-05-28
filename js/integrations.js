@@ -30,6 +30,10 @@ export const integrations = {
         integration.providerLabel = getProviderConfig(integration.providerConfiguration.providerId).label
         integration.operations = integrationConfig.operations
         integration.color = integrationConfig.color
+        integration.tooltipData = Object.entries(integration.integrationOptions || {})
+          .filter(([key]) => !key.toLowerCase().includes('password'))
+          .map(([key, value]) => ({ key, value: String(value) }))
+        integration._showTooltip = false
       })
     },
     filter: {
