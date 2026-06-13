@@ -1,3 +1,23 @@
+<template x-if="externalRequest?.practice?.name || externalRequest?.integrationId">
+  <dl class="mb-4 grid grid-cols-2 gap-4">
+    <template x-if="externalRequest?.practice?.name">
+      <div>
+        <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Practice</dt>
+        <dd class="text-sm font-semibold text-gray-900 dark:text-white" x-text="externalRequest.practice.name"></dd>
+      </div>
+    </template>
+    <template x-if="externalRequest?.integrationId">
+      <div>
+        <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Integration</dt>
+        <dd class="text-sm font-semibold">
+          <a :href="externalRequest.integrationUrl"
+             class="text-blue-600 dark:text-blue-500 hover:underline"
+             x-text="externalRequest.integrationId"></a>
+        </dd>
+      </div>
+    </template>
+  </dl>
+</template>
 <div class="mb-4">
   <h4 class="text-lg mb-3 font-semibold text-gray-900 dark:text-white">
     Request

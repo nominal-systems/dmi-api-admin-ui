@@ -17,6 +17,9 @@
             <th scope="col" class="px-6 py-3 w-36">
               Provider
             </th>
+            <th scope="col" class="px-6 py-3 w-56">
+              Practice
+            </th>
             <th scope="col" class="px-6 py-3 w-24">
               Method
             </th>
@@ -39,6 +42,8 @@
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   x-text="req.providerLabel">
               </th>
+              <td class="px-6 py-4 truncate" x-text="req.practice?.name">
+              </td>
               <td class="px-6 py-4" x-text="req.method">
               </td>
               <td class="px-6 py-4 truncate" x-text="req.url">
