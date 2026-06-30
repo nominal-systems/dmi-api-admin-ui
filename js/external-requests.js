@@ -1,11 +1,15 @@
 import Alpine from 'alpinejs'
-import { getExternalRequest, getExternalRequests, getProviders } from './api-client'
+import { getExternalRequest, getExternalRequests, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, mapHttpStatusText } from './common/utils'
+import { getProviderConfig, getQueryParams, isNullOrUndefined, mapHttpStatusText } from './common/utils'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
 import { parseDateRange } from './common/date-utils'
+import config from './config'
+
+const integrationUrl = (integrationId) =>
+  integrationId ? `${config.get('UI_BASE')}/integrations/${integrationId}` : null
 
 export const externalRequests = () => {
   return {
@@ -22,9 +26,18 @@ export const externalRequests = () => {
 
         return await getExternalRequests(providers, status, method, date, page, pageSize)
       },
-      processResults: (externalRequests) => {
+      processResults: async (externalRequests) => {
+        const practiceIds = [...new Set(
+          externalRequests
+            .filter((req) => !isNullOrUndefined(req.practiceId))
+            .map((req) => req.practiceId)
+        )]
+        const practices = practiceIds.length
+          ? (await getPractices({ ids: practiceIds }, 1, 1000)).data
+          : []
         externalRequests.forEach((req) => {
           req.providerLabel = getProviderConfig(req.provider).label
+          req.practice = practices.find((practice) => practice.id === req.practiceId) || {}
         })
       },
       filter: {
@@ -102,6 +115,8 @@ export const externalRequests = () => {
       const req = await getExternalRequest(externalRequest._id)
       req.statusText = mapHttpStatusText(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
+      req.practice = externalRequest.practice
+      req.integrationUrl = integrationUrl(req.integrationId)
       this.externalRequest = req
       this.modal.open()
     },
