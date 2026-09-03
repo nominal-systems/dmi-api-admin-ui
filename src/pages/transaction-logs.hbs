@@ -26,11 +26,19 @@
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
         <span class="sr-only">Info</span>
-        <div>
-          <span class="font-semibold">Order not found:</span> No order with Accession ID
-          '<span class="underline decoration-red-400 decoration-2 underline-offset-2" x-text="accessionId"></span>' was
-          found.
-        </div>
+        <template x-if="error.status === 404">
+          <div>
+            <span class="font-semibold">Order not found:</span> No order with Accession ID
+            '<span class="underline decoration-red-400 decoration-2 underline-offset-2" x-text="accessionId"></span>' was
+            found.
+          </div>
+        </template>
+        <template x-if="error.status !== 404">
+          <div>
+            <span class="font-semibold">Something went wrong</span> loading the transaction logs. Please retry.
+            <span x-show="error.message" class="block mt-1 text-xs opacity-75" x-text="error.message"></span>
+          </div>
+        </template>
       </div>
     </template>
 

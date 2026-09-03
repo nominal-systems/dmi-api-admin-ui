@@ -27,8 +27,8 @@ export default () => {
       const queryParams = getQueryParams()
       this.accessionId = queryParams.accessionId?.toUpperCase()
       Alpine.store('title').set(`Transaction Logs for ${this.accessionId}`)
-      const transactionLogs = await getTransactionLogs(this.accessionId)
-      if (transactionLogs.errors === undefined) {
+      try {
+        const transactionLogs = await getTransactionLogs(this.accessionId)
         transactionLogs.forEach(log => {
           log.timestamp = new Date(log.timestamp).toLocaleString()
           log.message = buildMessage(log)
@@ -38,8 +38,9 @@ export default () => {
           }
         })
         this.logs = transactionLogs
-      } else {
-        this.error = transactionLogs.message
+      } catch (err) {
+        if (err.redirected) return
+        this.error = err
       }
       this.doFilter();
     }
