@@ -15,6 +15,7 @@ export default (opts) => ({
   pagesNav: null,
   filter: opts.filter,
   _search: opts._search,
+  _searchSelect: opts._searchSelect,
   actions: opts.actions,
   selectedItems: [],
   selectAllCheckbox: false,

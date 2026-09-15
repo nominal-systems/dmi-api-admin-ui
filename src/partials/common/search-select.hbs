@@ -1,0 +1,35 @@
+<div class="flex" @click.outside="close">
+  <div class="relative">
+    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+      <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+      </svg>
+    </div>
+    <input x-search-select:input type="text" autocomplete="off" class="block w-96 p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" :placeholder="placeholder"/>
+
+    <!-- Results -->
+    <div x-show="open"
+         class="absolute z-10 w-96 mt-1 overflow-y-auto bg-white rounded-lg shadow max-h-64 dark:bg-gray-700">
+      <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+        <template x-if="loading">
+          <li class="px-4 py-2 text-gray-500 dark:text-gray-400">Searching...</li>
+        </template>
+        <template x-if="!loading && items.length === 0">
+          <li class="px-4 py-2 text-gray-500 dark:text-gray-400" x-text="emptyLabel"></li>
+        </template>
+        <template x-for="item in items" :key="item.value">
+          <li>
+            <a href="#" @click.prevent="select(item)" x-text="item.label"
+               class="block px-4 py-2 truncate hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            </a>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+  <div class="flex items-center ml-3">
+    <div x-show="dirty">
+      <a href="#" @click="clear" class="text-xs font-medium text-blue-600 dark:text-blue-500 hover:underline">Clear</a>
+    </div>
+  </div>
+</div>
