@@ -24,8 +24,12 @@
                   x-text="ev.provider.label">
                 </span>
           </td>
-          <td class="px-4 py-3 truncate" x-text="ev.practice?.name"></td>
-          <td class="px-4 py-3 truncate" x-text="ev.integrationId"></td>
+          <td class="px-4 py-3">
+            {{> common/truncated-text value="ev.practice?.name" }}
+          </td>
+          <td class="px-4 py-3">
+            {{> common/truncated-text value="ev.integrationId" }}
+          </td>
           <td class="px-4 py-3">
             <span class="px-2.5 py-0.5 rounded bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border">
               <span x-text="ev.type"></span>
