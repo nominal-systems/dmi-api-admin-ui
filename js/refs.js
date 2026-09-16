@@ -109,13 +109,9 @@ export const refs = () => {
     // Modal
     modal: modal({
       ref: 'refsModal',
-      onHide: (_this) => {
-        _this.editingRef = {}
-        _this.editingRefMappings = []
-        _this.editingMapping = null
-        _this.isEditingMapping = false
-        _this.updates = {}
-        _this.editingRef = false
+      // The plugin passes itself, not this component: reset via back-reference
+      onHide: (self) => {
+        self.page?.resetEditing()
       }
     }),
     editingRef: {},
@@ -124,6 +120,14 @@ export const refs = () => {
     isEditingMapping: false,
     editingMappingDefault: null,
     updatingMappingDefault: false,
+    resetEditing() {
+      this.editingRef = {}
+      this.editingRefMappings = []
+      this.editingMapping = null
+      this.isEditingMapping = false
+      this.editingMappingDefault = null
+      this.updates = {}
+    },
     editMapping(mapping) {
       this.isEditingMapping = true
       this.editingMapping = mapping
@@ -385,6 +389,7 @@ export const refs = () => {
 
     async init() {
       Alpine.store('title').set('Reference Data')
+      this.modal.page = this
       this.initTabs()
       const providers = await getProviders()
       providers.forEach((provider) => {
