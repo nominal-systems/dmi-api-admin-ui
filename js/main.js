@@ -20,6 +20,7 @@ import codeDirective from './directives/codeDirective'
 import config from './config'
 import filterDropdown from './plugins/filter-dropdown'
 import searchInput from './plugins/search-input'
+import searchSelect from './plugins/search-select'
 import Clipboard from "@ryangjchandler/alpine-clipboard"
 import datepicker from './plugins/datepicker'
 import chart from './plugins/chart'
@@ -180,6 +181,7 @@ Alpine.plugin(chart)
 Alpine.plugin(filterDropdown)
 Alpine.plugin(datepicker)
 Alpine.plugin(searchInput)
+Alpine.plugin(searchSelect)
 Alpine.plugin(Clipboard)
 
 // Alpine init

@@ -17,14 +17,32 @@ export const externalRequests = () => {
     table: table({
       pageSize: 20,
       pagesMax: 10,
+      _searchSelect: {
+        id: 'practice',
+        placeholder: 'Search by practice...',
+        emptyLabel: 'No practices found',
+        items: async (search) => {
+          return (await getPractices({ search }, 1, 20)).data.map((practice) => {
+            return {
+              label: practice.name,
+              value: practice.id
+            }
+          })
+        },
+        selected: async (id) => {
+          const practice = (await getPractices({ ids: [id] }, 1, 1)).data[0]
+          return practice ? { label: practice.name, value: practice.id } : null
+        }
+      },
       getPage: async (page, pageSize) => {
         const query = getQueryParams()
         const providers = query.provider ? query.provider.split(',') : undefined
         const method = query.method ? query.method.split(',') : undefined
         const status = query.status ? query.status.split(',') : undefined
         const date = query.date ? parseDateRange(query.date) : undefined
+        const practices = query.practice ? query.practice.split(',') : undefined
 
-        return await getExternalRequests(providers, status, method, date, page, pageSize)
+        return await getExternalRequests({ providers, status, method, practices, date }, page, pageSize)
       },
       processResults: async (externalRequests) => {
         const practiceIds = [...new Set(
