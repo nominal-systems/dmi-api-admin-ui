@@ -42,11 +42,13 @@
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   x-text="req.providerLabel">
               </th>
-              <td class="px-6 py-4 truncate" x-text="req.practice?.name">
+              <td class="px-6 py-4">
+                {{> common/truncated-text value="req.practice?.name" }}
               </td>
               <td class="px-6 py-4" x-text="req.method">
               </td>
-              <td class="px-6 py-4 truncate" x-text="req.url">
+              <td class="px-6 py-4">
+                {{> common/truncated-text value="req.url" }}
               </td>
               <td class="px-6 py-4" x-text="req.status">
               </td>

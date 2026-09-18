@@ -1,0 +1,9 @@
+<div class="relative" x-data="{ showTooltip: false }"
+     @mouseenter="showTooltip = $refs.text.scrollWidth > $refs.text.clientWidth"
+     @mouseleave="showTooltip = false">
+  <div class="truncate" x-ref="text" x-text="{{{value}}}"></div>
+  <div x-show="showTooltip"
+       class="absolute z-50 top-full left-0 mt-1 max-w-lg pointer-events-none px-2 py-1 text-xs text-white break-words bg-gray-900 rounded-lg shadow-lg dark:bg-gray-700"
+       x-text="{{{value}}}">
+  </div>
+</div>
