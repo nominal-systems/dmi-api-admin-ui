@@ -128,7 +128,7 @@ function handleToggle(el, Alpine) {
 
 function handleDatepicker(el, Alpine) {
   const $datePickerRadioInput = el.querySelector('input')
-  const $datePickerInputs = el.querySelectorAll('label input')
+  const $datePickerInput = el.querySelector('label input')
   Alpine.bind(el, {
     'x-data'() {
       return {
@@ -138,10 +138,9 @@ function handleDatepicker(el, Alpine) {
           if (date && !presetValues.includes(date)) {
             this.datePickerValue = date
             const [startDate, endDate] = date.includes('-') ? date.split('-') : [date, date]
-            const values = [startDate, endDate].map((value) => moment(value, DATE_FORMAT).format('MM/DD/YYYY'))
-            $datePickerInputs.forEach((input, index) => {
-              input.value = values[index]
-            })
+            const start = moment(startDate, DATE_FORMAT).format('MM/DD/YYYY')
+            const end = moment(endDate, DATE_FORMAT).format('MM/DD/YYYY')
+            $datePickerInput.value = startDate === endDate ? start : `${start} - ${end}`
             $datePickerRadioInput.checked = true
           }
         }
@@ -154,9 +153,7 @@ function handleDatepicker(el, Alpine) {
       }
 
       this.datePickerValue = null
-      $datePickerInputs.forEach((input) => {
-        input.value = null
-      })
+      $datePickerInput.value = null
       $datePickerRadioInput.checked = false
     },
     '@datePickerInput'(ev) {
