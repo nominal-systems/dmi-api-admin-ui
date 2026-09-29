@@ -155,7 +155,7 @@ function handleDatepicker(el, Alpine) {
   Alpine.bind($datePickerRadioInput, {
     '@input'() {
       setQueryParam(this._id, this.datePickerValue)
-      this.$dispatch('filter')
+      this.$dispatch('filter', { page: 1 })
     }
   })
   Alpine.bind($datePickerInput, {
@@ -163,7 +163,7 @@ function handleDatepicker(el, Alpine) {
       this.datePickerValue = ev.detail.date
       $datePickerRadioInput.checked = true
       setQueryParam(this._id, this.datePickerValue)
-      this.$dispatch('filter')
+      this.$dispatch('filter', { page: 1 })
     }
   })
 }
