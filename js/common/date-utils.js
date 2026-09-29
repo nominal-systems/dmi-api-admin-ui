@@ -50,7 +50,7 @@ export function parseDateRange(dateRange) {
   const [startDate, endDate] = dateRange.split('-')
   dates.push(moment(startDate).toISOString())
   if (endDate !== undefined) {
-    dates.push(moment(endDate).toISOString())
+    dates.push(moment(endDate).endOf('day').toISOString())
   } else {
     dates.push(moment(startDate).endOf('day').toISOString())
   }
@@ -65,8 +65,8 @@ export function defaultDateFilterValue() {
 export function dateFilterPresets() {
   const today = defaultDateFilterValue()
   const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
-  const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
-  const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+  const lastWeek = `${moment().subtract(6, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+  const lastMonth = `${moment().subtract(29, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
   return [
     { label: 'Today', value: today },
     { label: 'Yesterday', value: yesterday },
