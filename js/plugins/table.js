@@ -5,6 +5,7 @@ export default (opts) => ({
   pageTarget: null,
   pageSize: opts.pageSize || 10,
   pagesMax: opts.pagesMax || 10,
+  columnsCount: 6,
   totalPages: null,
   items: [],
   loading: false,
@@ -22,10 +23,18 @@ export default (opts) => ({
   selectedItems: [],
   selectAllCheckbox: false,
   async init() {
+    this.updateColumnsCount()
     if (!isNullOrUndefined(this.filter)) {
       initFilter(this.filter)
     }
     await this.fetchData()
+  },
+  updateColumnsCount() {
+    const table = this.$el.querySelector('table')
+    const columnsCount = table ? table.querySelectorAll('thead th').length : 0
+    if (columnsCount > 0) {
+      this.columnsCount = columnsCount
+    }
   },
   async fetchData($event) {
     this.loading = true
@@ -64,6 +73,7 @@ export default (opts) => ({
       this.error = error
     } finally {
       this.loading = false
+      this.updateColumnsCount()
     }
   },
   async setPageSize(pageSize) {
