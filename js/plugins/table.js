@@ -136,11 +136,10 @@ function initFilter(filter) {
       setQueryParam(key, defaultValue, { replace: true })
     }
 
-    // Sync the items selection with the query params
-    if (typeof filter[key].items !== 'function') {
-      const checked = filter[key].items.filter((i) => {
-        return i.checked || queryParams[key]?.split(',').includes(i.value)
-      }).map((i) => i.value)
+    // Sync the items selection with the query params. A value coming from the
+    // URL wins as-is; defaults only apply when the param is missing.
+    if (typeof filter[key].items !== 'function' && isNullOrUndefinedOrEmpty(queryParams[key])) {
+      const checked = filter[key].items.filter((i) => i.checked).map((i) => i.value)
       if (checked.length > 0) {
         setQueryParam(key, checked.join(','), { replace: true })
       }
