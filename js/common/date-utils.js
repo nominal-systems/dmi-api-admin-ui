@@ -90,3 +90,13 @@ export function dateFilterConfig() {
 export function parseDateRangeQuery(dateParam) {
   return parseDateRange(dateParam || defaultDateFilterValue())
 }
+
+export const MAX_DATE_RANGE_DAYS = 31
+
+export function validateDateRangeLimit(dateRange) {
+  const [startDate, endDate] = dateRange
+  const days = moment(endDate).startOf('day').diff(moment(startDate).startOf('day'), 'days')
+  if (days >= MAX_DATE_RANGE_DAYS) {
+    throw new Error(`The date range cannot exceed ${MAX_DATE_RANGE_DAYS} days`)
+  }
+}
