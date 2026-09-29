@@ -3,7 +3,7 @@ import { getExternalRequest, getExternalRequests, getPractices, getProviders } f
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, isNullOrUndefined, mapHttpStatusText } from './common/utils'
 import modal from './plugins/modal'
-import { dateFilterPresets, defaultDateFilterValue, parseDateRange } from './common/date-utils'
+import { dateFilterConfig, parseDateRangeQuery } from './common/date-utils'
 import config from './config'
 
 const integrationUrl = (integrationId) =>
@@ -38,7 +38,7 @@ export const externalRequests = () => {
         const method = query.method ? query.method.split(',') : undefined
         const status = query.status ? query.status.split(',') : undefined
         // Requests are always bounded: fall back to today when the date filter is missing
-        const date = parseDateRange(query.date || defaultDateFilterValue())
+        const date = parseDateRangeQuery(query.date)
         const practices = query.practice ? query.practice.split(',') : undefined
 
         return await getExternalRequests({ providers, status, method, practices, date }, page, pageSize)
@@ -101,15 +101,7 @@ export const externalRequests = () => {
             ]
           }
         },
-        date: {
-          id: 'date',
-          type: 'date',
-          label: 'Date',
-          updateQuery: true,
-          toggleEnabled: false,
-          defaultValue: defaultDateFilterValue,
-          items: dateFilterPresets
-        }
+        date: dateFilterConfig()
       }
     }),
 

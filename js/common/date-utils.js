@@ -74,3 +74,19 @@ export function dateFilterPresets() {
     { label: 'Last 30 days', value: lastMonth }
   ]
 }
+
+export function dateFilterConfig() {
+  return {
+    id: 'date',
+    type: 'date',
+    label: 'Date',
+    updateQuery: true,
+    toggleEnabled: false,
+    defaultValue: defaultDateFilterValue,
+    items: dateFilterPresets
+  }
+}
+
+export function parseDateRangeQuery(dateParam) {
+  return parseDateRange(dateParam || defaultDateFilterValue())
+}
