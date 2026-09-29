@@ -1,5 +1,6 @@
 import { Dropdown } from 'flowbite'
 import { getQueryParams, removeQueryParam, setQueryParam } from '../common/utils'
+import { dateFilterPresets } from '../common/date-utils'
 
 export default function (Alpine) {
   const defaultConfig = {
@@ -131,17 +132,22 @@ function handleDatepicker(el, Alpine) {
       return {
         init() {
           const date = getQueryParams().date
-          if (date) {
-            if (!date.includes('-')) {
-              this.datePickerValue = date
-              $datePickerInput.value = date
-              $datePickerRadioInput.checked = true
-            }
+          const presetValues = dateFilterPresets().map((preset) => preset.value)
+          if (date && !date.includes('-') && !presetValues.includes(date)) {
+            this.datePickerValue = date
+            $datePickerInput.value = date
+            $datePickerRadioInput.checked = true
           }
         }
       }
     },
-    '@selectionChanged.window'() {
+    '@selectionChanged.window'(ev) {
+      // Ignore selection changes from other dropdowns
+      if (ev.target !== el.closest('[x-filter-dropdown]')) {
+        return
+      }
+
+      this.datePickerValue = null
       $datePickerInput.value = null
       $datePickerRadioInput.checked = false
     }

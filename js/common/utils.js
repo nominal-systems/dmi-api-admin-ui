@@ -29,7 +29,7 @@ export function getIdFromPath() {
   return window.location.pathname.split('/').slice(-1)[0]
 }
 
-export function setQueryParam(param, value) {
+export function setQueryParam(param, value, { replace = false } = {}) {
   let url = new URL(window.location)
   if (isNullOrUndefinedOrEmpty(value)) {
     url.searchParams.delete(param)
@@ -37,7 +37,8 @@ export function setQueryParam(param, value) {
     url.searchParams.set(param, value)
   }
 
-  window.history.pushState({}, '', url)
+  const historyMethod = replace ? 'replaceState' : 'pushState'
+  window.history[historyMethod]({}, '', url)
 }
 
 export function removeQueryParam(param) {

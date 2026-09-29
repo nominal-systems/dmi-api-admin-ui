@@ -1,4 +1,5 @@
 import moment from 'moment/moment'
+import { DATE_FORMAT } from '../constants/date-format'
 
 export function dateRangePresets(preset) {
   switch (preset) {
@@ -55,4 +56,21 @@ export function parseDateRange(dateRange) {
   }
 
   return dates
+}
+
+export function defaultDateFilterValue() {
+  return moment().startOf('day').format(DATE_FORMAT)
+}
+
+export function dateFilterPresets() {
+  const today = defaultDateFilterValue()
+  const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
+  const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+  const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
+  return [
+    { label: 'Today', value: today },
+    { label: 'Yesterday', value: yesterday },
+    { label: 'Last 7 days', value: lastWeek },
+    { label: 'Last 30 days', value: lastMonth }
+  ]
 }
