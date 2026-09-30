@@ -1,8 +1,6 @@
 import { Dropdown } from 'flowbite'
-import moment from 'moment'
 import { getQueryParams, removeQueryParam, setQueryParam } from '../common/utils'
 import { dateFilterPresets } from '../common/date-utils'
-import { DATE_FORMAT } from '../constants/date-format'
 
 export default function (Alpine) {
   const defaultConfig = {
@@ -72,10 +70,10 @@ function handleRoot(el, Alpine, config) {
           this.items = items
           const $buttonEl = el.querySelector('[x-filter-dropdown\\:button]')
           const $menuEl = el.querySelector('[x-filter-dropdown\\:menu]')
-          this.dropdownOptions = config.dropdownOptions
-          if (config.type === 'date') {
-            this.dropdownOptions.ignoreClickOutsideClass = 'datepicker'
-          }
+          this.dropdownOptions = config.type === 'date'
+            // Wide enough to show a full range in the picker input
+            ? { ...config.dropdownOptions, width: '72', ignoreClickOutsideClass: 'flatpickr-calendar' }
+            : config.dropdownOptions
           this.dropdown = new Dropdown($menuEl, $buttonEl, this.dropdownOptions)
         }
       }
@@ -137,10 +135,6 @@ function handleDatepicker(el, Alpine) {
           const presetValues = dateFilterPresets().map((preset) => preset.value)
           if (date && !presetValues.includes(date)) {
             this.datePickerValue = date
-            const [startDate, endDate] = date.includes('-') ? date.split('-') : [date, date]
-            const start = moment(startDate, DATE_FORMAT).format('MM/DD/YYYY')
-            const end = moment(endDate, DATE_FORMAT).format('MM/DD/YYYY')
-            $datePickerInput.value = startDate === endDate ? start : `${start} - ${end}`
             $datePickerRadioInput.checked = true
           }
         }
@@ -153,10 +147,16 @@ function handleDatepicker(el, Alpine) {
       }
 
       this.datePickerValue = null
-      $datePickerInput.value = null
+      const picker = $datePickerInput._flatpickr
+      picker?.clear()
+      picker?.jumpToDate(new Date())
       $datePickerRadioInput.checked = false
     },
     '@datePickerInput'(ev) {
+      if (ev.detail.date === this.datePickerValue && $datePickerRadioInput.checked) {
+        return
+      }
+
       this.datePickerValue = ev.detail.date
       $datePickerRadioInput.checked = true
       setQueryParam(this._id, this.datePickerValue)

@@ -1,112 +1,49 @@
-import { Datepicker } from 'flowbite-datepicker'
-import moment from 'moment'
-import { DATE_FORMAT } from '../constants/date-format'
+import flatpickr from 'flatpickr'
+import { dateFilterValueToDates, datesToDateFilterValue, exceedsDateRangeLimit } from '../common/date-utils'
 
 export default function (Alpine) {
-  Alpine.directive('datepicker', (el, { value }) => {
+  Alpine.directive('datepicker', (el, { value, expression }, { evaluate, cleanup }) => {
     if (!value) {
-      handleRoot(el)
+      const picker = handleRoot(el, expression ? evaluate(expression) : null)
+      cleanup(() => picker.destroy())
     }
   })
 }
 
-function handleRoot(el) {
-  const input = el.querySelector('input')
-  if (!input) {
-    return
-  }
+function handleRoot(el, initialValue) {
+  let picker = null
+  picker = flatpickr(el, {
+    mode: 'range',
+    dateFormat: 'm/d/Y',
+    maxDate: 'today',
+    monthSelectorType: 'static',
+    locale: { rangeSeparator: ' - ' },
+    defaultDate: initialValue ? dateFilterValueToDates(initialValue) : null,
+    // Once the start date is picked, only allow ends within the API limit
+    disable: [
+      (date) => picker !== null && picker.selectedDates.length === 1 && exceedsDateRangeLimit(picker.selectedDates[0], date)
+    ],
+    // Refresh the max date in case the page stayed open past midnight
+    onOpen(selectedDates, dateStr, instance) {
+      instance.set('maxDate', 'today')
+    },
+    onClose(selectedDates, dateStr, instance) {
+      if (selectedDates.length === 0) {
+        return
+      }
 
-  const initialValue = input.value
-  const datepicker = new Datepicker(input, {
-    defaultDatepickerId: null,
-    autohide: false,
-    format: 'mm/dd/yyyy',
-    maxDate: null,
-    minDate: null,
-    orientation: 'bottom',
-    buttons: false,
-    autoSelectToday: false,
-    title: null
-  })
-  if (initialValue && input.value !== initialValue) {
-    input.value = initialValue
-  }
+      // Closing after picking only the start date selects that single day
+      const [startDate, endDate = startDate] = selectedDates
+      if (selectedDates.length === 1) {
+        instance.setDate([startDate, endDate], false)
+      }
 
-  const format = (date) => moment(date).format('MM/DD/YYYY')
-  let pendingStart = null
-  let suppressHide = false
-
-  const commit = (startDate, endDate) => {
-    const start = moment(startDate).format(DATE_FORMAT)
-    const end = moment(endDate).format(DATE_FORMAT)
-
-    input.value = start === end ? format(startDate) : `${format(startDate)} - ${format(endDate)}`
-    pendingStart = null
-    suppressHide = true
-    setTimeout(() => {
-      suppressHide = false
-    }, 0)
-    datepicker.hide()
-
-    el.dispatchEvent(new CustomEvent('datePickerInput', {
-      detail: { date: start === end ? start : `${start}-${end}` },
-      bubbles: true
-    }))
-    input.blur()
-  }
-
-  input.addEventListener('changeDate', (ev) => {
-    if (!datepicker.picker.active) {
-      return
+      el.dispatchEvent(new CustomEvent('datePickerInput', {
+        detail: { date: datesToDateFilterValue(startDate, endDate) },
+        bubbles: true
+      }))
     }
-
-    const date = ev.detail.date
-    if (!date) {
-      return
-    }
-
-    if (!pendingStart) {
-      pendingStart = date
-      return
-    }
-
-    commit(date < pendingStart ? date : pendingStart, date < pendingStart ? pendingStart : date)
   })
 
-  input.addEventListener('hide', () => {
-    if (suppressHide) {
-      suppressHide = false
-      return
-    }
-
-    if (pendingStart) {
-      commit(pendingStart, pendingStart)
-    }
-    input.blur()
-  })
-
-  // The picker can't parse the range value, so dismiss it before its own blur
-  // handling rewrites the field, and keep the pending selection in sync.
-  document.addEventListener('mousedown', (ev) => {
-    if (input.contains(ev.target) || datepicker.picker.element.contains(ev.target)) {
-      return
-    }
-
-    if (datepicker.picker.active) {
-      datepicker.hide()
-    } else if (pendingStart) {
-      commit(pendingStart, pendingStart)
-    }
-    input.blur()
-  }, true)
-
-  // Keep the picker's Tab handling from reparsing the range value on the way out
-  el.addEventListener('keydown', (ev) => {
-    if (ev.key !== 'Tab') {
-      return
-    }
-
-    ev.stopPropagation()
-    datepicker.hide()
-  }, true)
+  return picker
 }
