@@ -1,0 +1,96 @@
+/* Flatpickr overrides to match Flowbite in light and dark mode */
+.flatpickr-calendar {
+  @apply bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-700 dark:border-gray-600;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+  display: none;
+}
+
+.flatpickr-calendar .flatpickr-months .flatpickr-month,
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month {
+  @apply text-gray-900 dark:text-white;
+  fill: currentColor;
+}
+
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover {
+  @apply text-blue-700 dark:text-blue-500;
+}
+
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover svg {
+  fill: currentColor;
+}
+
+.flatpickr-calendar .flatpickr-current-month {
+  @apply text-sm font-semibold;
+}
+
+/* Undo the Flowbite form styles on the year input */
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+  @apply font-semibold bg-transparent border-0 shadow-none focus:ring-0;
+  padding: 0 0 0 0.5ch;
+  color: inherit;
+}
+
+.flatpickr-calendar span.flatpickr-weekday {
+  @apply font-medium text-gray-500 dark:text-gray-400;
+}
+
+.flatpickr-calendar .flatpickr-day {
+  @apply text-gray-900 dark:text-white;
+}
+
+.flatpickr-calendar .flatpickr-day:hover,
+.flatpickr-calendar .flatpickr-day:focus,
+.flatpickr-calendar .flatpickr-day.today:hover,
+.flatpickr-calendar .flatpickr-day.today:focus {
+  @apply text-gray-900 bg-gray-100 border-gray-100 dark:text-white dark:bg-gray-600 dark:border-gray-600;
+}
+
+.flatpickr-calendar .flatpickr-day.today {
+  @apply border-blue-700 dark:border-blue-500;
+}
+
+.flatpickr-calendar .flatpickr-day.inRange,
+.flatpickr-calendar .flatpickr-day.inRange:hover {
+  @apply bg-gray-100 border-gray-100 dark:bg-gray-600 dark:border-gray-600;
+  box-shadow: -5px 0 0 theme('colors.gray.100'), 5px 0 0 theme('colors.gray.100');
+}
+
+.dark .flatpickr-calendar .flatpickr-day.inRange {
+  box-shadow: -5px 0 0 theme('colors.gray.600'), 5px 0 0 theme('colors.gray.600');
+}
+
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.selected:hover,
+.flatpickr-calendar .flatpickr-day.selected:focus,
+.flatpickr-calendar .flatpickr-day.startRange,
+.flatpickr-calendar .flatpickr-day.startRange:hover,
+.flatpickr-calendar .flatpickr-day.startRange:focus,
+.flatpickr-calendar .flatpickr-day.endRange,
+.flatpickr-calendar .flatpickr-day.endRange:hover,
+.flatpickr-calendar .flatpickr-day.endRange:focus {
+  @apply text-white bg-blue-700 border-blue-700 dark:bg-blue-600 dark:border-blue-600;
+}
+
+.flatpickr-calendar .flatpickr-day.startRange + .endRange:not(:nth-child(7n+1)) {
+  box-shadow: -10px 0 0 theme('colors.blue.700');
+}
+
+.dark .flatpickr-calendar .flatpickr-day.startRange + .endRange:not(:nth-child(7n+1)) {
+  box-shadow: -10px 0 0 theme('colors.blue.600');
+}
+
+.flatpickr-calendar .flatpickr-day.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.nextMonthDay {
+  @apply text-gray-400;
+}
+
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover {
+  @apply text-gray-300 bg-transparent border-transparent dark:text-gray-500;
+}

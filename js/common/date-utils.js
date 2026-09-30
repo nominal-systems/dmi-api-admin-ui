@@ -91,12 +91,28 @@ export function parseDateRangeQuery(dateParam) {
   return parseDateRange(dateParam || defaultDateFilterValue())
 }
 
+// Converts a `YYYYMMDD[-YYYYMMDD]` filter value into its [start, end] dates
+export function dateFilterValueToDates(value) {
+  const [startDate, endDate = startDate] = value.split('-')
+  return [moment(startDate, DATE_FORMAT).toDate(), moment(endDate, DATE_FORMAT).toDate()]
+}
+
+export function datesToDateFilterValue(startDate, endDate) {
+  const start = moment(startDate).format(DATE_FORMAT)
+  const end = moment(endDate).format(DATE_FORMAT)
+  return start === end ? start : `${start}-${end}`
+}
+
 export const MAX_DATE_RANGE_DAYS = 31
+
+export function exceedsDateRangeLimit(startDate, endDate) {
+  const days = moment(endDate).startOf('day').diff(moment(startDate).startOf('day'), 'days')
+  return Math.abs(days) >= MAX_DATE_RANGE_DAYS
+}
 
 export function validateDateRangeLimit(dateRange) {
   const [startDate, endDate] = dateRange
-  const days = moment(endDate).startOf('day').diff(moment(startDate).startOf('day'), 'days')
-  if (days >= MAX_DATE_RANGE_DAYS) {
+  if (exceedsDateRangeLimit(startDate, endDate)) {
     throw new Error(`The date range cannot exceed ${MAX_DATE_RANGE_DAYS} days`)
   }
 }
