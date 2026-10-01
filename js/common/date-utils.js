@@ -91,10 +91,12 @@ export function parseDateRangeQuery(dateParam) {
   return parseDateRange(dateParam || defaultDateFilterValue())
 }
 
-// Converts a `YYYYMMDD[-YYYYMMDD]` filter value into its [start, end] dates
+// Converts a `YYYYMMDD[-YYYYMMDD]` filter value into its [start, end] dates, or null when the value
+// is not in that format, so the picker starts empty instead of showing a mis-parsed date
 export function dateFilterValueToDates(value) {
   const [startDate, endDate = startDate] = value.split('-')
-  return [moment(startDate, DATE_FORMAT).toDate(), moment(endDate, DATE_FORMAT).toDate()]
+  const dates = [moment(startDate, DATE_FORMAT, true), moment(endDate, DATE_FORMAT, true)]
+  return dates.every((date) => date.isValid()) ? dates.map((date) => date.toDate()) : null
 }
 
 export function datesToDateFilterValue(startDate, endDate) {
