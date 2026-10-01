@@ -90,3 +90,31 @@ export function dateFilterConfig() {
 export function parseDateRangeQuery(dateParam) {
   return parseDateRange(dateParam || defaultDateFilterValue())
 }
+
+// Converts a `YYYYMMDD[-YYYYMMDD]` filter value into its [start, end] dates, or null when the value
+// is not in that format, so the picker starts empty instead of showing a mis-parsed date
+export function dateFilterValueToDates(value) {
+  const [startDate, endDate = startDate] = value.split('-')
+  const dates = [moment(startDate, DATE_FORMAT, true), moment(endDate, DATE_FORMAT, true)]
+  return dates.every((date) => date.isValid()) ? dates.map((date) => date.toDate()) : null
+}
+
+export function datesToDateFilterValue(startDate, endDate) {
+  const start = moment(startDate).format(DATE_FORMAT)
+  const end = moment(endDate).format(DATE_FORMAT)
+  return start === end ? start : `${start}-${end}`
+}
+
+export const MAX_DATE_RANGE_DAYS = 31
+
+export function exceedsDateRangeLimit(startDate, endDate) {
+  const days = moment(endDate).startOf('day').diff(moment(startDate).startOf('day'), 'days')
+  return Math.abs(days) >= MAX_DATE_RANGE_DAYS
+}
+
+export function validateDateRangeLimit(dateRange) {
+  const [startDate, endDate] = dateRange
+  if (exceedsDateRangeLimit(startDate, endDate)) {
+    throw new Error(`The date range cannot exceed ${MAX_DATE_RANGE_DAYS} days`)
+  }
+}

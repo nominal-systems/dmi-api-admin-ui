@@ -1,5 +1,7 @@
 @import "http.css";
 @import "providers.css";
+@import "npm:flatpickr/dist/flatpickr.css";
+@import "datepicker.css";
 
 @tailwind base;
 @tailwind components;

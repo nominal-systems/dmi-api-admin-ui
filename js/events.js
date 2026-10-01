@@ -4,7 +4,7 @@ import table from './plugins/table'
 import config from './config'
 import { getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
 import modal from './plugins/modal'
-import { dateFilterConfig, parseDateRangeQuery } from './common/date-utils'
+import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
 
 export const events = {
   // Table
@@ -21,6 +21,7 @@ export const events = {
         const types = query.type ? query.type.split(',') : undefined
         // Requests are always bounded: fall back to today when the date filter is missing
         const date = parseDateRangeQuery(query.date)
+        validateDateRangeLimit(date)
         const search = query.search || undefined
 
         return await getEvents({ providers, integrations, types, date, search }, page, pageSize)
