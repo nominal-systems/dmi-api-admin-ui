@@ -3,10 +3,8 @@ import { getEvent, getEvents, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
 import config from './config'
 import { getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
-import moment from 'moment'
-import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
-import { parseDateRange } from './common/date-utils'
+import { dateFilterConfig, parseDateRangeQuery } from './common/date-utils'
 
 export const events = {
   // Table
@@ -21,7 +19,8 @@ export const events = {
         const providers = query.provider ? query.provider.split(',') : undefined
         const integrations = query.integration ? query.integration.split(',') : undefined
         const types = query.type ? query.type.split(',') : undefined
-        const date = query.date ? parseDateRange(query.date) : undefined
+        // Requests are always bounded: fall back to today when the date filter is missing
+        const date = parseDateRangeQuery(query.date)
         const search = query.search || undefined
 
         return await getEvents({ providers, integrations, types, date, search }, page, pageSize)
@@ -69,25 +68,7 @@ export const events = {
             ]
           }
         },
-        date: {
-          id: 'date',
-          type: 'date',
-          label: 'Date',
-          updateQuery: true,
-          toggleEnabled: false,
-          items() {
-            const today = moment().startOf('day').format(DATE_FORMAT)
-            const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
-            const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
-            const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
-            return [
-              { label: 'Today', value: today },
-              { label: 'Yesterday', value: yesterday },
-              { label: 'Last 7 days', value: lastWeek },
-              { label: 'Last 30 days', value: lastMonth }
-            ]
-          }
-        }
+        date: dateFilterConfig()
       }
     }
   ),

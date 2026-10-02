@@ -1,15 +1,18 @@
-import { getQueryParams, isNullOrUndefined, setQueryParam } from '../common/utils'
+import { getQueryParams, isNullOrUndefined, isNullOrUndefinedOrEmpty, setQueryParam } from '../common/utils'
 
 export default (opts) => ({
   currentPage: opts.initialPage || 1,
   pageTarget: null,
   pageSize: opts.pageSize || 10,
   pagesMax: opts.pagesMax || 10,
+  columnsCount: 6,
   totalPages: null,
   items: [],
   loading: false,
   error: null,
   totalItems: null,
+  totalCapped: false,
+  totalItemsLabel: null,
   resultsStart: null,
   resultsEnd: null,
   pagesNav: null,
@@ -20,10 +23,18 @@ export default (opts) => ({
   selectedItems: [],
   selectAllCheckbox: false,
   async init() {
+    this.updateColumnsCount()
     if (!isNullOrUndefined(this.filter)) {
       initFilter(this.filter)
     }
     await this.fetchData()
+  },
+  updateColumnsCount() {
+    const table = this.$el.querySelector('table')
+    const columnsCount = table ? table.querySelectorAll('thead th').length : 0
+    if (columnsCount > 0) {
+      this.columnsCount = columnsCount
+    }
   },
   async fetchData($event) {
     this.loading = true
@@ -49,6 +60,10 @@ export default (opts) => ({
 
       // Pagination
       this.totalItems = response.total
+      this.totalCapped = response.totalCapped === true
+      this.totalItemsLabel = isNullOrUndefined(this.totalItems)
+        ? null
+        : `${this.totalItems.toLocaleString()}${this.totalCapped ? '+' : ''}`
       this.resultsStart = this.currentPage * this.pageSize - this.pageSize + 1
       this.resultsEnd = Math.min(this.currentPage * this.pageSize, this.totalItems)
       this.totalPages = Math.ceil(this.totalItems / this.pageSize)
@@ -58,6 +73,7 @@ export default (opts) => ({
       this.error = error
     } finally {
       this.loading = false
+      this.updateColumnsCount()
     }
   },
   async setPageSize(pageSize) {
@@ -112,17 +128,30 @@ export default (opts) => ({
 })
 
 function initFilter(filter) {
+  const queryParams = getQueryParams()
+
   Object.keys(filter).forEach((key) => {
-    if (filter[key].updateQuery) {
-      // Set query params
-      if (typeof filter[key].items !== 'function') {
-        const queryParams = getQueryParams()
-        const checked = filter[key].items.filter((i) => {
-          return i.checked || queryParams[key]?.split(',').includes(i.value)
-        }).map((i) => i.value)
-        if (checked.length > 0) {
-          setQueryParam(key, checked.join(','))
-        }
+    if (!filter[key].updateQuery) {
+      return
+    }
+
+    // Seed default values (e.g. the date filter) before the first fetch so the
+    // initial request is never unbounded. Use replaceState, defaults should not
+    // add a history entry.
+    const defaultValue = typeof filter[key].defaultValue === 'function'
+      ? filter[key].defaultValue()
+      : filter[key].defaultValue
+    if (isNullOrUndefinedOrEmpty(queryParams[key]) && !isNullOrUndefinedOrEmpty(defaultValue)) {
+      queryParams[key] = defaultValue
+      setQueryParam(key, defaultValue, { replace: true })
+    }
+
+    // Sync the items selection with the query params. A value coming from the
+    // URL wins as-is; defaults only apply when the param is missing.
+    if (typeof filter[key].items !== 'function' && isNullOrUndefinedOrEmpty(queryParams[key])) {
+      const checked = filter[key].items.filter((i) => i.checked).map((i) => i.value)
+      if (checked.length > 0) {
+        setQueryParam(key, checked.join(','), { replace: true })
       }
     }
   })

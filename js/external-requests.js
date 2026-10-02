@@ -2,10 +2,8 @@ import Alpine from 'alpinejs'
 import { getExternalRequest, getExternalRequests, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
 import { getProviderConfig, getQueryParams, isNullOrUndefined, mapHttpStatusText } from './common/utils'
-import moment from 'moment'
-import { DATE_FORMAT } from './constants/date-format'
 import modal from './plugins/modal'
-import { parseDateRange } from './common/date-utils'
+import { dateFilterConfig, parseDateRangeQuery } from './common/date-utils'
 import config from './config'
 
 const integrationUrl = (integrationId) =>
@@ -39,7 +37,8 @@ export const externalRequests = () => {
         const providers = query.provider ? query.provider.split(',') : undefined
         const method = query.method ? query.method.split(',') : undefined
         const status = query.status ? query.status.split(',') : undefined
-        const date = query.date ? parseDateRange(query.date) : undefined
+        // Requests are always bounded: fall back to today when the date filter is missing
+        const date = parseDateRangeQuery(query.date)
         const practices = query.practice ? query.practice.split(',') : undefined
 
         return await getExternalRequests({ providers, status, method, practices, date }, page, pageSize)
@@ -102,25 +101,7 @@ export const externalRequests = () => {
             ]
           }
         },
-        date: {
-          id: 'date',
-          type: 'date',
-          label: 'Date',
-          updateQuery: true,
-          toggleEnabled: false,
-          items() {
-            const today = moment().startOf('day').format(DATE_FORMAT)
-            const yesterday = `${moment().subtract(1, 'days').startOf('day').format(DATE_FORMAT)}`
-            const lastWeek = `${moment().subtract(7, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
-            const lastMonth = `${moment().subtract(30, 'days').startOf('day').format(DATE_FORMAT)}-${today}`
-            return [
-              { label: 'Today', value: today },
-              { label: 'Yesterday', value: yesterday },
-              { label: 'Last 7 days', value: lastWeek },
-              { label: 'Last 30 days', value: lastMonth }
-            ]
-          }
-        }
+        date: dateFilterConfig()
       }
     }),
 
