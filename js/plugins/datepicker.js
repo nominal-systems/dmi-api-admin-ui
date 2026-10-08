@@ -4,13 +4,14 @@ import { dateFilterValueToDates, datesToDateFilterValue, exceedsDateRangeLimit }
 export default function (Alpine) {
   Alpine.directive('datepicker', (el, { value, expression }, { evaluate, cleanup }) => {
     if (!value) {
-      const picker = handleRoot(el, expression ? evaluate(expression) : null)
+      const picker = handleRoot(el, () => expression ? evaluate(expression) : null)
       cleanup(() => picker.destroy())
     }
   })
 }
 
-function handleRoot(el, initialValue) {
+function handleRoot(el, getValue) {
+  const initialValue = getValue()
   let picker = null
   picker = flatpickr(el, {
     mode: 'range',
@@ -19,16 +20,23 @@ function handleRoot(el, initialValue) {
     monthSelectorType: 'static',
     locale: { rangeSeparator: ' - ' },
     defaultDate: initialValue ? dateFilterValueToDates(initialValue) : null,
-    // Once the start date is picked, only allow ends within the API limit
+    // Once the start date is picked, disable the ends past the date range limit
     disable: [
-      (date) => picker !== null && picker.selectedDates.length === 1 && exceedsDateRangeLimit(picker.selectedDates[0], date)
+      (date) => picker !== null &&
+        picker.selectedDates.length === 1 &&
+        exceedsDateRangeLimit(picker.selectedDates[0], date)
     ],
     // Refresh the max date in case the page stayed open past midnight
     onOpen(selectedDates, dateStr, instance) {
       instance.set('maxDate', 'today')
     },
     onClose(selectedDates, dateStr, instance) {
+      // Backspace/Delete clears the field: restore the applied filter instead of leaving it empty
       if (selectedDates.length === 0) {
+        const value = getValue()
+        if (value) {
+          instance.setDate(dateFilterValueToDates(value), false)
+        }
         return
       }
 

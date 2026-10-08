@@ -88,7 +88,9 @@ export function dateFilterConfig() {
 }
 
 export function parseDateRangeQuery(dateParam) {
-  return parseDateRange(dateParam || defaultDateFilterValue())
+  // Fall back to today when the value is missing or not in the filter's format
+  const isValid = dateParam && dateFilterValueToDates(dateParam) !== null
+  return parseDateRange(isValid ? dateParam : defaultDateFilterValue())
 }
 
 // Converts a `YYYYMMDD[-YYYYMMDD]` filter value into its [start, end] dates, or null when the value
