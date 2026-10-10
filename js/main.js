@@ -15,6 +15,7 @@ import { integrationPage } from './integration-page'
 import { providerConfigurations } from './provider-configurations'
 import { providerConfigurationPage } from './provider-configuration-page'
 import { externalRequests } from './external-requests'
+import republishPanel from './republish-panel'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 import config from './config'
@@ -188,6 +189,7 @@ Alpine.plugin(Clipboard)
 window.dashboard = dashboard
 window.events = events
 window.eventPage = eventPage
+window.republishPanel = republishPanel
 window.refs = refs
 window.providers = providers
 window.integrations = integrations
