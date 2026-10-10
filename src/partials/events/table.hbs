@@ -33,6 +33,8 @@
           <td class="px-4 py-3">
             <span class="px-2.5 py-0.5 rounded bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border">
               <span x-text="ev.type"></span>
+              <span x-show="ev.context?.republish"
+                    class="ml-2 text-xs font-medium px-2.5 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">Republished</span>
             </span>
           </td>
           <td class="px-4 py-3 text-center">

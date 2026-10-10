@@ -3,3 +3,9 @@
     <span x-text="message"></span>
   </div>
 </div>
+<template x-if="reportId">
+  <div class="mt-3" @click.stop
+       x-data="republishPanel({ reportId, sourceEventId: null, integrationId: data.integrationId, type: 'report:updated' })">
+    {{> events/republish-panel }}
+  </div>
+</template>
