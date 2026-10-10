@@ -1,5 +1,5 @@
 <div>
-  <button type="button" x-show="!open" @click="toggle()"
+  <button type="button" x-show="!open" @click="toggle()" :aria-expanded="open"
           class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
     Republish current report to PIMS
   </button>
@@ -16,11 +16,12 @@
       The event will still be sent to the organization's subscriptions.
     </p>
 
+    <div role="status" aria-live="polite">
     <!-- Result -->
     <template x-if="result">
       <div class="mt-3">
         <p x-show="delivery?.status === 'sent'" class="text-green-800 dark:text-green-400">
-          Delivered to the organization's Event Hubs subscription.
+          Sent to the organization's Event Hubs subscription.
         </p>
         <p x-show="!delivery" class="text-yellow-800 dark:text-yellow-300">
           Event created, but the organization has no Event Hubs subscription for <code x-text="result.type"></code>.
@@ -33,6 +34,9 @@
         <p x-show="delivery?.status === 'error'" class="text-red-800 dark:text-red-400">
           Event created but NOT delivered: <span x-text="delivery?.message"></span>
         </p>
+        <p x-show="unknownDelivery" class="text-yellow-800 dark:text-yellow-300">
+          Delivery status: <span x-text="delivery?.status"></span>
+        </p>
         <a :href="eventUrl" class="inline-block mt-2 font-medium text-purple-700 hover:underline dark:text-purple-400">
           View new event #<span x-text="result.seq"></span>
         </a>
@@ -42,27 +46,30 @@
     <!-- Error -->
     <template x-if="error">
       <div class="mt-3 text-red-800 dark:text-red-400">
-        <span x-text="error.message"></span>
-        <span x-show="error.maybePersisted" class="block mt-1">
+        <span x-text="sessionExpired ? 'Your session has expired: reload the page and log in again.' : errorText"></span>
+        <span x-show="nothingSent" class="block mt-1">Nothing was sent.</span>
+        <span x-show="error.maybePersisted && !sessionExpired" class="block mt-1">
           The event may have been created anyway: check the events list before retrying.
         </span>
       </div>
     </template>
+    </div>
 
     <!-- Actions -->
+    <p x-show="checkingIntegration" class="mt-3 text-gray-600 dark:text-gray-300">Checking integration…</p>
     <div class="flex items-center mt-4 space-x-2" x-show="!result">
-      <button type="button" x-show="!inProgress" @click="confirm()"
-              class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
-        Republish
-      </button>
-      <button disabled type="button" x-show="inProgress"
-              class="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600">
-        Republishing...
+      <button type="button" x-show="!sessionExpired" @click="confirm()"
+              :disabled="inProgress || checkingIntegration || sessionExpired"
+              class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
+        <span x-text="inProgress ? 'Republishing...' : 'Republish'"></span>
       </button>
       <button type="button" x-show="!inProgress" @click="open = false; error = null"
               class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-4 py-2 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600">
         Cancel
       </button>
     </div>
+    <p x-show="inProgress" class="mt-2 text-gray-600 dark:text-gray-300">
+      The event is created first; delivery can take a few minutes if Event Hubs is slow. Don't close this or retry — if it fails, check the events list first.
+    </p>
   </div>
 </div>
