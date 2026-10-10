@@ -48,6 +48,14 @@ export default ({ reportId, sourceEventId, integrationId, type }) => ({
     }
   },
 
+  cancel() {
+    this.open = false
+    this.error = null
+    this.integrationAuthFailed = false
+    // Retry the lookup next time if it failed
+    if (this.integrationStatus === undefined) this.integrationStatus = null
+  },
+
   get checkingIntegration() {
     return Boolean(this.integrationId) && this.integrationStatus === null
   },

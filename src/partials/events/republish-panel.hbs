@@ -43,12 +43,16 @@
       </div>
     </template>
 
+    <p x-show="sessionExpired" class="mt-3 text-red-800 dark:text-red-400">
+      Your session has expired: reload the page and log in again.
+    </p>
+
     <!-- Error -->
-    <template x-if="error">
+    <template x-if="error && !sessionExpired">
       <div class="mt-3 text-red-800 dark:text-red-400">
-        <span x-text="sessionExpired ? 'Your session has expired: reload the page and log in again.' : errorText"></span>
+        <span x-text="errorText"></span>
         <span x-show="nothingSent" class="block mt-1">Nothing was sent.</span>
-        <span x-show="error.maybePersisted && !sessionExpired" class="block mt-1">
+        <span x-show="error.maybePersisted" class="block mt-1">
           The event may have been created anyway: check the events list before retrying.
         </span>
       </div>
@@ -63,7 +67,7 @@
               class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
         <span x-text="inProgress ? 'Republishing...' : 'Republish'"></span>
       </button>
-      <button type="button" x-show="!inProgress" @click="open = false; error = null"
+      <button type="button" x-show="!inProgress" @click="cancel()"
               class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-4 py-2 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600">
         Cancel
       </button>
