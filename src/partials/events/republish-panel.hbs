@@ -1,79 +1,81 @@
-<div>
-  <button type="button" x-show="!open" @click="toggle()" :aria-expanded="open"
-          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
-    Republish current report to PIMS
-  </button>
-
-  <div x-show="open" class="p-4 text-sm border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600">
+<div x-show="open" class="p-4 text-sm border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600">
+  <div class="flex items-start justify-between">
     <p class="font-semibold text-gray-900 dark:text-white">Republish current report to PIMS</p>
-    <p class="mt-1 text-gray-600 dark:text-gray-300">
-      Sends the report's current state in DMI as a new <code x-text="type"></code> event.
-      <span x-show="sourceEventId">This is not a replay of the event you are viewing.</span>
-    </p>
-    <p x-show="integrationStatus && integrationStatus !== 'RUNNING'"
-       class="mt-2 text-yellow-800 dark:text-yellow-300">
-      Integration is <span class="font-semibold" x-text="integrationStatus"></span>.
-      The event will still be sent to the organization's subscriptions.
-    </p>
-
-    <div role="status" aria-live="polite">
-    <!-- Result -->
-    <template x-if="result">
-      <div class="mt-3">
-        <p x-show="delivery?.status === 'sent'" class="text-green-800 dark:text-green-400">
-          Sent to the organization's Event Hubs subscription.
-        </p>
-        <p x-show="!delivery" class="text-yellow-800 dark:text-yellow-300">
-          Event created, but the organization has no Event Hubs subscription for <code x-text="result.type"></code>.
-          Only PIMS polling <code>GET /events</code> will see it.
-        </p>
-        <p x-show="delivery?.status === 'too_large'" class="text-red-800 dark:text-red-400">
-          Event created but NOT delivered: it is larger than the Event Hubs limit
-          (<span x-text="delivery?.jsonSizeInBytes"></span> bytes, max <span x-text="delivery?.maxSizeInBytes"></span>).
-        </p>
-        <p x-show="delivery?.status === 'error'" class="text-red-800 dark:text-red-400">
-          Event created but NOT delivered: <span x-text="delivery?.message"></span>
-        </p>
-        <p x-show="unknownDelivery" class="text-yellow-800 dark:text-yellow-300">
-          Delivery status: <span x-text="delivery?.status"></span>
-        </p>
-        <a :href="eventUrl" class="inline-block mt-2 font-medium text-purple-700 hover:underline dark:text-purple-400">
-          View new event #<span x-text="result.seq"></span>
-        </a>
-      </div>
-    </template>
-
-    <p x-show="sessionExpired" class="mt-3 text-red-800 dark:text-red-400">
-      Your session has expired: reload the page and log in again.
-    </p>
-
-    <!-- Error -->
-    <template x-if="error && !sessionExpired">
-      <div class="mt-3 text-red-800 dark:text-red-400">
-        <span x-text="errorText"></span>
-        <span x-show="nothingSent" class="block mt-1">Nothing was sent.</span>
-        <span x-show="error.maybePersisted" class="block mt-1">
-          The event may have been created anyway: check the events list before retrying.
-        </span>
-      </div>
-    </template>
-    </div>
-
-    <!-- Actions -->
-    <p x-show="checkingIntegration" class="mt-3 text-gray-600 dark:text-gray-300">Checking integration…</p>
-    <div class="flex items-center mt-4 space-x-2" x-show="!result">
-      <button type="button" x-show="!sessionExpired" @click="confirm()"
-              :disabled="inProgress || checkingIntegration || sessionExpired"
-              class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
-        <span x-text="inProgress ? 'Republishing...' : 'Republish'"></span>
-      </button>
-      <button type="button" x-show="!inProgress" @click="cancel()"
-              class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-4 py-2 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600">
-        Cancel
-      </button>
-    </div>
-    <p x-show="inProgress" class="mt-2 text-gray-600 dark:text-gray-300">
-      The event is created first; delivery can take a few minutes if Event Hubs is slow. Don't close this or retry — if it fails, check the events list first.
-    </p>
+    <button type="button" x-show="!inProgress" @click="cancel()"
+            class="-mt-1 -me-1 p-1 text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">
+      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+      </svg>
+      <span class="sr-only">Close</span>
+    </button>
   </div>
+  <p class="mt-1 text-gray-600 dark:text-gray-300">
+    Sends the report's current state in DMI as a new <code x-text="type"></code> event.
+    <span x-show="sourceEventId">This is not a replay of the event you are viewing.</span>
+  </p>
+  <p x-show="integrationStatus && integrationStatus !== 'RUNNING'"
+     class="mt-2 text-yellow-800 dark:text-yellow-300">
+    Integration is <span class="font-semibold" x-text="integrationStatus"></span>.
+    The event will still be sent to the organization's subscriptions.
+  </p>
+
+  <div role="status" aria-live="polite">
+  <!-- Result -->
+  <template x-if="result">
+    <div class="mt-3">
+      <p x-show="delivery?.status === 'sent'" class="text-green-800 dark:text-green-400">
+        Sent to the organization's Event Hubs subscription.
+      </p>
+      <p x-show="!delivery" class="text-yellow-800 dark:text-yellow-300">
+        Event created, but the organization has no Event Hubs subscription for <code x-text="result.type"></code>.
+        Only PIMS polling <code>GET /events</code> will see it.
+      </p>
+      <p x-show="delivery?.status === 'too_large'" class="text-red-800 dark:text-red-400">
+        Event created but NOT delivered: it is larger than the Event Hubs limit
+        (<span x-text="delivery?.jsonSizeInBytes"></span> bytes, max <span x-text="delivery?.maxSizeInBytes"></span>).
+      </p>
+      <p x-show="delivery?.status === 'error'" class="text-red-800 dark:text-red-400">
+        Event created but NOT delivered: <span x-text="delivery?.message"></span>
+      </p>
+      <p x-show="unknownDelivery" class="text-yellow-800 dark:text-yellow-300">
+        Delivery status: <span x-text="delivery?.status"></span>
+      </p>
+      <a :href="eventUrl" class="inline-block mt-2 font-medium text-purple-700 hover:underline dark:text-purple-400">
+        View new event #<span x-text="result.seq"></span>
+      </a>
+    </div>
+  </template>
+
+  <p x-show="sessionExpired" class="mt-3 text-red-800 dark:text-red-400">
+    Your session has expired: reload the page and log in again.
+  </p>
+
+  <!-- Error -->
+  <template x-if="error && !sessionExpired">
+    <div class="mt-3 text-red-800 dark:text-red-400">
+      <span x-text="errorText"></span>
+      <span x-show="nothingSent" class="block mt-1">Nothing was sent.</span>
+      <span x-show="error.maybePersisted" class="block mt-1">
+        The event may have been created anyway: check the events list before retrying.
+      </span>
+    </div>
+  </template>
+  </div>
+
+  <!-- Actions -->
+  <p x-show="checkingIntegration" class="mt-3 text-gray-600 dark:text-gray-300">Checking integration…</p>
+  <div class="flex items-center mt-4 space-x-2" x-show="!result">
+    <button type="button" x-show="!sessionExpired" @click="confirm()"
+            :disabled="inProgress || checkingIntegration || sessionExpired"
+            class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
+      <span x-text="inProgress ? 'Republishing...' : 'Republish'"></span>
+    </button>
+    <button type="button" x-show="!inProgress" @click="cancel()"
+            class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-4 py-2 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600">
+      Cancel
+    </button>
+  </div>
+  <p x-show="inProgress" class="mt-2 text-gray-600 dark:text-gray-300">
+    The event is created first; delivery can take a few minutes if Event Hubs is slow. Don't close this or retry — if it fails, check the events list first.
+  </p>
 </div>

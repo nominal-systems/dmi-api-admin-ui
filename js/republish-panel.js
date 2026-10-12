@@ -50,6 +50,7 @@ export default ({ reportId, sourceEventId, integrationId, type }) => ({
 
   cancel() {
     this.open = false
+    this.result = null
     this.error = null
     this.integrationAuthFailed = false
     // Retry the lookup next time if it failed
