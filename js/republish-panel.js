@@ -3,11 +3,10 @@ import { getIntegration, republishReport } from './api-client'
 
 const isAuthStatus = (status) => status === 401 || status === 403
 
-export default ({ reportId, sourceEventId, integrationId, type }) => ({
+export default ({ reportId, sourceEventId, integrationId }) => ({
   reportId,
   sourceEventId,
   integrationId,
-  type,
   open: false,
   inProgress: false,
   integrationStatus: null,

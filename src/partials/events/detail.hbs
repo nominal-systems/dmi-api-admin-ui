@@ -25,7 +25,7 @@
   </div>
   <template x-if="event.type?.startsWith('report:') && event.data?.reportId">
     <div class="pt-3"
-         x-data="republishPanel({ reportId: event.data.reportId, sourceEventId: event._id, integrationId: event.integrationId, type: event.type })">
+         x-data="republishPanel({ reportId: event.data.reportId, sourceEventId: event._id, integrationId: event.integrationId })">
       {{> events/republish-button }}
       {{> events/republish-panel }}
     </div>

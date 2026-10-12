@@ -10,7 +10,7 @@
     </button>
   </div>
   <p class="mt-1 text-gray-600 dark:text-gray-300">
-    Sends the report's current state in DMI as a new <code x-text="type"></code> event.
+    Sends the report's current state in DMI as a new <code>report:updated</code> event.
     <span x-show="sourceEventId">This is not a replay of the event you are viewing.</span>
   </p>
   <p x-show="integrationStatus && integrationStatus !== 'RUNNING'"
