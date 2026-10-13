@@ -1,0 +1,8 @@
+<span class="px-2 py-1 font-semibold leading-tight rounded-full {{classes}}"
+      :class="{
+      'text-green-700 bg-green-100 dark:bg-green-700 dark:text-green-100': {{{integration}}}.color === 'green',
+      'text-red-700 bg-red-100 dark:bg-red-700 dark:text-red-100': {{{integration}}}.color === 'red',
+      'text-blue-700 bg-blue-100 dark:bg-blue-700 dark:text-blue-100': {{{integration}}}.color === 'blue',
+      'text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-100': {{{integration}}}.color === 'gray',
+      }"
+      x-text="{{{integration}}}.status"></span>

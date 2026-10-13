@@ -1,7 +1,13 @@
 import Alpine from 'alpinejs'
 import { getExternalRequest, getExternalRequests, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, integrationUrl, isNullOrUndefined, mapHttpStatusText } from './common/utils'
+import {
+  buildIntegrationField,
+  getProviderConfig,
+  getQueryParams,
+  isNullOrUndefined,
+  mapHttpStatusText
+} from './common/utils'
 import modal from './plugins/modal'
 import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
 
@@ -111,8 +117,7 @@ export const externalRequests = () => {
       const req = await getExternalRequest(externalRequest._id)
       req.statusText = mapHttpStatusText(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
-      req.practice = externalRequest.practice
-      req.integrationUrl = integrationUrl(req.integrationId)
+      req.integration = buildIntegrationField(req.integrationId, { practiceName: externalRequest.practice?.name })
       this.externalRequest = req
       this.modal.open()
     },

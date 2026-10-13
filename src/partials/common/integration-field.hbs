@@ -1,0 +1,14 @@
+<dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Integration</dt>
+<dd class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold">
+  <a :href="{{{integration}}}?.url"
+     class="text-blue-600 dark:text-blue-500 hover:underline"
+     x-text="{{{integration}}}?.id"></a>
+  <template x-if="{{{integration}}}?.practiceName">
+    <span x-text="{{{integration}}}.practiceName"></span>
+  </template>
+  <template x-if="{{{integration}}}?.status">
+    <span class="text-xs" title="Current status">
+      {{> common/integration-status integration=integration }}
+    </span>
+  </template>
+</dd>

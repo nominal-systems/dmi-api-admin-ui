@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs'
-import { getQueryParams, integrationUrl, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
-import { getTransactionLogs } from './api-client'
+import { buildIntegrationField, getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
+import { getIntegration, getTransactionLogs } from './api-client'
 
 export default () => {
   return {
@@ -29,10 +29,18 @@ export default () => {
       Alpine.store('title').set(`Transaction Logs for ${this.accessionId}`)
       try {
         const transactionLogs = await getTransactionLogs(this.accessionId)
+        const integrations = await fetchIntegrations(transactionLogs)
         transactionLogs.forEach(log => {
           log.timestamp = new Date(log.timestamp).toLocaleString()
           log.message = buildMessage(log)
           log.tag = buildTag(log)
+          if (log.type === 'event' || log.type === 'external-request') {
+            const integration = integrations.get(log.data.integrationId)
+            log.data.integration = buildIntegrationField(log.data.integrationId, {
+              practiceName: integration?.practice?.name,
+              status: integration?.status || 'UNKNOWN'
+            })
+          }
           if (log.type === 'external-request') {
             prepareExternalRequest(log)
           }
@@ -45,6 +53,13 @@ export default () => {
       this.doFilter();
     }
   }
+}
+
+// Current status and practice of each integration in the logs, usually just one
+async function fetchIntegrations(logs) {
+  const ids = [...new Set(logs.map((log) => log.data?.integrationId).filter(Boolean))]
+  const results = await Promise.allSettled(ids.map((id) => getIntegration(id)))
+  return new Map(ids.map((id, i) => [id, results[i].value]))
 }
 
 function buildMessage(log) {
@@ -90,7 +105,6 @@ function buildTag(log) {
 
 function prepareExternalRequest(log) {
   const data = log.data
-  data.integrationUrl = integrationUrl(data.integrationId)
   data.statusText = mapHttpStatusText(data.status)
   let body = data.body
   if (!body) return
