@@ -2,7 +2,7 @@ import Alpine from 'alpinejs'
 import { getEvent, getEvents, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
 import config from './config'
-import { getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
+import { buildIntegrationField, getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
 import modal from './plugins/modal'
 import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
 
@@ -80,7 +80,9 @@ export const events = {
   }),
   async openModal(ev) {
     this.event = null
-    this.event = await getEvent(ev._id)
+    const event = await getEvent(ev._id)
+    event.integration = buildIntegrationField(event.integrationId, { practiceName: ev.practice?.name })
+    this.event = event
     this.modal.open()
   },
   event: null,

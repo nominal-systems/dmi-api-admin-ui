@@ -4,11 +4,7 @@
   <div class="container px-6 mx-auto grid">
     <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
       Integration <span x-text="integration.id"></span>
-      <span
-        class="text-sm px-2 py-1 font-semibold leading-tight rounded-full"
-        x-bind:class="`text-${integration.color}-700 bg-${integration.color}-100 dark:bg-${integration.color}-700 dark:text-${integration.color}-100`"
-        x-text="integration.status">
-      </span>
+      {{> common/integration-status integration="integration" classes="text-sm" }}
       <template x-if="integration.operations?.length">
         <span class="ml-3 text-sm font-semibold text-purple-600 dark:text-gray-400">
           <template x-for="(operation, index) in integration.operations" :key="operation">
