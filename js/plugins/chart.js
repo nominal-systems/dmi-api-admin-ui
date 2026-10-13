@@ -120,8 +120,16 @@ export default function (Alpine) {
             this.total = '-'
             const { startDate, endDate, granularity } = dateRangePresets(this.dateSelector.current.value)
             this.series = await getSeries(startDate, endDate, granularity)
-            this.total = this.series.reduce((acc, item) => acc + item.data.reduce((acc, item) => acc + item.y, 0), 0)
+            this.total = this.computeTotal()
             this.loading = false
+          },
+          computeTotal() {
+            // Skip series hidden from the legend
+            const { collapsedSeriesIndices = [], ancillaryCollapsedSeriesIndices = [] } = this.chart?.w.globals || {}
+            const hidden = [...collapsedSeriesIndices, ...ancillaryCollapsedSeriesIndices]
+            return this.series
+              .filter((_, index) => !hidden.includes(index))
+              .reduce((acc, item) => acc + item.data.reduce((acc, item) => acc + item.y, 0), 0)
           },
           async refresh() {
             await this.fetch()
@@ -148,6 +156,9 @@ export default function (Alpine) {
             await this.fetch()
             this.chart = new ApexCharts($canvas, { series: this.series, ...options })
             this.chart.render()
+            this.chart.addEventListener('updated', () => {
+              this.total = this.computeTotal()
+            })
             this.chart.updateOptions({
               tooltip: {
                 x: {
