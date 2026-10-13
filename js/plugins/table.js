@@ -22,6 +22,7 @@ export default (opts) => ({
   actions: opts.actions,
   selectedItems: [],
   selectAllCheckbox: false,
+  _fetchId: 0,
   async init() {
     this.updateColumnsCount()
     if (!isNullOrUndefined(this.filter)) {
@@ -37,6 +38,8 @@ export default (opts) => ({
     }
   },
   async fetchData($event) {
+    // Only the latest request updates the table, so a slower earlier response cannot overwrite it
+    const fetchId = ++this._fetchId
     this.loading = true
     this.error = null
     if ($event && $event.detail.page) {
@@ -47,6 +50,9 @@ export default (opts) => ({
       const response = await opts.getPage(this.currentPage, this.pageSize)
       if (opts.processResults) {
         await opts.processResults(response.data)
+      }
+      if (fetchId !== this._fetchId) {
+        return
       }
       this.items = response.data
 
@@ -70,10 +76,14 @@ export default (opts) => ({
       this.pagesNav = navPages(this.currentPage, this.totalPages, this.pagesMax)
     } catch (error) {
       console.error(error)
-      this.error = error
+      if (fetchId === this._fetchId) {
+        this.error = error
+      }
     } finally {
-      this.loading = false
-      this.updateColumnsCount()
+      if (fetchId === this._fetchId) {
+        this.loading = false
+        this.updateColumnsCount()
+      }
     }
   },
   async setPageSize(pageSize) {

@@ -70,10 +70,10 @@ function handleRoot(el, Alpine, config) {
           this.items = items
           const $buttonEl = el.querySelector('[x-filter-dropdown\\:button]')
           const $menuEl = el.querySelector('[x-filter-dropdown\\:menu]')
-          this.dropdownOptions = config.dropdownOptions
-          if (config.type === 'date') {
-            this.dropdownOptions.ignoreClickOutsideClass = 'datepicker'
-          }
+          this.dropdownOptions = config.type === 'date'
+            // Wide enough to show a full range in the picker input
+            ? { ...config.dropdownOptions, width: '72', ignoreClickOutsideClass: 'flatpickr-calendar' }
+            : config.dropdownOptions
           this.dropdown = new Dropdown($menuEl, $buttonEl, this.dropdownOptions)
         }
       }
@@ -133,9 +133,8 @@ function handleDatepicker(el, Alpine) {
         init() {
           const date = getQueryParams().date
           const presetValues = dateFilterPresets().map((preset) => preset.value)
-          if (date && !date.includes('-') && !presetValues.includes(date)) {
+          if (date && !presetValues.includes(date)) {
             this.datePickerValue = date
-            $datePickerInput.value = date
             $datePickerRadioInput.checked = true
           }
         }
@@ -148,20 +147,24 @@ function handleDatepicker(el, Alpine) {
       }
 
       this.datePickerValue = null
-      $datePickerInput.value = null
+      const picker = $datePickerInput._flatpickr
+      picker?.clear()
+      picker?.jumpToDate(new Date())
       $datePickerRadioInput.checked = false
-    }
-  })
-  Alpine.bind($datePickerRadioInput, {
-    '@input'() {
+    },
+    '@datePickerInput'(ev) {
+      if (ev.detail.date === this.datePickerValue && $datePickerRadioInput.checked) {
+        return
+      }
+
+      this.datePickerValue = ev.detail.date
+      $datePickerRadioInput.checked = true
       setQueryParam(this._id, this.datePickerValue)
       this.$dispatch('filter', { page: 1 })
     }
   })
-  Alpine.bind($datePickerInput, {
-    '@datePickerInput'(ev) {
-      this.datePickerValue = ev.detail.date
-      $datePickerRadioInput.checked = true
+  Alpine.bind($datePickerRadioInput, {
+    '@input'() {
       setQueryParam(this._id, this.datePickerValue)
       this.$dispatch('filter', { page: 1 })
     }
