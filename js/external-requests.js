@@ -1,13 +1,9 @@
 import Alpine from 'alpinejs'
 import { getExternalRequest, getExternalRequests, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
-import { getProviderConfig, getQueryParams, isNullOrUndefined, mapHttpStatusText } from './common/utils'
+import { getProviderConfig, getQueryParams, integrationUrl, isNullOrUndefined, mapHttpStatusText } from './common/utils'
 import modal from './plugins/modal'
 import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
-import config from './config'
-
-const integrationUrl = (integrationId) =>
-  integrationId ? `${config.get('UI_BASE')}/integrations/${integrationId}` : null
 
 export const externalRequests = () => {
   return {
