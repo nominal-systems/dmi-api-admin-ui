@@ -158,6 +158,10 @@ export const getEvent = async (id) => {
   return await apiGet(`/events/${id}`)
 }
 
+export const republishReport = async (reportId, sourceEventId) => {
+  return await apiPost(`/reports/${reportId}/republish`, sourceEventId ? { sourceEventId } : {})
+}
+
 export const getIntegrations = async ({
                                         providers,
                                         providerConfigurations,
