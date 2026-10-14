@@ -12,7 +12,8 @@ let reauthenticating = false;
 /**
  * Reloads the page once so the API restarts the login for its auth strategy and brings the user back here.
  * Parallel failures share that single reload. Returns false when a reload already happened within the
- * cooldown, so a login that keeps failing surfaces as an error instead of looping.
+ * cooldown, or when sessionStorage is unavailable to track it, so a failing login surfaces as an error
+ * instead of looping.
  */
 const reauthenticate = () => {
   if (reauthenticating) {
@@ -25,6 +26,8 @@ const reauthenticate = () => {
     }
     window.sessionStorage.setItem(REAUTH_STORAGE_KEY, String(Date.now()));
   } catch (_) {
+    // Without storage there is no cooldown: don't risk a reload loop
+    return false;
   }
   reauthenticating = true;
   unsetToken();
@@ -70,11 +73,9 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
         // The page is reloading: never settle, so callers don't render errors in the meantime
         return new Promise(() => {});
       }
-      if (isRedirect) {
-        const error = new Error('Your session expired and logging in again failed. Please reload the page.');
-        error.status = 401;
-        throw error;
-      }
+      const error = new Error('Your session expired. Please reload the page to log in again.');
+      error.status = 401;
+      throw error;
     }
 
     let responseBody = null;
