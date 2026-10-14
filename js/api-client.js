@@ -5,6 +5,33 @@ import { isNullOrUndefined, isNullOrUndefinedOrEmpty } from './common/utils'
 const API_BASE_URL = config.get('API_BASE')
 const UI_BASE_URL = config.get('UI_BASE')
 
+const REAUTH_STORAGE_KEY = 'dmi-admin:reauth-at';
+const REAUTH_COOLDOWN_MS = 30 * 1000;
+let reauthenticating = false;
+
+/**
+ * Reloads the page once so the API restarts the login for its auth strategy and brings the user back here.
+ * Parallel failures share that single reload. Returns false when a reload already happened within the
+ * cooldown, so a login that keeps failing surfaces as an error instead of looping.
+ */
+const reauthenticate = () => {
+  if (reauthenticating) {
+    return true;
+  }
+  try {
+    const lastAttempt = Number(window.sessionStorage.getItem(REAUTH_STORAGE_KEY)) || 0;
+    if (Date.now() - lastAttempt < REAUTH_COOLDOWN_MS) {
+      return false;
+    }
+    window.sessionStorage.setItem(REAUTH_STORAGE_KEY, String(Date.now()));
+  } catch (_) {
+  }
+  reauthenticating = true;
+  unsetToken();
+  window.location.reload();
+  return true;
+};
+
 /**
  * Core request function used by both GET and POST/PUT calls.
  * Omits the Authorization header if getToken() returns null or undefined.
@@ -33,23 +60,21 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
     }
     const response = await fetch(`${baseUrl}${path}`, req);
     const contentType = response.headers ? (response.headers.get('content-type') || '') : '';
-    // Detect redirect and navigate at the window level rather than via fetch
-    if (response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400)) {
-      let location = '';
-      try {
-        location = response.headers?.get('Location') || response.url || '';
-      } catch (_) {
-      }
-      if (!location) {
-        location = `${config.get('API_HOST')}/auth/login`;
-      }
+    // The session expired: 401 from the admin API, or a redirect to Okta from APIs that predate the 401
+    const isRedirect = response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400);
+    if (baseUrl === API_BASE_URL && (isRedirect || response.status === 401)) {
       if (process.env.NODE_ENV === 'development') {
-        console.warn(`[apiRequest] Redirect detected for ${method} ${baseUrl}${path}; navigating to ${location}`);
+        console.warn(`[apiRequest] Authentication required for ${method} ${baseUrl}${path}`);
       }
-      window.location.href = location;
-      const redirectError = new Error('Redirect required');
-      redirectError.redirected = true;
-      throw redirectError;
+      if (reauthenticate()) {
+        // The page is reloading: never settle, so callers don't render errors in the meantime
+        return new Promise(() => {});
+      }
+      if (isRedirect) {
+        const error = new Error('Your session expired and logging in again failed. Please reload the page.');
+        error.status = 401;
+        throw error;
+      }
     }
 
     let responseBody = null;
@@ -87,8 +112,7 @@ const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => 
 
 /**
  * Wrapper for GET requests.
- * After receiving JSON, checks for 401/403 status codes in the response body,
- * clears token and redirects to login if necessary.
+ * Clears the stored token on 401/403 so later requests don't resend it. Re-login is handled by apiRequest.
  */
 const apiGet = async (path, baseUrl = API_BASE_URL) => {
   try {
