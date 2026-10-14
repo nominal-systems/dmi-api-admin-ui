@@ -72,6 +72,8 @@ export default ({ reportId, sourceEventId, integrationId }) => ({
 
   get errorText() {
     const { message, status, maybePersisted } = this.error ?? {}
+    // An order's report before any results arrive: the API refuses it with a 409
+    if (status === 409) return 'The report has no results yet.'
     if (maybePersisted && String(message ?? '').trimStart().startsWith('<')) {
       return status ? `The server did not answer (HTTP ${status}).` : 'The server did not answer.'
     }
