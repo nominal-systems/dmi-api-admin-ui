@@ -160,6 +160,17 @@ Alpine.store('alert', {
   }
 })
 
+// Republish state per report, shared by every panel on the page (see republish-panel.js)
+Alpine.store('republish', {
+  reports: {},
+  for(reportId) {
+    if (!this.reports[reportId]) {
+      this.reports[reportId] = { inProgress: false, result: null, error: null }
+    }
+    return this.reports[reportId]
+  }
+})
+
 // HTML title
 Alpine.store('title', {
   set(title, prefix = true) {

@@ -13,10 +13,13 @@
     Sends the report's current state in DMI as a new <code>report:updated</code> event.
     <span x-show="sourceEventId">This is not a replay of the event you are viewing.</span>
   </p>
-  <p x-show="integrationStatus && integrationStatus !== 'RUNNING'"
+  <p x-show="!result && integrationStatus && integrationStatus !== 'RUNNING'"
      class="mt-2 text-yellow-800 dark:text-yellow-300">
     Integration is <span class="font-semibold" x-text="integrationStatus"></span>.
     The event will still be sent to the organization's subscriptions.
+  </p>
+  <p x-show="!result && integrationCheckFailed" class="mt-2 text-yellow-800 dark:text-yellow-300">
+    Couldn't check the integration status.
   </p>
 
   <div role="status" aria-live="polite">
@@ -47,7 +50,7 @@
   </template>
 
   <p x-show="sessionExpired" class="mt-3 text-red-800 dark:text-red-400">
-    Your session has expired: reload the page and log in again.
+    Your session has expired or you don't have access: reload the page and log in again.
   </p>
 
   <!-- Error -->
@@ -56,7 +59,8 @@
       <span x-text="errorText"></span>
       <span x-show="nothingSent" class="block mt-1">Nothing was sent.</span>
       <span x-show="error.maybePersisted" class="block mt-1">
-        The event may have been created anyway: check the events list before retrying.
+        The event may have been created anyway.
+        <a :href="eventsUrl" class="font-medium underline">Check the events list</a> before republishing again.
       </span>
     </div>
   </template>
@@ -65,10 +69,16 @@
   <!-- Actions -->
   <p x-show="checkingIntegration" class="mt-3 text-gray-600 dark:text-gray-300">Checking integration…</p>
   <div class="flex items-center mt-4 space-x-2" x-show="!result">
-    <button type="button" x-show="!sessionExpired" @click="confirm()"
+    <button type="button" x-show="!sessionExpired && !error?.maybePersisted" @click="confirm()"
             :disabled="inProgress || checkingIntegration || sessionExpired"
             class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
       <span x-text="inProgress ? 'Republishing...' : 'Republish'"></span>
+    </button>
+    <!-- After a 5xx or a network error the first attempt may have created the event: retrying takes an explicit step -->
+    <button type="button" x-show="!sessionExpired && error?.maybePersisted" @click="confirm()"
+            :disabled="inProgress"
+            class="text-red-700 bg-white hover:bg-red-50 rounded-lg border border-red-300 text-sm font-medium px-4 py-2 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-red-400 dark:border-red-500 dark:hover:bg-gray-600">
+      I checked, republish again
     </button>
     <button type="button" x-show="!inProgress" @click="cancel()"
             class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-4 py-2 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600">
@@ -76,6 +86,6 @@
     </button>
   </div>
   <p x-show="inProgress" class="mt-2 text-gray-600 dark:text-gray-300">
-    The event is created first; delivery can take a few minutes if Event Hubs is slow. Don't close this or retry — if it fails, check the events list first.
+    The event is created first; delivery can take a few minutes if Event Hubs is slow. You can close this: reopening it shows the outcome.
   </p>
 </div>

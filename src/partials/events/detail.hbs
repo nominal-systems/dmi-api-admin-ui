@@ -7,7 +7,7 @@
     <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Type</dt>
     <dd class="text-sm font-semibold">
       <span x-text="event.type"></span>
-      <span x-show="event.context?.republish"
+      <span x-show="event?.context?.republish"
             class="ml-2 text-xs font-medium px-2.5 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">Republished</span>
     </dd>
   </div>
@@ -23,7 +23,7 @@
       </div>
     </dd>
   </div>
-  <template x-if="event.type?.startsWith('report:') && event.data?.reportId">
+  <template x-if="event?.type?.startsWith('report:') && event?.data?.reportId">
     <div class="pt-3"
          x-data="republishPanel({ reportId: event.data.reportId, sourceEventId: event._id, integrationId: event.integrationId })">
       {{> events/republish-button }}
