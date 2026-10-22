@@ -67,7 +67,6 @@ export default ({ reportId, sourceEventId, integrationId }) => ({
     try {
       state.result = await republishReport(this.reportId, this.sourceEventId)
     } catch (err) {
-      if (err.redirected) return
       state.error = {
         message: err.message,
         status: err.status,
