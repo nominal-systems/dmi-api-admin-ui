@@ -1,5 +1,15 @@
-<div class="flex">
-  <div class="text-sm font-semibold text-gray-500 dark:text-gray-300">
-    <span x-text="message"></span>
+<div x-data="republishPanel({ reportId: log.reportId, sourceEventId: null, integrationId: data?.integrationId })">
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+    <div class="text-sm font-semibold text-gray-500 dark:text-gray-300">
+      <span x-text="message"></span>
+    </div>
+    <template x-if="reportId">
+      {{> events/republish-button }}
+    </template>
   </div>
+  <template x-if="reportId">
+    <div x-show="open" class="mt-3 cursor-default" @click.stop>
+      {{> events/republish-panel }}
+    </div>
+  </template>
 </div>
