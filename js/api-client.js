@@ -11,9 +11,9 @@ let reauthenticating = false;
 
 /**
  * Reloads the page once so the API restarts the login for its auth strategy and brings the user back here.
- * Parallel failures share that single reload. Returns false when a reload already happened within the
- * cooldown, or when sessionStorage is unavailable to track it, so a failing login surfaces as an error
- * instead of looping.
+ * Parallel failures share that single reload, and admin requests sent meanwhile are held. Returns false
+ * when a reload already happened within the cooldown, or when sessionStorage is unavailable to track it,
+ * so a failing login surfaces as an error instead of looping.
  */
 const reauthenticate = () => {
   if (reauthenticating) {
@@ -31,7 +31,14 @@ const reauthenticate = () => {
   }
   reauthenticating = true;
   unsetToken();
-  window.location.reload();
+  // dmi-api serves `/ui/` as a static file, outside the page guard: drop the trailing slash so the login starts
+  const { pathname, search, hash } = window.location;
+  const guardedPath = pathname.replace(/\/+$/, '');
+  if (guardedPath && guardedPath !== pathname) {
+    window.location.replace(`${guardedPath}${search}${hash}`);
+  } else {
+    window.location.reload();
+  }
   return true;
 };
 
@@ -40,6 +47,11 @@ const reauthenticate = () => {
  * Omits the Authorization header if getToken() returns null or undefined.
  */
 const apiRequest = async (method, path, body = null, baseUrl = API_BASE_URL) => {
+  // The page is already reloading: on APIs that predate the 401, a new request would restart the login
+  if (reauthenticating && baseUrl === API_BASE_URL) {
+    return new Promise(() => {});
+  }
+
   // Build headers, including Authorization only if a token is present
   const headers = {};
   const token = getToken();
