@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs'
-import { getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
+import { getQueryParams, integrationUrl, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
 import { getTransactionLogs } from './api-client'
 
 export default () => {
@@ -89,6 +89,8 @@ function buildTag(log) {
 
 function prepareExternalRequest(log) {
   const data = log.data
+  data.integrationUrl = integrationUrl(data.integrationId)
+  data.statusText = mapHttpStatusText(data.status)
   let body = data.body
   if (!body) return
 

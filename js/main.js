@@ -15,6 +15,7 @@ import { integrationPage } from './integration-page'
 import { providerConfigurations } from './provider-configurations'
 import { providerConfigurationPage } from './provider-configuration-page'
 import { externalRequests } from './external-requests'
+import republishPanel from './republish-panel'
 import dateDirective from './directives/dateDirective'
 import codeDirective from './directives/codeDirective'
 import config from './config'
@@ -159,6 +160,17 @@ Alpine.store('alert', {
   }
 })
 
+// Republish state per report, shared by every panel on the page (see republish-panel.js)
+Alpine.store('republish', {
+  reports: {},
+  for(reportId) {
+    if (!this.reports[reportId]) {
+      this.reports[reportId] = { inProgress: false, result: null, error: null }
+    }
+    return this.reports[reportId]
+  }
+})
+
 // HTML title
 Alpine.store('title', {
   set(title, prefix = true) {
@@ -188,6 +200,7 @@ Alpine.plugin(Clipboard)
 window.dashboard = dashboard
 window.events = events
 window.eventPage = eventPage
+window.republishPanel = republishPanel
 window.refs = refs
 window.providers = providers
 window.integrations = integrations
