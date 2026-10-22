@@ -1,21 +1,6 @@
-<template x-if="externalRequest?.practice?.name || externalRequest?.integrationId">
-  <dl class="mb-4 grid grid-cols-2 gap-4">
-    <template x-if="externalRequest?.practice?.name">
-      <div>
-        <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Practice</dt>
-        <dd class="text-sm font-semibold text-gray-900 dark:text-white" x-text="externalRequest.practice.name"></dd>
-      </div>
-    </template>
-    <template x-if="externalRequest?.integrationId">
-      <div>
-        <dt class="mb-1 text-gray-500 md:text-sm dark:text-gray-400">Integration</dt>
-        <dd class="text-sm font-semibold">
-          <a :href="externalRequest.integrationUrl"
-             class="text-blue-600 dark:text-blue-500 hover:underline"
-             x-text="externalRequest.integrationId"></a>
-        </dd>
-      </div>
-    </template>
+<template x-if="externalRequest?.integration">
+  <dl class="flex flex-col pb-3 mb-4 text-gray-900 border-b border-gray-200 dark:text-white dark:border-gray-700">
+    {{> common/integration-field integration="externalRequest.integration" }}
   </dl>
 </template>
 <div class="mb-4">
