@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs'
 import { buildIntegrationField, getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
-import { getIntegration, getTransactionLogs } from './api-client'
+import { getTransactionLogs } from './api-client'
+import { fetchIntegrationField } from './common/integration-field'
 
 export default () => {
   return {
@@ -29,17 +30,12 @@ export default () => {
       Alpine.store('title').set(`Transaction Logs for ${this.accessionId}`)
       try {
         const transactionLogs = await getTransactionLogs(this.accessionId)
-        const integrations = await fetchIntegrations(transactionLogs)
         transactionLogs.forEach(log => {
           log.timestamp = new Date(log.timestamp).toLocaleString()
           log.message = buildMessage(log)
           log.tag = buildTag(log)
-          if (log.type === 'event' || log.type === 'external-request') {
-            const integration = integrations.get(log.data.integrationId)
-            log.data.integration = buildIntegrationField(log.data.integrationId, {
-              practiceName: integration?.practice?.name,
-              status: integration?.status || 'UNKNOWN'
-            })
+          if (hasIntegrationField(log)) {
+            log.data.integration = buildIntegrationField(log.data.integrationId)
           }
           if (log.type === 'external-request') {
             prepareExternalRequest(log)
@@ -50,15 +46,23 @@ export default () => {
         this.error = err
       }
       this.doFilter();
+      this.loadIntegrations()
+    },
+
+    // Fill in the status and practice once the lookups settle, without holding up the logs
+    async loadIntegrations() {
+      const logs = this.logs.filter((log) => hasIntegrationField(log) && log.data.integrationId)
+      const ids = [...new Set(logs.map((log) => log.data.integrationId))]
+      const fields = new Map(await Promise.all(ids.map(async (id) => [id, await fetchIntegrationField(id)])))
+      logs.forEach((log) => {
+        log.data.integration = fields.get(log.data.integrationId)
+      })
     }
   }
 }
 
-// Current status and practice of each integration in the logs, usually just one
-async function fetchIntegrations(logs) {
-  const ids = [...new Set(logs.map((log) => log.data?.integrationId).filter(Boolean))]
-  const results = await Promise.allSettled(ids.map((id) => getIntegration(id)))
-  return new Map(ids.map((id, i) => [id, results[i].value]))
+function hasIntegrationField(log) {
+  return log.type === 'event' || log.type === 'external-request'
 }
 
 function buildMessage(log) {

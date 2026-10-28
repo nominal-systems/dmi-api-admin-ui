@@ -9,6 +9,7 @@ import {
   mapHttpStatusText
 } from './common/utils'
 import modal from './plugins/modal'
+import { fetchIntegrationField } from './common/integration-field'
 import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
 
 export const externalRequests = () => {
@@ -117,9 +118,13 @@ export const externalRequests = () => {
       const req = await getExternalRequest(externalRequest._id)
       req.statusText = mapHttpStatusText(req.status)
       req.providerLabel = getProviderConfig(req.provider).label
-      req.integration = buildIntegrationField(req.integrationId, { practiceName: externalRequest.practice?.name })
+      req.integration = buildIntegrationField(req.integrationId)
       this.externalRequest = req
       this.modal.open()
+      const integration = await fetchIntegrationField(req.integrationId)
+      if (this.externalRequest?._id === req._id) {
+        this.externalRequest.integration = integration
+      }
     },
     externalRequest: null,
 
