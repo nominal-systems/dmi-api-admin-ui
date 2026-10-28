@@ -30,7 +30,9 @@ export const events = {
         const practiceIds = [...new Set(
           events.filter((event) => !isNullOrUndefined(event.practiceId)).map((event) => event.practiceId)
         )]
-        const practices = (await getPractices(practiceIds, 1, 1000)).data
+        const practices = practiceIds.length
+          ? (await getPractices({ ids: practiceIds }, 1, 1000)).data
+          : []
         events.forEach((event) => {
           event.provider = getProviderConfig(event.providerId) || {}
           event.practice = practices.find((practice) => practice.id === event.practiceId) || {}
