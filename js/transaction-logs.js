@@ -39,7 +39,6 @@ export default () => {
         })
         this.logs = transactionLogs
       } catch (err) {
-        if (err.redirected) return
         this.error = err
       }
       this.doFilter();
