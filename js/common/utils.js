@@ -18,6 +18,18 @@ export function integrationUrl(integrationId) {
   return integrationId ? `${config.get('UI_BASE')}/integrations/${integrationId}` : null
 }
 
+// Data for the common/integration-field partial
+export function buildIntegrationField(integrationId, { practiceName, status } = {}) {
+  if (!integrationId) return null
+  return {
+    id: integrationId,
+    url: integrationUrl(integrationId),
+    practiceName,
+    status,
+    color: getIntegrationConfig(status)?.color || 'gray'
+  }
+}
+
 export function navigateToProviderPage(url) {
   window.history.pushState({}, '', url)
   setTimeout(() => {

@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs'
-import { getQueryParams, integrationUrl, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
+import { buildIntegrationField, getQueryParams, mapHttpStatusColor, mapHttpStatusText } from './common/utils'
 import { getTransactionLogs } from './api-client'
+import { fetchIntegrationField } from './common/integration-field'
 
 export default () => {
   return {
@@ -33,6 +34,9 @@ export default () => {
           log.timestamp = new Date(log.timestamp).toLocaleString()
           log.message = buildMessage(log)
           log.tag = buildTag(log)
+          if (hasIntegrationField(log)) {
+            log.data.integration = buildIntegrationField(log.data.integrationId)
+          }
           if (log.type === 'external-request') {
             prepareExternalRequest(log)
           }
@@ -42,8 +46,23 @@ export default () => {
         this.error = err
       }
       this.doFilter();
+      this.loadIntegrations()
+    },
+
+    // Fill in the status and practice once the lookups settle, without holding up the logs
+    async loadIntegrations() {
+      const logs = this.logs.filter((log) => hasIntegrationField(log) && log.data.integrationId)
+      const ids = [...new Set(logs.map((log) => log.data.integrationId))]
+      const fields = new Map(await Promise.all(ids.map(async (id) => [id, await fetchIntegrationField(id)])))
+      logs.forEach((log) => {
+        log.data.integration = fields.get(log.data.integrationId)
+      })
     }
   }
+}
+
+function hasIntegrationField(log) {
+  return log.type === 'event' || log.type === 'external-request'
 }
 
 function buildMessage(log) {
@@ -89,7 +108,6 @@ function buildTag(log) {
 
 function prepareExternalRequest(log) {
   const data = log.data
-  data.integrationUrl = integrationUrl(data.integrationId)
   data.statusText = mapHttpStatusText(data.status)
   let body = data.body
   if (!body) return

@@ -63,11 +63,7 @@
             <span x-text="integration.providerLabel"></span>
           </td>
           <td class="px-4 py-3 text-xs text-center">
-              <span
-                class="px-2 py-1 font-semibold leading-tight rounded-full"
-                x-bind:class="`text-${integration.color}-700 bg-${integration.color}-100 dark:bg-${integration.color}-700 dark:text-${integration.color}-100`"
-                x-text="integration.status">
-              </span>
+            {{> common/integration-status integration="integration" }}
           </td>
           <template x-if="actions">
             <td class="px-4 py-3 text-xs">
@@ -89,5 +85,3 @@
     {{/inline}}
   {{/table}}
 </div>
-<div class="w-0 h-0 dark:bg-green-700"></div>
-<div class="w-0 h-0 dark:bg-blue-700"></div>

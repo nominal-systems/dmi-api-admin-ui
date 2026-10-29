@@ -2,8 +2,9 @@ import Alpine from 'alpinejs'
 import { getEvent, getEvents, getPractices, getProviders } from './api-client'
 import table from './plugins/table'
 import config from './config'
-import { getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
+import { buildIntegrationField, getProviderConfig, getQueryParams, isNullOrUndefined } from './common/utils'
 import modal from './plugins/modal'
+import { fetchIntegrationField } from './common/integration-field'
 import { dateFilterConfig, parseDateRangeQuery, validateDateRangeLimit } from './common/date-utils'
 
 export const events = {
@@ -80,8 +81,14 @@ export const events = {
   }),
   async openModal(ev) {
     this.event = null
-    this.event = await getEvent(ev._id)
+    const event = await getEvent(ev._id)
+    event.integration = buildIntegrationField(event.integrationId)
+    this.event = event
     this.modal.open()
+    const integration = await fetchIntegrationField(event.integrationId)
+    if (this.event?._id === event._id) {
+      this.event.integration = integration
+    }
   },
   event: null,
 
