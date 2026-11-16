@@ -297,14 +297,22 @@ export const getProviderRefs = async (provider, type, query, page, limit) => {
 }
 
 export const searchProviderRefs = async ({ provider, type, species, search }) => {
-  let queryString = `page=1&limit=500`
+  let queryString = ''
   if (!isNullOrUndefinedOrEmpty(species)) {
     queryString += `&species=${species}`
   }
   if (!isNullOrUndefinedOrEmpty(search)) {
     queryString += `&search=${search}`
   }
-  return await apiGet(`/providers/${provider}/refs/${type}?${queryString}`)
+  const getRefs = (limit) => apiGet(`/providers/${provider}/refs/${type}?page=1&limit=${limit}${queryString}`)
+
+  const refs = await getRefs(500)
+  if (!Number.isFinite(refs?.total) || refs.data?.length >= refs.total) {
+    return refs
+  }
+  // More refs than one page holds: ask for all of them in one request rather than page by page.
+  // The API orders by name only, so refs with equal names could move between two paged requests.
+  return await getRefs(refs.total)
 }
 
 export const getDefaultBreeds = async (providerId, speciesCodes) => {

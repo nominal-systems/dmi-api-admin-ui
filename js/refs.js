@@ -199,6 +199,20 @@ export const refs = () => {
       const onSelect = cfg.onSelect
       const placeholder = cfg.placeholder || 'Search by code or name...'
 
+      // The refs are loaded once per typeahead and filtered in memory on each keystroke.
+      // The promise is cached so concurrent searches share one load; a failed load is dropped so it can be retried.
+      const loadedRefs = {}
+      const loadRefs = (refsProvider) => {
+        if (!loadedRefs[refsProvider]) {
+          loadedRefs[refsProvider] = searchProviderRefs({ provider: refsProvider, type, species, search: null })
+            .catch((e) => {
+              delete loadedRefs[refsProvider]
+              throw e
+            })
+        }
+        return loadedRefs[refsProvider]
+      }
+
       return {
         query: '',
         results: [],
@@ -292,7 +306,7 @@ export const refs = () => {
           const query = (arg2 === undefined ? arg1 : arg2)
           const q = (query || '').toString().toLowerCase()
           const effectiveProvider = provider || arg1
-          const providerRefs = await searchProviderRefs({ provider: effectiveProvider, type, species, search: null })
+          const providerRefs = await loadRefs(effectiveProvider)
           const data = providerRefs?.data || []
           if (q.length === 0) {
             this.results = data
