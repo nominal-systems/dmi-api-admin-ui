@@ -2,7 +2,9 @@ import { getQueryParams, isNullOrUndefinedOrEmpty, removeQueryParam, setQueryPar
 
 const defaultOptions = {
   placeholder: 'Search...',
-  label: 'Search'
+  label: 'Search',
+  // The page query parameter that holds the search
+  param: 'search'
 }
 
 export default function (Alpine) {
@@ -22,7 +24,7 @@ function handleRoot(el, Alpine, options) {
   Alpine.bind(el, {
     'x-data'() {
       const queryParams = getQueryParams()
-      this.query = queryParams.search || null
+      this.query = queryParams[options.param] || null
       return {
         placeholder: options.placeholder,
         label: options.label,
@@ -31,14 +33,14 @@ function handleRoot(el, Alpine, options) {
         clear() {
           this.query = null
           this.dirty = false
-          removeQueryParam('search')
+          removeQueryParam(options.param)
           this.$dispatch('filter', {
             page: 1
           })
         },
         search() {
           this.dirty = !isNullOrUndefinedOrEmpty(this.query)
-          setQueryParam('search', this.query)
+          setQueryParam(options.param, this.query)
           this.$dispatch('filter', {
             query: this.query,
             page: 1

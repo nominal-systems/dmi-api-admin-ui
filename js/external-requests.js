@@ -18,6 +18,10 @@ export const externalRequests = () => {
     table: table({
       pageSize: 20,
       pagesMax: 10,
+      _search: {
+        placeholder: 'Search by Accession ID...',
+        param: 'accessionId'
+      },
       _searchSelect: {
         id: 'practice',
         placeholder: 'Search by practice...',
@@ -44,8 +48,9 @@ export const externalRequests = () => {
         const date = parseDateRangeQuery(query.date)
         validateDateRangeLimit(date)
         const practices = query.practice ? query.practice.split(',') : undefined
+        const accessionId = query.accessionId?.trim() || undefined
 
-        return await getExternalRequests({ providers, status, method, practices, date }, page, pageSize)
+        return await getExternalRequests({ providers, status, method, practices, date, accessionId }, page, pageSize)
       },
       processResults: async (externalRequests) => {
         const practiceIds = [...new Set(
