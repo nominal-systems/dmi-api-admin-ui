@@ -48,7 +48,11 @@
                 </td>
                 <td class="px-4 py-3">
                   <span class="text-green-700 dark:text-green-400" x-show="!entry.error">OK</span>
-                  <span class="text-red-700 dark:text-red-400" x-show="entry.error" x-text="entry.error"></span>
+                  <!-- A delete goes ahead when its stop fails: deleted, with the stop's error as a warning -->
+                  <span class="text-yellow-700 dark:text-yellow-400" x-show="entry.error && entry.action === 'delete'"
+                        x-text="`Deleted, but: ${entry.error}`"></span>
+                  <span class="text-red-700 dark:text-red-400" x-show="entry.error && entry.action !== 'delete'"
+                        x-text="entry.error"></span>
                 </td>
               </tr>
             </template>
