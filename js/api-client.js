@@ -241,6 +241,10 @@ export const updateIntegrationStatus = async (integrationId, operation) => {
   return await apiPost(`/integrations/${integrationId}/${operation}`, null)
 }
 
+export const getIntegrationLog = async (integrationId, page, limit) => {
+  return await apiGet(`/integrations/${integrationId}/log?page=${page}&limit=${limit}`)
+}
+
 export const updateIntegrationOptions = async (integrationId, integrationOptions) => {
   return await apiRequest('PATCH', `/integrations/${integrationId}`, { integrationOptions })
 }

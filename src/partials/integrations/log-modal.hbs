@@ -1,0 +1,84 @@
+<div x-ref="integrationLogModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+  <div class="relative p-4 w-full max-w-4xl h-full md:h-auto" x-data="data">
+    <!-- Modal content -->
+    <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+      <!-- Modal header -->
+      <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+          Integration log
+          <span class="block text-sm font-normal text-gray-600 dark:text-gray-400">
+            <span x-text="integration?.id"></span>
+            (<span x-text="integration?.practice?.name"></span> - <span class="uppercase" x-text="integration?.providerConfiguration?.providerId"></span>)
+          </span>
+        </h3>
+        <button type="button"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                @click="close">
+          <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <!-- Modal body: who started, stopped, restarted or deleted the integration, newest first -->
+      <div class="mt-4 mb-6">
+        <p class="text-sm text-gray-700 dark:text-gray-400" x-show="loading">Loading...</p>
+        <p class="text-sm text-gray-700 dark:text-gray-400" x-show="!loading && !error && entries.length === 0">
+          Nothing has been recorded for this integration yet.
+        </p>
+        <!-- Scrolls inside the modal, so a full page of entries never pushes the header off the screen -->
+        <div class="w-full overflow-x-auto overflow-y-auto max-h-[60vh]" x-show="!loading && entries.length > 0">
+          <table class="w-full whitespace-no-wrap">
+            <thead>
+            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+              <th class="px-4 py-3">When</th>
+              <th class="px-4 py-3">Action</th>
+              <th class="px-4 py-3">By</th>
+              <th class="px-4 py-3">Result</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+            <template x-for="entry in entries" :key="entry.id">
+              <tr class="text-sm text-gray-700 dark:text-gray-400">
+                <td class="px-4 py-3" x-date="entry.createdAt"></td>
+                <td class="px-4 py-3 capitalize" x-text="entry.action"></td>
+                <td class="px-4 py-3">
+                  <span x-text="entry.actor"></span>
+                  <span class="text-xs text-gray-500" x-text="`(${entry.actorType})`"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="text-green-700 dark:text-green-400" x-show="!entry.error">OK</span>
+                  <span class="text-red-700 dark:text-red-400" x-show="entry.error" x-text="entry.error"></span>
+                </td>
+              </tr>
+            </template>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex items-center justify-between mt-4 text-xs text-gray-600 dark:text-gray-400" x-show="!loading && total > limit">
+          <span x-text="`${(page - 1) * limit + 1}–${Math.min(page * limit, total)} of ${total}`"></span>
+          <span class="space-x-2">
+            <button type="button" class="px-3 py-1 rounded-md border border-gray-200 dark:border-gray-600 disabled:opacity-50"
+                    :disabled="page <= 1" @click="await loadLogPage(data, page - 1)">Newer</button>
+            <button type="button" class="px-3 py-1 rounded-md border border-gray-200 dark:border-gray-600 disabled:opacity-50"
+                    :disabled="page * limit >= total" @click="await loadLogPage(data, page + 1)">Older</button>
+          </span>
+        </div>
+      </div>
+      <div class="flex items-center p-4 my-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert"
+           x-show="error">
+        <span class="sr-only">Info</span>
+        <div>
+          <span x-text="error?.message"></span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 rounded-b dark:border-gray-600">
+        <button type="button"
+                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                @click="close">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
