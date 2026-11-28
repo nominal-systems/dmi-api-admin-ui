@@ -1,8 +1,30 @@
-import { getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
+import { getIntegrationLog, getIntegrations, getOrganizations, getProviders, updateIntegrationStatus } from './api-client'
 import Alpine from 'alpinejs'
 import { delay, getIntegrationConfig, getProviderConfig, getQueryParams } from './common/utils'
 import table from './plugins/table'
 import modal from './plugins/modal'
+
+// The latest log request: an answer to an earlier one (another integration's, or another page) is dropped
+let logRequestId = 0
+
+// One page of an integration's log, newest first, into the log modal's data
+async function loadLogPage(data, page) {
+  const requestId = ++logRequestId
+  data.loading = true
+  data.error = null
+  try {
+    const result = await getIntegrationLog(data.integration.id, page, data.limit)
+    if (requestId !== logRequestId) return
+    data.entries = result.data
+    data.total = result.total
+    data.page = page
+  } catch (err) {
+    if (requestId !== logRequestId) return
+    data.error = { message: err.body?.message || err.message }
+  } finally {
+    if (requestId === logRequestId) data.loading = false
+  }
+}
 
 export const integrations = {
   setTitle: () => {
@@ -150,6 +172,28 @@ export const integrations = {
       self.operation = null
     }
   }),
+  logModal: modal({
+    ref: 'integrationLogModal',
+    data: {
+      integration: null,
+      entries: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+      loading: false,
+      error: null
+    },
+    onShow: async (self, data) => {
+      data.entries = []
+      data.total = 0
+      await loadLogPage(data, 1)
+    }
+  }),
+
+  async loadLogPage(data, page) {
+    await loadLogPage(data, page)
+  },
+
   batchActionsModal: modal({
     ref: 'actionsModal',
     data: {
